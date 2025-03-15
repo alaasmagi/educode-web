@@ -1,0 +1,11 @@
+.qr-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 35px;
+    background-color: #BCBCBD;
+    border-radius: 20px;
+    border-color: #525252;
+    border-width: 25px;
+    border-style: solid;
+  }
