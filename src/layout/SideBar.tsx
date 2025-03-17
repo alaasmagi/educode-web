@@ -10,12 +10,12 @@ export default function SideBar() {
     <div className="flex flex-col mt-5 h-[calc(100vh-4rem)] overflow-y-auto">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 md:hidden text-white bg-[#3B3B3B] fixed top-4 left-4 z-50 rounded-md"
+        className="p-2 md:hidden text-white bg-main-dark fixed top-4 left-4 z-50 rounded-md"
       >
         ☰
       </button>
       <div
-        className={`fixed top-0 left-0 h-full bg-[#2B2B2B] text-white w-70 transform transition-transform duration-300 ease-in-out z-40 ${
+        className={`fixed top-0 left-0 h-full bg-main-dark text-white w-70 transform transition-transform duration-300 ease-in-out z-40 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:block`}
       >
@@ -37,7 +37,7 @@ export default function SideBar() {
                   onClick={() => setSelected(item)}
                 />
                 {index !== array.length - 1 && (
-                  <div className="bottom-0 w-55 h-0.5 bg-[#4492EA]"></div>
+                  <div className="bottom-0 w-55 h-0.5 bg-main-blue"></div>
                 )}
               </div>
             )
@@ -49,7 +49,6 @@ export default function SideBar() {
         </div>
       </div>
 
-      {/* Overlay when sidebar is open (only visible on mobile) */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black opacity-50 z-30 md:hidden"

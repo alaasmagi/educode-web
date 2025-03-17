@@ -1,3 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --color-main-blue: #4492EA;
+  --color-main-dark: #2B2B2B;
+  --color-button-dark: #1E1E1E;
+  --color-button-hover: #282828;
+  --color-secondary-dark: #3B3B3B;
+  --color-main-text: #BCBCBD;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;

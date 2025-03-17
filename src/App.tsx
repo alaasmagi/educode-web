@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <QrGenerator value={"000003"} />
-      <h1 className="text-9xl">Hello tailwind</h1>
+      <h1 className="text-9xl text-main-blue">Hello tailwind</h1>
       <SideBar />
     </>
   );
