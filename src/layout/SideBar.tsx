@@ -49,7 +49,7 @@ export default function SideBar() {
                   }}
                 />
                 {index !== array.length - 1 && (
-                  <div className="w-55 h-px bg-main-blue"></div>
+                  <div className="w-55 h-[2px] bg-main-blue"></div>
                 )}
               </div>
             )
