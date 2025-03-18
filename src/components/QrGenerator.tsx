@@ -20,9 +20,9 @@ const QrGenerator: React.FC<QrGeneratorProperties> = ({ value }) => {
   }, []);
 
   return (
-    <div className="qr-container">
+    <div className="flex justify-center items-center p-4">
       <QRCode
-        className="qr-code"
+        className="p-7 bg-main-text rounded-3xl border-15 border-teritary-dark"
         value={value}
         size={qrSize}
         bgColor="#BCBCBD"

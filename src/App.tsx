@@ -1,14 +1,23 @@
-import "./App.css";
-import QrGenerator from "./components/QrGenerator";
-import SideBar from "./layout/SideBar";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import InitialSelectionView from "./screens/InitialSelectionView";
+import HomeView from "./screens/HomeView";
+import AttendancesView from "./screens/AttendancesView";
+import CoursesView from "./screens/CoursesView";
+import StatisticsView from "./screens/StatisticsView";
+import SettingsView from "./screens/SettingsView";
 
 function App() {
   return (
-    <>
-      <QrGenerator value={"000003"} />
-      <h1 className="text-9xl text-main-blue">Hello tailwind</h1>
-      <SideBar />
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<InitialSelectionView />} />
+        <Route path="/Home" element={<HomeView />} />
+        <Route path="/Courses" element={<CoursesView />} />
+        <Route path="/Attendances" element={<AttendancesView />} />
+        <Route path="/Statistics" element={<StatisticsView />} />
+        <Route path="/Settings" element={<SettingsView />} />
+      </Routes>
+    </Router>
   );
 }
 

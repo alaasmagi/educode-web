@@ -13,12 +13,12 @@ export const SideBarItem: React.FC<SideBarItemProperties> = ({
 }) => {
   return (
     <div
-      className={`flex items-center px-5 md:py-5 max-md:py-3 cursor-pointer  ${
-        isSelected ? "bg-[#3B3B3B]" : "bg-[#2B2B2B] hover:bg-[#353535]"
+      className={`flex items-center px-5 py-5 ${
+        isSelected ? "bg-secondary-dark" : "bg-main-dark hover:bg-nav-hover"
       }`}
       onClick={onClick}
     >
-      <span className="md:text-xl font-bold text-[#BCBCBD]">{label}</span>
+      <span className="text-xl font-bold text-main-text">{label}</span>
     </div>
   );
 };
