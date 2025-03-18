@@ -15,10 +15,10 @@ export default function SideBar() {
   }, []);
 
   return (
-    <div className="flex flex-row mt-5 max-md:mb-5 overflow-y-auto">
+    <div className="flex flex-row mt-20 max-md:mb-5 overflow-y-auto">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 md:hidden bg-button-dark border-main-blue border-2 fixed top-5 right-5 z-50 rounded-2xl "
+        className="p-2 md:hidden bg-button-dark border-main-blue border-2 fixed top-15 right-5 z-50 rounded-2xl "
       >
         <img src={Icons["menu-icon"]} className="h-7"></img>
       </button>
@@ -27,7 +27,7 @@ export default function SideBar() {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:block`}
       >
-        <div className="p-5 text-xl font-bold flex items-center gap-2">
+        <div className="p-5 mt-10 text-xl font-bold flex items-center gap-2">
           <img
             src="./logos/splash-logo.png"
             alt="EduCode Logo"
@@ -49,7 +49,7 @@ export default function SideBar() {
                   }}
                 />
                 {index !== array.length - 1 && (
-                  <div className="bottom-0 w-55 h-0.5 bg-main-blue"></div>
+                  <div className="w-55 h-px bg-main-blue"></div>
                 )}
               </div>
             )

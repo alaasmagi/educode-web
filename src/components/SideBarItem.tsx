@@ -14,7 +14,9 @@ export const SideBarItem: React.FC<SideBarItemProperties> = ({
   return (
     <div
       className={`flex items-center px-5 py-5 ${
-        isSelected ? "bg-secondary-dark" : "bg-main-dark hover:bg-nav-hover"
+        isSelected
+          ? "bg-secondary-dark"
+          : "bg-main-dark hover:bg-nav-hover hover:cursor-pointer"
       }`}
       onClick={onClick}
     >
