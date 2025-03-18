@@ -13,7 +13,7 @@ const NormalButton: React.FC<NormalButtonProperties> = ({
     <button
       disabled={isDisabled}
       onClick={onClick}
-      className="bg-button-dark hover:bg-button-hover w-2xs py-3 border-2 rounded-2xl border-main-blue text-2xl font-bold text-main-text"
+      className="bg-button-dark hover:bg-button-hover md:w-xs max-md:w-2xs py-3 border-2 rounded-2xl border-main-blue text-2xl font-bold text-main-text"
     >
       {text}
     </button>

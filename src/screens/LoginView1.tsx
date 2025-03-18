@@ -1,12 +1,14 @@
 import "../App.css";
-import SideBar from "../layout/SideBar";
+import NormalButton from "../components/NormalButton";
+import { useNavigate } from "react-router-dom";
 
 function LoginView() {
+  const navigate = useNavigate();
   return (
     <>
-      <SideBar />
       <div className="max-h-screen max-w-screen">
-        <h1>Statistics</h1>
+        <h1>LoginView</h1>
+        <NormalButton text={"Log in"} onClick={() => navigate("/Home")} />
       </div>
     </>
   );

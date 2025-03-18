@@ -23,7 +23,7 @@ export default function SideBar() {
         <img src={Icons["menu-icon"]} className="h-7"></img>
       </button>
       <div
-        className={`fixed top-0 left-0 h-screen bg-main-dark text-white md:w-80 max-md:w-screen transform transition-transform duration-300 ease-in-out z-40 ${
+        className={`fixed top-0 left-0 h-screen bg-main-dark text-white md:w-90 max-md:w-screen transform transition-transform duration-300 ease-in-out z-40 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:block`}
       >
