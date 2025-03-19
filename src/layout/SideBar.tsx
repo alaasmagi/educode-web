@@ -3,8 +3,11 @@ import { SideBarItem } from "../components/SideBarItem";
 import NormalButton from "../components/NormalButton";
 import { Icons } from "../components/Icons";
 import { useNavigate, useLocation } from "react-router-dom";
+import LanguageSwitch from "../components/LanguageSwitch";
+import { useTranslation } from "react-i18next";
 
 export default function SideBar() {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -13,6 +16,13 @@ export default function SideBar() {
   useEffect(() => {
     setSelected(location.pathname.slice(1));
   }, []);
+
+  const navItems = [
+    { label: t("home"), path: "/Home" },
+    { label: t("courses"), path: "/Courses" },
+    { label: t("attendances"), path: "/Attendances" },
+    { label: t("statistics"), path: "/Statistics" },
+  ];
 
   return (
     <div className="flex flex-row mt-20 max-md:mb-5 overflow-y-auto">
@@ -36,27 +46,24 @@ export default function SideBar() {
         </div>
 
         <nav className="flex flex-col mt-5">
-          {["Home", "Courses", "Attendances", "Statistics"].map(
-            (item, index, array) => (
-              <div key={item}>
-                <SideBarItem
-                  label={item}
-                  isSelected={selected === item}
-                  onClick={() => {
-                    setSelected(item);
-                    setIsOpen(false);
-                    navigate(`/${item}`);
-                  }}
-                />
-                {index !== array.length - 1 && (
-                  <div className="w-55 h-[2px] bg-main-blue"></div>
-                )}
-              </div>
-            )
-          )}
+          {navItems.map((item, index) => (
+            <div key={item.path}>
+              <SideBarItem
+                label={item.label}
+                isSelected={selected === item.path}
+                onClick={() => {
+                  setSelected(item.path);
+                  setIsOpen(false);
+                  navigate(item.path);
+                }}
+              />
+              {index !== navItems.length - 1 && (
+                <div className="w-55 h-[2px] bg-main-blue"></div>
+              )}
+            </div>
+          ))}
         </nav>
-
-        <div className="absolute bottom-5 w-full flex justify-center">
+        <div className="absolute bottom-5 w-full flex justify-center gap-2 p-2">
           <NormalButton
             text="Settings"
             onClick={() => {
@@ -65,6 +72,7 @@ export default function SideBar() {
               setSelected(null);
             }}
           />
+          <LanguageSwitch />
         </div>
       </div>
     </div>
