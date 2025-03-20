@@ -90,5 +90,7 @@
     "no-of-students": "Number of registered students",
     "view-attendance-details": "View attendance details",
     "add-student": "Add student",
-    "student-add-success": "Student added successfully"
+    "student-add-success": "Student added successfully",
+    "settings": "Settings",
+    "register-as-teacher": "Register as teacher"
 }

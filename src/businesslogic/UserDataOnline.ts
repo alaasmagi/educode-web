@@ -15,7 +15,7 @@ export async function UserLogin(
   uniId: string,
   password: string
 ): Promise<boolean> {
-  console.log("LOGIN");
+  console.log("LOGINg");
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/User/Login`, {
       method: "POST",

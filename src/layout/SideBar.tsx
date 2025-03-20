@@ -65,7 +65,7 @@ export default function SideBar() {
         </nav>
         <div className="absolute bottom-5 w-full flex justify-center gap-2 p-2">
           <NormalButton
-            text="Settings"
+            text={t("settings")}
             onClick={() => {
               navigate(`/Settings`);
               setIsOpen(false);

@@ -11,6 +11,8 @@ import {
   UserLogin,
 } from "../businesslogic/UserDataOnline";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { useTranslation } from "react-i18next";
+import LanguageSwitch from "../components/LanguageSwitch";
 
 function LoginView() {
   const [uniIdInput, setUniIdInput] = useState<string>("");
@@ -18,6 +20,7 @@ function LoginView() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogin = async () => {
     dismissKeyboard();
@@ -49,6 +52,7 @@ function LoginView() {
         <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
           <img src="../logos/splash-logo.png" className="md:w-xl" />
           <div className="flex flex-col gap-3.5">
+            <LanguageSwitch />
             <TextBox
               icon="person-icon"
               placeHolder={"UniID"}
@@ -57,7 +61,7 @@ function LoginView() {
             />
             <TextBox
               icon="lock-icon"
-              placeHolder={"Password"}
+              placeHolder={t("password")}
               value={passwordInput}
               onChange={setPasswordInput}
               isPassword={true}
@@ -66,13 +70,13 @@ function LoginView() {
             <div className="flex flex-col gap-0.5">
               <div className="flex justify-end pr-2">
                 <NormalLink
-                  text="Forgot password?"
+                  text={t("forgot-password")}
                   onClick={() => console.log("LINK PRESSED")}
                 />
               </div>
               <NormalButton text={"Log in"} onClick={handleLogin} />
               <NormalLink
-                text={"No account? Create one!"}
+                text={t("register-now")}
                 onClick={() => console.log("LINK PRESSED")}
               />
             </div>

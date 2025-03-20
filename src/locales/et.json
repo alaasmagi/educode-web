@@ -90,7 +90,9 @@
     "no-of-students": "Kohalolevate üliõpilaste arv",
     "view-attendance-details": "Kuva ainetunni üksikasjad",
     "add-student": "Lisa üliõpilane",
-    "student-add-success": "Üliõpilase lisamine õnnestus"
+    "student-add-success": "Üliõpilase lisamine õnnestus",
+    "settings": "Seaded",
+    "register-as-teacher": "Registreeri õppejõuks"
 
   }
   
