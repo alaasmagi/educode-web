@@ -20,7 +20,7 @@ export const SideBarItem: React.FC<SideBarItemProperties> = ({
       }`}
       onClick={onClick}
     >
-      <span className="text-xl font-bold text-main-text">{label}</span>
+      <span className="text-2xl font-bold text-main-text">{label}</span>
     </div>
   );
 };

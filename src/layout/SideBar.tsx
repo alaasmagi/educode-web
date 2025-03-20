@@ -37,7 +37,7 @@ export default function SideBar() {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 md:block`}
       >
-        <div className="p-5 mt-10 text-xl font-bold flex items-center gap-2">
+        <div className="p-5 mt-10 flex items-center gap-2">
           <img
             src="./logos/splash-logo.png"
             alt="EduCode Logo"

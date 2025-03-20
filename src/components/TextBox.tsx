@@ -21,7 +21,7 @@ export default function TextBox({
   const [isTextVisible, setIsTextVisible] = useState(!isPassword);
 
   return (
-    <div className="flex flex-col max-md:w-max-screen">
+    <div className="flex flex-col max-md:w-max-screen md:min-w-xs">
       <div className="flex flex-row w-max-screen items-center gap-1.5">
         <img src={Icons[icon]} className="h-7" alt="User Icon" />
         <input

@@ -34,16 +34,13 @@ function LoginView() {
         }
       } else {
         setErrorMessage("login-error");
-        setTimeout(() => {
-          setErrorMessage(null);
-        }, 3000);
       }
     } else {
       setErrorMessage("login-error");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 3000);
     }
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 3000);
   };
 
   return (

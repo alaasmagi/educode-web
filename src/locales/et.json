@@ -80,6 +80,17 @@
     "home": "Avaleht",
     "courses": "Õppeained",
     "attendances": "Ainetunnid",
-    "statistics": "Statistika"
+    "statistics": "Statistika",
+    "quick-nav": "Leia kiirelt",
+    "add-new-attendance": "Lisa uus ainetund",
+    "view-recent-attendance": "Kuva kõige hiljutisem ainetund",
+    "ongoing-attendance": "Käimasolev ainetund",
+    "course-name": "Kursuse nimi",
+    "course-code": "Kursuse kood",
+    "no-of-students": "Kohalolevate üliõpilaste arv",
+    "view-attendance-details": "Kuva ainetunni üksikasjad",
+    "add-student": "Lisa üliõpilane",
+    "student-add-success": "Üliõpilase lisamine õnnestus"
+
   }
   

@@ -80,5 +80,15 @@
     "home": "Home",
     "courses": "Courses",
     "attendances": "Attendances",
-    "statistics": "Statistics"
+    "statistics": "Statistics",
+    "quick-nav": "Quick navigation",
+    "add-new-attendance": "Add new attendace",
+    "view-recent-attendance": "View the most recent attendance",
+    "ongoing-attendance": "Ongoing attendance",
+    "course-name": "Course name",
+    "course-code": "Course code",
+    "no-of-students": "Number of registered students",
+    "view-attendance-details": "View attendance details",
+    "add-student": "Add student",
+    "student-add-success": "Student added successfully"
 }
