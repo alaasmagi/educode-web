@@ -14,9 +14,11 @@ const ContainerCardSmall: React.FC<ContainerCardSmallProperties> = ({
   onClick,
 }) => {
   return (
-    <div className="flex flex-col max-md:w-90 md:w-xl bg-secondary-dark rounded-3xl border-[1px] border-main-blue p-4">
-      <span className="text-2xl font-bold self-start">{boldLabelA}</span>
-      <span className="text-2xl font-bold self-start">{boldLabelB}</span>
+    <div className="flex flex-row bg-secondary-dark rounded-3xl border-[1px] border-main-blue p-4 items-center justify-between">
+      <div className="flex flex-col">
+        <span className="text-2xl font-bold self-start">{boldLabelA}</span>
+        <span className="text-2xl font-bold self-start">{boldLabelB}</span>
+      </div>
       <NormalLink text={linkText} onClick={onClick} />
     </div>
   );

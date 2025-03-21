@@ -5,6 +5,7 @@ import CreateUserModel from "../models/CreateUserModel";
 import VerifyOTPModel from "../models/VerifyOTPModel";
 import ChangePasswordModel from "../models/ChangePasswordModel";
 import LocalUserData from "../models/LocalUserDataModel";
+import axios from "axios";
 import {
   GetUserToken,
   SaveOfflineUserData,
@@ -15,24 +16,25 @@ export async function UserLogin(
   uniId: string,
   password: string
 ): Promise<boolean> {
-  console.log("LOGINg");
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/User/Login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/User/Login`,
+      {
         uniId: uniId,
         password: password,
-      }),
-    });
-    if (!response.ok) {
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.status !== 200) {
       return false;
     }
 
-    const data = await response.json();
-    Storage.saveData(LocalKeys.localToken, data.token);
+    Storage.saveData(LocalKeys.localToken, response.data.token);
     return true;
   } catch (error) {
     return false;

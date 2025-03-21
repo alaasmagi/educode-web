@@ -21,16 +21,16 @@ export default function TextBox({
   const [isTextVisible, setIsTextVisible] = useState(!isPassword);
 
   return (
-    <div className="flex flex-col max-md:w-max-screen md:min-w-xs">
+    <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs">
       <div className="flex flex-row w-max-screen items-center gap-1.5">
-        <img src={Icons[icon]} className="h-7" alt="User Icon" />
+        <img src={Icons[icon]} className="h-7" alt={icon} />
         <input
           type={isTextVisible ? "text" : "password"}
           value={value}
           placeholder={placeHolder}
           onChange={(e) => onChange && onChange(e.target.value)}
           disabled={disabled}
-          className="outline-none text-main-text md:w-10/12 text-lg"
+          className="outline-none text-main-text w-10/12 text-lg"
         />
         {isPassword && (
           <button

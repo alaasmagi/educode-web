@@ -13,6 +13,8 @@ import engFlag from "../assets/icons/eng-flag.png";
 import visibilityOnIcon from "../assets/icons/visibility-on.png";
 import visibilityOffIcon from "../assets/icons/visibility-off.png";
 import menuIcon from "../assets/icons/menu-icon.png";
+import searchIcon from "../assets/icons/search-icon.png";
+import eventStatusIcon from "../assets/icons/event-status-icon.png";
 
 export const Icons = {
   "lock-icon": lockIcon,
@@ -30,4 +32,6 @@ export const Icons = {
   "visibility-on": visibilityOnIcon,
   "visibility-off": visibilityOffIcon,
   "menu-icon": menuIcon,
+  "search-icon": searchIcon,
+  "event-status-icon": eventStatusIcon,
 };
