@@ -6,7 +6,7 @@ interface NormalLinkProperties {
 export default function NormalLink({ text, onClick }: NormalLinkProperties) {
   return (
     <span
-      className="md:text-xl text-main-text underline hover:cursor-pointer"
+      className="text-xl text-main-text underline hover:cursor-pointer"
       onClick={onClick}
     >
       {text}
