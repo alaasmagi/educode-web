@@ -14,6 +14,9 @@ import { useTranslation } from "react-i18next";
 import DateSelector from "../components/DateSelector";
 import TimeSelector from "../components/TimeSelector";
 import IconButton from "../components/IconButton";
+import DetailedDataField from "../components/DetailedDataField";
+import QrGenerator from "../components/QrGenerator";
+import { Icons } from "../components/Icons";
 
 function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -265,6 +268,90 @@ function AttendancesView() {
                   <SuccessMessage text={t("student-add-success")} />
                 </div>
                 <NormalButton text="Edit attendance" onClick={console.log} />
+              </div>
+            </div>
+          )}
+          {navState === "Students" && (
+            <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
+              <span className="text-2xl font-bold self-start">
+                {"Students in this attendance"}
+              </span>
+              <div className="flex flex-col gap-5 items-center justify-center self-center">
+                <div className="flex flex-row gap-5">
+                  <DetailedDataField
+                    dataA="213453IACB"
+                    dataB="Aleksander Laasmägi"
+                  />
+                  <NormalLink text="Remove" onClick={console.log} />
+                </div>
+                <div className="flex flex-row gap-5">
+                  <DetailedDataField
+                    dataA="213453IACB"
+                    dataB="Aleksander Laasmägi"
+                  />
+                  <NormalLink text="Remove" onClick={console.log} />
+                </div>
+                <div className="flex flex-row gap-5">
+                  <DetailedDataField
+                    dataA="213453IACB"
+                    dataB="Aleksander Laasmägi"
+                  />
+                  <NormalLink text="Remove" onClick={console.log} />
+                </div>
+                <div className="flex flex-row gap-5">
+                  <DetailedDataField
+                    dataA="213453IACB"
+                    dataB="Aleksander Laasmägi"
+                  />
+                  <NormalLink text="Remove" onClick={console.log} />
+                </div>
+                <div className="flex flex-row gap-5">
+                  <DetailedDataField
+                    dataA="213453IACB"
+                    dataB="Aleksander Laasmägi"
+                  />
+                  <NormalLink text="Remove" onClick={console.log} />
+                </div>
+                <div className="flex flex-row gap-5">
+                  <DetailedDataField
+                    dataA="213453IACB"
+                    dataB="Aleksander Laasmägi"
+                  />
+                  <NormalLink text="Remove" onClick={console.log} />
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <NormalLink
+                  text="Go back"
+                  onClick={() => {
+                    setNavState("Details");
+                  }}
+                />
+                <NormalLink text="Download as PDF" onClick={console.log} />
+              </div>
+            </div>
+          )}
+          {navState === "QR" && (
+            <div className="flex flex-col max-md:w-90 md:w-7xl bg-main-dark rounded-3xl gap-10 p-6">
+              <span className="text-2xl font-bold self-start">
+                {"QR of this attendance"}
+              </span>
+              <div className="flex flex-col gap-5 items-center justify-center self-center">
+                <QrGenerator value="000002" />
+                <div className="flex flex-row gap-8 items-center justify-items-center">
+                  <img src={Icons["key-icon"]} className="h-15" />
+                  <span className="md:text-6xl max-md:text-3xl font-bold">
+                    {"000002"}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <NormalLink
+                  text="Go back"
+                  onClick={() => {
+                    setNavState("Details");
+                  }}
+                />
               </div>
             </div>
           )}
