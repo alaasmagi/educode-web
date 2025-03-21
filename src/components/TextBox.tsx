@@ -22,7 +22,7 @@ export default function TextBox({
 
   return (
     <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs">
-      <div className="flex flex-row w-max-screen items-center gap-1.5">
+      <div className="flex flex-row w-max-full items-center gap-1.5">
         <img src={Icons[icon]} className="h-7" alt={icon} />
         <input
           type={isTextVisible ? "text" : "password"}

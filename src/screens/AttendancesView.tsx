@@ -11,13 +11,41 @@ import QuickNavigation from "../layout/QuickNavigation";
 import { useNavigate } from "react-router-dom";
 import SuccessMessage from "../components/SuccessMessage";
 import { useTranslation } from "react-i18next";
+import DateSelector from "../components/DataSelector";
+import TimeSelector from "../components/TimeSelector";
 
 function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
   const [editCourse, setEditCourse] = useState<string | null>(null);
+  const [dates, setDates] = useState([{ id: Date.now(), date: "" }]);
+  const [submitted, setSubmitted] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string>("");
+  const [startTime, setStartTime] = useState<string>("");
+  const [endTime, setEndTime] = useState<string>("");
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const updateDateField = (id: number, newDate: string) => {
+    setDates((prevDates) =>
+      prevDates.map((entry) =>
+        entry.id === id ? { ...entry, date: newDate } : entry
+      )
+    );
+  };
+  const addDateField = () => {
+    setDates([...dates, { id: Date.now(), date: "" }]);
+  };
+
+  const removeDateField = (id: number) => {
+    setDates(dates.filter((entry) => entry.id !== id));
+  };
+
+  const handleSubmit = () => {
+    if (dates.every((d) => d.date)) {
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 3000);
+    }
+  };
   return (
     <>
       <SideBar />
@@ -59,33 +87,76 @@ function AttendancesView() {
               />
               <NormalLink
                 text="Add new attendance"
-                onClick={() => setNavState("Edit")}
+                onClick={() => setNavState("Create")}
               />
             </div>
           )}
-          {navState === "Edit" && (
+          {navState === "Create" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
               <span className="text-2xl font-bold self-start">
-                {editCourse ? "Edit course" : "Add course"}
+                {"Add attendance"}
               </span>
-
               <div className="flex flex-col gap-5 items-center justify-center self-center">
-                <TextBox icon="school-icon" placeHolder="Course name" />
-                <TextBox icon="pincode-icon" placeHolder="Course code" />
                 <DropDownList
-                  icon="event-status-icon"
+                  icon="school-icon"
                   options={[]}
                   onChange={(e) => setSelectedOption(e.target.value)}
-                  label="course status"
+                  label="Course"
                 />
+                <DropDownList
+                  icon="attendance-type-icon"
+                  options={[]}
+                  onChange={(e) => setSelectedOption(e.target.value)}
+                  label="Attendance type"
+                />
+                <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs gap-4">
+                  <div className="flex flex-col items-start">
+                    <div>
+                      <span className="text-xl font-semibold mr-2">
+                        {"Start time:"}
+                      </span>
+                      <TimeSelector
+                        value={startTime}
+                        onChange={(e) => setStartTime(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <span className="text-xl font-semibold mr-2">
+                        {"End time:"}
+                      </span>
+                      <TimeSelector
+                        value={endTime}
+                        onChange={(e) => setEndTime(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <span className="text-xl mr-2 font-semibold self-start">
+                  {"Kuupäevad:"}
+                </span>
+                <div className="flex flex-col">
+                  {dates.map((entry) => (
+                    <div key={entry.id} className="flex flex-row gap-0">
+                      <DateSelector
+                        value={entry.date}
+                        onChange={(e) =>
+                          updateDateField(entry.id, e.target.value)
+                        }
+                      />
+                      {dates.length > 1 && (
+                        <NormalLink
+                          text={"Remove"}
+                          onClick={() => removeDateField(entry.id)}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <NormalLink text={"Add more dates"} onClick={addDateField} />
                 <div className="my-4">
                   <SuccessMessage text={t("student-add-success")} />
                 </div>
-                {editCourse ? (
-                  <NormalButton text="Edit course" onClick={console.log} />
-                ) : (
-                  <NormalButton text="Add course" onClick={console.log} />
-                )}
+                <NormalButton text="Add attendance" onClick={console.log} />
               </div>
             </div>
           )}
@@ -98,6 +169,11 @@ function AttendancesView() {
                 <div>
                   <DataField fieldName="Course name" data="Kasutajaliidesed" />
                   <DataField fieldName="Course code" data="ITI0209" />
+                  <DataField
+                    fieldName="Attendance type"
+                    data="Course + Lecture"
+                  />
+                  <DataField fieldName="Status" data="Available" />
                   <DataField fieldName="Status" data="Available" />
                 </div>
                 <div className="flex justify-between">
@@ -122,6 +198,62 @@ function AttendancesView() {
                 }}
               />
             </>
+          )}
+          {navState === "Edit" && (
+            <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
+              <span className="text-2xl font-bold self-start">
+                {"Edit attendance"}
+              </span>
+              <div className="flex flex-col gap-5 items-center justify-center self-center">
+                <DropDownList
+                  icon="school-icon"
+                  options={[]}
+                  onChange={(e) => setSelectedOption(e.target.value)}
+                  label="Course"
+                />
+                <DropDownList
+                  icon="attendance-type-icon"
+                  options={[]}
+                  onChange={(e) => setSelectedOption(e.target.value)}
+                  label="Attendance type"
+                />
+                <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs gap-4">
+                  <div className="flex flex-col items-start">
+                    <div>
+                      <span className="text-xl font-semibold mr-2">
+                        {"Start time:"}
+                      </span>
+                      <TimeSelector
+                        value={startTime}
+                        onChange={(e) => setStartTime(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <span className="text-xl font-semibold mr-2">
+                        {"End time:"}
+                      </span>
+                      <TimeSelector
+                        value={endTime}
+                        onChange={(e) => setEndTime(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <span className="text-xl font-semibold mr-2">
+                        {"Kuupäev:"}
+                      </span>
+                      <DateSelector
+                        value={""}
+                        onChange={(e) => updateDateField(2, e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="my-4">
+                  <SuccessMessage text={t("student-add-success")} />
+                </div>
+                <NormalButton text="Edit attendance" onClick={console.log} />
+              </div>
+            </div>
           )}
         </div>
       </div>

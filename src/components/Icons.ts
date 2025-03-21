@@ -15,6 +15,9 @@ import visibilityOffIcon from "../assets/icons/visibility-off.png";
 import menuIcon from "../assets/icons/menu-icon.png";
 import searchIcon from "../assets/icons/search-icon.png";
 import eventStatusIcon from "../assets/icons/event-status-icon.png";
+import attendanceTypeIcon from "../assets/icons/attendance-type-icon.png";
+import calendarIcon from "../assets/icons/calendar-icon.png";
+import clockIcon from "../assets/icons/clock-icon.png";
 
 export const Icons = {
   "lock-icon": lockIcon,
@@ -34,4 +37,7 @@ export const Icons = {
   "menu-icon": menuIcon,
   "search-icon": searchIcon,
   "event-status-icon": eventStatusIcon,
+  "attendance-type-icon": attendanceTypeIcon,
+  "calendar-icon": calendarIcon,
+  "clock-icon": clockIcon,
 };

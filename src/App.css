@@ -53,3 +53,26 @@
 .read-the-docs {
   color: #888;
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-image: url('./assets/icons/calendar-icon.png');
+  height: 2rem;
+  min-width: 1.1rem;
+  background-size: 1.75rem;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  background-image: url('./assets/icons/clock-icon.png');
+  height: 2rem;
+  min-width: 0.5rem;
+  background-size: 1.75rem;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding-right: 2rem;
+  cursor: pointer;
+}
