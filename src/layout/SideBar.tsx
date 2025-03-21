@@ -28,7 +28,7 @@ export default function SideBar() {
     <div className="flex flex-row mt-20 max-md:mb-5 overflow-y-auto">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 md:hidden bg-button-dark border-main-blue border-2 fixed top-15 right-5 z-50 rounded-2xl "
+        className="p-2 md:hidden bg-button-dark border-main-blue border-2 absolute top-15 right-5 z-50 rounded-2xl "
       >
         <img src={Icons["menu-icon"]} className="h-7"></img>
       </button>
