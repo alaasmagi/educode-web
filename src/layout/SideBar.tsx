@@ -63,7 +63,7 @@ export default function SideBar() {
             </div>
           ))}
         </nav>
-        <div className="absolute md:bottom-5 max-md:bottom-15 w-full flex justify-center gap-2 px-2">
+        <div className="absolute bottom-0 md:py-10 max-md:py-20 w-full flex justify-center gap-2 px-2">
           <NormalButton
             text={t("settings")}
             onClick={() => {
