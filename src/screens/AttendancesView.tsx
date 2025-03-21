@@ -277,7 +277,7 @@ function AttendancesView() {
                 {"Students in this attendance"}
               </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
-                <div className="flex flex-row gap-5 items-center">
+                <div className="flex flex-row gap-5">
                   <DetailedDataField
                     dataA="213453IACB"
                     dataB="Aleksander Laasmägi"
