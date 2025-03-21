@@ -75,7 +75,7 @@ function CoursesView() {
                   onChange={(e) => setSelectedOption(e.target.value)}
                   label="course status"
                 />
-                <div className="my-4">
+                <div className="py-4 flex justify-center">
                   <SuccessMessage text={t("student-add-success")} />
                 </div>
                 {editCourse ? (

@@ -33,7 +33,7 @@ function HomeView() {
                 onClick={() => navigate("/Attendances")}
               />
             </div>
-            <div className="my-4">
+            <div className="py-4 flex justify-center">
               <SuccessMessage text={t("student-add-success")} />
             </div>
             <div className="flex flex-col w-9/12 self-center items-center gap-3">
