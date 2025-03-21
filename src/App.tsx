@@ -5,7 +5,7 @@ import AttendancesView from "./screens/AttendancesView";
 import CoursesView from "./screens/CoursesView";
 import StatisticsView from "./screens/StatisticsView";
 import SettingsView from "./screens/SettingsView";
-import LoginView from "./screens/LoginView1";
+import LoginView from "./screens/LoginView";
 
 function App() {
   return (

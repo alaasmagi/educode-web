@@ -11,8 +11,9 @@ import QuickNavigation from "../layout/QuickNavigation";
 import { useNavigate } from "react-router-dom";
 import SuccessMessage from "../components/SuccessMessage";
 import { useTranslation } from "react-i18next";
-import DateSelector from "../components/DataSelector";
+import DateSelector from "../components/DateSelector";
 import TimeSelector from "../components/TimeSelector";
+import IconButton from "../components/IconButton";
 
 function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -53,10 +54,10 @@ function AttendancesView() {
         <div className="flex flex-col gap-5">
           {navState === "Main" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-              <TextBox
-                icon="search-icon"
-                placeHolder="Search by course name or code"
-              />
+              <div className="flex flex-row w-full justify-between items-center md:gap-3 max-md:gap-1">
+                <TextBox icon="search-icon" placeHolder="Course name or code" />
+                <IconButton icon="search-icon" onClick={console.log} />
+              </div>
               <ContainerCardLarge
                 boldLabelA="Kasutajaliidesed"
                 boldLabelB="Lecture"
@@ -153,7 +154,7 @@ function AttendancesView() {
                   ))}
                 </div>
                 <NormalLink text={"Add more dates"} onClick={addDateField} />
-                <div className="my-4">
+                <div className="py-4 flex justify-center">
                   <SuccessMessage text={t("student-add-success")} />
                 </div>
                 <NormalButton text="Add attendance" onClick={console.log} />
@@ -173,8 +174,20 @@ function AttendancesView() {
                     fieldName="Attendance type"
                     data="Course + Lecture"
                   />
-                  <DataField fieldName="Status" data="Available" />
-                  <DataField fieldName="Status" data="Available" />
+                  <DataField fieldName="Date" data="18.03.2025" />
+                  <DataField fieldName="Start time" data="12:30" />
+                  <DataField fieldName="End time" data="15:45" />
+                  <DataField fieldName="ID" data="000002" />
+                  <div className="flex flex-col items-start mt-3">
+                    <NormalLink
+                      text="View students"
+                      onClick={() => setNavState("Students")}
+                    />
+                    <NormalLink
+                      text="View QR"
+                      onClick={() => setNavState("QR")}
+                    />
+                  </div>
                 </div>
                 <div className="flex justify-between">
                   <NormalLink

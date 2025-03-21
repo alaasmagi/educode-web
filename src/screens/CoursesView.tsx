@@ -11,6 +11,7 @@ import QuickNavigation from "../layout/QuickNavigation";
 import { useNavigate } from "react-router-dom";
 import SuccessMessage from "../components/SuccessMessage";
 import { useTranslation } from "react-i18next";
+import IconButton from "../components/IconButton";
 
 function CoursesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -26,10 +27,10 @@ function CoursesView() {
         <div className="flex flex-col gap-5">
           {navState === "Main" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-              <TextBox
-                icon="search-icon"
-                placeHolder="Search by course name or code"
-              />
+              <div className="flex flex-row w-full justify-between items-center md:gap-3 max-md:gap-1">
+                <TextBox icon="search-icon" placeHolder="Course name or code" />
+                <IconButton icon="search-icon" onClick={console.log} />
+              </div>
               <ContainerCardSmall
                 boldLabelA="Kasutajaliidesed"
                 boldLabelB="(ITI0209)"

@@ -17,7 +17,7 @@ const DropDownList: React.FC<DropDownListProperties> = ({
   onChange,
 }) => {
   return (
-    <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6  md:min-w-xs">
+    <div className="flex flex-col w-full">
       <div className="flex flex-row w-max-full items-center gap-1.5">
         <img src={Icons[icon]} className="h-7" />
         <select
