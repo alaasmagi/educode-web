@@ -27,7 +27,7 @@ function CoursesView() {
         <div className="flex flex-col gap-5">
           {navState === "Main" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-              <div className="flex flex-row w-full justify-between items-center md:gap-3 max-md:gap-1">
+              <div className="flex flex-row w-full justify-between items-center gap-3">
                 <TextBox icon="search-icon" placeHolder="Course name or code" />
                 <IconButton icon="search-icon" onClick={console.log} />
               </div>
