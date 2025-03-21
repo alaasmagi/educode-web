@@ -1,4 +1,4 @@
-interface DataFieldProperties {
+export interface DataFieldProperties {
   fieldName: string;
   data: string;
 }

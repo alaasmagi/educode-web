@@ -74,7 +74,7 @@ function LoginView() {
                   onClick={() => console.log("LINK PRESSED")}
                 />
               </div>
-              <NormalButton text={"Log in"} onClick={handleLogin} />
+              <NormalButton text={"Log in"} onClick={() => navigate("/Home")} />
               <NormalLink
                 text={t("register-now")}
                 onClick={() => console.log("LINK PRESSED")}

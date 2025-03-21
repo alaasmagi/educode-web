@@ -8,12 +8,16 @@ import NormalButton from "../components/NormalButton";
 import DropDownList from "../components/DropdownList";
 import DataField from "../components/DataField";
 import QuickNavigation from "../layout/QuickNavigation";
-import { useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import SuccessMessage from "../components/SuccessMessage";
+import { useTranslation } from "react-i18next";
 
 function CoursesView() {
   const [navState, setNavState] = useState<string>("Main");
+  const [editCourse, setEditCourse] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<string>("");
-  const navigate = useNavigation;
+  const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -52,14 +56,14 @@ function CoursesView() {
               />
               <NormalLink
                 text="Add new course"
-                onClick={() => setNavState("Create")}
+                onClick={() => setNavState("Edit")}
               />
             </div>
           )}
-          {navState === "Create" && (
-            <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6">
+          {navState === "Edit" && (
+            <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
               <span className="text-2xl font-bold self-start">
-                {"Add course"}
+                {editCourse ? "Edit course" : "Add course"}
               </span>
 
               <div className="flex flex-col gap-5 items-center justify-center self-center">
@@ -71,7 +75,14 @@ function CoursesView() {
                   onChange={(e) => setSelectedOption(e.target.value)}
                   label="course status"
                 />
-                <NormalButton text="Add course" onClick={console.log} />
+                <div className="my-4">
+                  <SuccessMessage text={t("student-add-success")} />
+                </div>
+                {editCourse ? (
+                  <NormalButton text="Edit course" onClick={console.log} />
+                ) : (
+                  <NormalButton text="Add course" onClick={console.log} />
+                )}
               </div>
             </div>
           )}
@@ -87,7 +98,13 @@ function CoursesView() {
                   <DataField fieldName="Status" data="Available" />
                 </div>
                 <div className="flex justify-between">
-                  <NormalLink text="Edit details" onClick={console.log} />
+                  <NormalLink
+                    text="Edit details"
+                    onClick={() => {
+                      setEditCourse("ITI0209");
+                      setNavState("Edit");
+                    }}
+                  />
                   <NormalLink text="Delete course" onClick={console.log} />
                 </div>
               </div>
