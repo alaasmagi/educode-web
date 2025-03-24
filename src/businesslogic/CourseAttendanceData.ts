@@ -1,65 +1,61 @@
 import CreateAttendanceCheckModel from "../models/CreateAttendanceCheckModel";
-import Storage from "../data/LocalDataAccess";
-import { LocalKeys } from "../helpers/HardcodedLocalDataKeys";
 import AttendanceModel from "../models/AttendanceModel";
 import { GetUserToken } from "./UserDataOffline";
-import Constants from 'expo-constants';
+import axios from "axios";
 
-
-export async function AddAttendanceCheck(model:CreateAttendanceCheckModel) : Promise<Boolean> {
-    const token = await Storage.getData(LocalKeys.localToken);
-    try {
-        const response = await fetch(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_API_URL}/Course/AttendanceCheck/Add`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                studentCode: model.studentCode,
-                courseAttendanceId: model.courseAttendanceId,
-                workplaceId: model.workplaceId,
-                creator: "educode-mobile"
-            })
-          });
-        if (!response.ok) {
-            return false;
-        }
-        return true;
-    } catch (error) {
-        return false;
+export async function AddAttendanceCheck(
+  model: CreateAttendanceCheckModel
+): Promise<boolean | string> {
+  const token = await GetUserToken();
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_URL}/Attendance/AttendanceCheck/Add`,
+    {
+      studentCode: model.studentCode,
+      courseAttendanceId: model.courseAttendanceId,
+      workplaceId: model.workplaceId,
+      creator: "educode-mobile",
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      validateStatus: (status) => status < 500,
     }
+  );
+
+  if (response.status == 200) {
+    return true;
+  }
+
+  return response.data.error ?? "internet-connection-error";
 }
 
-export async function GetCurrentAttendance(uniId:string) : Promise<AttendanceModel|null> {
-    const token = await GetUserToken();
-    try {
-        const response = await fetch(`${Constants.expoConfig?.extra?.EXPO_PUBLIC_API_URL}/Course/GetCurrentAttendance`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                uniId: uniId
-            })
-          });
-        if (!response.ok) {
-            console.log(response)
-            return null;
-        }
-        const data = await response.json();
-        if (data.courseName) {
-            const output:AttendanceModel = {
-                attendanceId: data.attendanceId,
-                courseName: data.courseName,
-                courseCode: data.courseCode
-            }
-            return output;
-        } else {
-            return null;
-        }
-    } catch (error) {
-        return null;
+export async function GetCurrentAttendance(
+  uniId: string
+): Promise<AttendanceModel | string> {
+  const token = await GetUserToken();
+  const response = await axios.get(
+    `${import.meta.env.VITE_API_URL}/Attendance/CurrentAttendance/UniId/${uniId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      validateStatus: (status) => status < 500,
     }
+  );
+
+  if (response.status == 200) {
+    const data = response.data;
+    return {
+      attendanceId: data.attendanceId,
+      courseName: data.courseName,
+      courseCode: data.courseCode,
+    } as AttendanceModel;
+  }
+
+  console.log(response.status);
+  console.log(response.data.error);
+  return response.data.error ?? "internet-connection-error";
 }

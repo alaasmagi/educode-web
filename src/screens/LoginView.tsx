@@ -31,9 +31,7 @@ function LoginView() {
         if (localData) {
           localData.userType === "Teacher"
             ? navigate("/Home")
-            : setErrorMessage(
-                "Students can't log in. Please use the mobile app."
-              );
+            : setErrorMessage(t(String(loginStatus)));
         }
       } else {
         setErrorMessage("login-error");
@@ -74,7 +72,7 @@ function LoginView() {
                   onClick={() => console.log("LINK PRESSED")}
                 />
               </div>
-              <NormalButton text={"Log in"} onClick={() => navigate("/Home")} />
+              <NormalButton text={"Log in"} onClick={handleLogin} />
               <NormalLink
                 text={t("register-now")}
                 onClick={() => console.log("LINK PRESSED")}

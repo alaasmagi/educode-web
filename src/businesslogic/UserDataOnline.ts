@@ -1,9 +1,5 @@
-import OnlineUserModel from "../models/OnlineUserModel";
-import Storage from "../data/LocalDataAccess";
-import { LocalKeys } from "../helpers/HardcodedLocalDataKeys";
 import CreateUserModel from "../models/CreateUserModel";
-import VerifyOTPModel from "../models/VerifyOTPModel";
-import ChangePasswordModel from "../models/ChangePasswordModel";
+import OnlineUserModel from "../models/OnlineUserModel";
 import LocalUserData from "../models/LocalUserDataModel";
 import axios from "axios";
 import {
@@ -12,82 +8,80 @@ import {
   SaveUserToken,
 } from "./UserDataOffline";
 
+export async function TestConnection(): Promise<boolean> {
+  const response = await axios.get(
+    `${import.meta.env.VITE_API_URL}/User/TestConnection`
+  );
+  return response.status === 200;
+}
+
 export async function UserLogin(
   uniId: string,
   password: string
-): Promise<boolean> {
-  try {
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}/User/Login`,
-      {
-        uniId: uniId,
-        password: password,
+): Promise<boolean | string> {
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_URL}/Auth/Login`,
+    {
+      uniId: uniId,
+      password: password,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (response.status !== 200) {
-      return false;
+      validateStatus: (status) => status < 500,
     }
-
-    Storage.saveData(LocalKeys.localToken, response.data.token);
+  );
+  if (response.status === 200) {
     return true;
-  } catch (error) {
-    return false;
   }
+
+  return response.data.error ?? "internet-connection-error";
 }
 
 export async function CreateUserAccount(
   model: CreateUserModel
-): Promise<Boolean> {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/User/Register`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: model.fullName,
-          uniId: model.uniId,
-          studentCode: model.studentCode,
-          password: model.password,
-          userRole: "Student",
-          creator: "educode-mobile",
-        }),
-      }
-    );
-    if (!response.ok) {
-      return false;
+): Promise<boolean | string> {
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_URL}/Auth/Register`,
+    {
+      fullName: model.fullName,
+      uniId: model.uniId,
+      studentCode: model.studentCode,
+      password: model.password,
+      userRole: "Student",
+      creator: "educode-mobile",
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      validateStatus: (status) => status < 500,
     }
+  );
+  if (response.status === 200) {
     return true;
-  } catch (error) {
-    return false;
   }
+
+  return response.data.error ?? "internet-connection-error";
 }
 
 export async function FetchAndSaveUserDataByUniId(
   uniId: string
-): Promise<boolean> {
+): Promise<boolean | string> {
   const token = await GetUserToken();
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/User/UniId/${uniId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fetch user data");
+  const response = await axios.get(
+    `${import.meta.env.VITE_API_URL}/User/UniId/${uniId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      validateStatus: (status) => status < 500,
     }
-    const data: OnlineUserModel = await response.json();
+  );
+
+  if (response.status === 200) {
+    const data: OnlineUserModel = response.data;
     const localData: LocalUserData = {
       userType: data.userType.userType,
       uniId: data.uniId,
@@ -95,107 +89,9 @@ export async function FetchAndSaveUserDataByUniId(
       offlineOnly: false,
       fullName: data.fullName,
     };
+
     SaveOfflineUserData(localData);
     return true;
-  } catch (error) {
-    return false;
   }
-}
-
-export async function RequestOTP(uniId: string): Promise<boolean> {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/User/RequestOTP`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          uniId: uniId,
-        }),
-      }
-    );
-    if (!response.ok) {
-      return false;
-    }
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-export async function VerifyOTP(model: VerifyOTPModel): Promise<boolean> {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/User/VerifyOTP`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          uniId: model.uniId,
-          otp: model.otp,
-        }),
-      }
-    );
-    if (!response.ok) {
-      return false;
-    }
-    const data = await response.json();
-    SaveUserToken(data.token);
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-export async function ChangeUserPassword(
-  model: ChangePasswordModel
-): Promise<boolean> {
-  const token = await GetUserToken();
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/User/ChangePassword`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          uniId: model.uniId,
-          newPassword: model.newPassword,
-        }),
-      }
-    );
-    if (!response.ok) {
-      return false;
-    }
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
-
-export async function DeleteUser(uniId: string): Promise<boolean> {
-  const token = await GetUserToken();
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/User/Delete/${uniId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (!response.ok) {
-      return false;
-    }
-    return true;
-  } catch (error) {
-    return false;
-  }
+  return response.data.error ?? "internet-connection-error";
 }
