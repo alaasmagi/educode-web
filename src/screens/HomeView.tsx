@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "../App.css";
 import DataField from "../components/DataField";
 import NormalLink from "../components/Link";
@@ -8,10 +9,44 @@ import QuickNavigation from "../layout/QuickNavigation";
 import SideBar from "../layout/SideBar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { GetCurrentAttendance } from "../businesslogic/CourseAttendanceData";
+import LocalUserData from "../models/LocalUserDataModel";
+import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import AttendanceModel from "../models/AttendanceModel";
+import NormalMessage from "../components/NormalMessage";
+import ErrorMessage from "../components/ErrorMessage";
 
 function HomeView() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [normalMessage, setNormalMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [localData, setLocalData] = useState<LocalUserData | null>(null);
+  const [currentAttendanceData, setCurrentAttendanceData] =
+    useState<AttendanceModel | null>(null);
+
+  useEffect(() => {
+    fetchUserData();
+    fetchCurrentAttdencance();
+  });
+
+  const fetchCurrentAttdencance = async () => {
+    const status = localData
+      ? await GetCurrentAttendance(String(localData.uniId))
+      : t("local-data-not-found");
+    if (typeof status === "string") {
+      setNormalMessage(status);
+    } else {
+      setCurrentAttendanceData(status);
+    }
+  };
+
+  const fetchUserData = async () => {
+    const localUserData = await GetOfflineUserData();
+    setLocalData(localUserData);
+  };
+
   return (
     <>
       <SideBar />
@@ -21,25 +56,31 @@ function HomeView() {
             <span className="text-2xl font-bold self-start">
               {t("ongoing-attendance") + ":"}
             </span>
-            <div className="flex flex-col gap-2 items-start">
-              <DataField
-                fieldName={t("course-name")}
-                data={"Kasutajaliidesed"}
-              />
-              <DataField fieldName={t("course-code")} data={"ITI0209"} />
-              <DataField fieldName={t("no-of-students")} data={"25"} />
-              <NormalLink
-                text={t("view-attendance-details")}
-                onClick={() => navigate("/Attendances")}
-              />
-            </div>
+            {currentAttendanceData && (
+              <div className="flex flex-col gap-2 items-start">
+                <DataField
+                  fieldName={t("course-name")}
+                  data={"Kasutajaliidesed"}
+                />
+                <DataField fieldName={t("course-code")} data={"ITI0209"} />
+                <DataField fieldName={t("no-of-students")} data={"25"} />
+                <NormalLink
+                  text={t("view-attendance-details")}
+                  onClick={() => navigate("/Attendances")}
+                />
+              </div>
+            )}
             <div className="py-4 flex justify-center">
-              <SuccessMessage text={t("student-add-success")} />
+              {successMessage && <SuccessMessage text={t(successMessage)} />}
+              {normalMessage && <NormalMessage text={t(normalMessage)} />}
+              {errorMessage && <ErrorMessage text={t(errorMessage)} />}
             </div>
-            <div className="flex flex-col w-9/12 self-center items-center gap-3">
-              <TextBox icon="person-icon" placeHolder={t("student-code")} />
-              <NormalButton text={t("add-student")} onClick={console.log} />
-            </div>
+            {currentAttendanceData && (
+              <div className="flex flex-col w-9/12 self-center items-center gap-3">
+                <TextBox icon="person-icon" placeHolder={t("student-code")} />
+                <NormalButton text={t("add-student")} onClick={console.log} />
+              </div>
+            )}
           </div>
           <QuickNavigation
             quickNavItemA={{

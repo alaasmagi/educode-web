@@ -24,20 +24,21 @@ function LoginView() {
 
   const handleLogin = async () => {
     dismissKeyboard();
-    if (await UserLogin(uniIdInput, passwordInput)) {
-      const loginStatus = await FetchAndSaveUserDataByUniId(uniIdInput);
-      if (loginStatus) {
+    const status = await UserLogin(uniIdInput, passwordInput);
+    if (status === true) {
+      const fetchStatus = await FetchAndSaveUserDataByUniId(uniIdInput);
+      if (fetchStatus === true) {
         const localData = await GetOfflineUserData();
         if (localData) {
           localData.userType === "Teacher"
             ? navigate("/Home")
-            : setErrorMessage(t(String(loginStatus)));
+            : setErrorMessage(t("students-not-allowed"));
         }
       } else {
-        setErrorMessage("login-error");
+        setErrorMessage(t(String(fetchStatus)));
       }
     } else {
-      setErrorMessage("login-error");
+      setErrorMessage(t(String(status)));
     }
     setTimeout(() => {
       setErrorMessage(null);

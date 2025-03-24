@@ -36,12 +36,15 @@ export async function GetCurrentAttendance(
 ): Promise<AttendanceModel | string> {
   const token = await GetUserToken();
   const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/Attendance/CurrentAttendance/UniId/${uniId}`,
+    `${
+      import.meta.env.VITE_API_URL
+    }/Attendance/CurrentAttendance/UniId/${uniId}`,
     {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      withCredentials: true,
       validateStatus: (status) => status < 500,
     }
   );
