@@ -9,7 +9,10 @@ import QuickNavigation from "../layout/QuickNavigation";
 import SideBar from "../layout/SideBar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { GetCurrentAttendance } from "../businesslogic/CourseAttendanceData";
+import {
+  GetCurrentAttendance,
+  GetStudentCountByAttendanceId,
+} from "../businesslogic/CourseAttendanceData";
 import LocalUserData from "../models/LocalUserDataModel";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import AttendanceModel from "../models/AttendanceModel";
@@ -23,28 +26,68 @@ function HomeView() {
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
+  const [currentStudentCount, setCurrentStudentCount] = useState<string | null>(
+    null
+  );
   const [currentAttendanceData, setCurrentAttendanceData] =
     useState<AttendanceModel | null>(null);
 
   useEffect(() => {
     fetchUserData();
-    fetchCurrentAttdencance();
-  });
+  }, []);
 
-  const fetchCurrentAttdencance = async () => {
-    const status = localData
-      ? await GetCurrentAttendance(String(localData.uniId))
-      : t("local-data-not-found");
+  useEffect(() => {
+    if (localData != null) {
+      fetchCurrentAttdencanceData();
+      const interval = setInterval(() => {
+        fetchCurrentAttdencanceData();
+      }, 120000);
+
+      return () => clearInterval(interval);
+    }
+  }, [localData]);
+
+  const fetchCurrentAttdencanceData = async () => {
+    const status =
+      localData != null
+        ? await GetCurrentAttendance(String(localData.uniId))
+        : "Local data not found";
+
     if (typeof status === "string") {
       setNormalMessage(status);
     } else {
-      setCurrentAttendanceData(status);
+      const studentStatus = await GetStudentCountByAttendanceId(
+        status.attendanceId
+      );
+
+      if (typeof status === "string") {
+        setErrorMessage(t(String(studentStatus)));
+        setCurrentStudentCount("0");
+      } else {
+        setCurrentStudentCount(String(studentStatus));
+        setCurrentAttendanceData(status);
+      }
+    }
+    setTimeout(() => setErrorMessage(null), 3000);
+    setTimeout(() => setNormalMessage(null), 3000);
+  };
+
+  const getCurrentStudentCount = async () => {
+    if (currentAttendanceData) {
+      const status = await GetStudentCountByAttendanceId(
+        currentAttendanceData.attendanceId
+      );
+      if (typeof status === "string") {
+        setErrorMessage(t(String(status)));
+      } else {
+        setCurrentStudentCount(String(status));
+      }
     }
   };
 
   const fetchUserData = async () => {
-    const localUserData = await GetOfflineUserData();
-    setLocalData(localUserData);
+    const userData = await GetOfflineUserData();
+    setLocalData(userData);
   };
 
   return (
@@ -60,10 +103,16 @@ function HomeView() {
               <div className="flex flex-col gap-2 items-start">
                 <DataField
                   fieldName={t("course-name")}
-                  data={"Kasutajaliidesed"}
+                  data={currentAttendanceData.courseName}
                 />
-                <DataField fieldName={t("course-code")} data={"ITI0209"} />
-                <DataField fieldName={t("no-of-students")} data={"25"} />
+                <DataField
+                  fieldName={t("course-code")}
+                  data={currentAttendanceData.courseCode}
+                />
+                <DataField
+                  fieldName={t("no-of-students")}
+                  data={String(currentStudentCount)}
+                />
                 <NormalLink
                   text={t("view-attendance-details")}
                   onClick={() => navigate("/Attendances")}

@@ -23,11 +23,9 @@ export async function AddAttendanceCheck(
       validateStatus: (status) => status < 500,
     }
   );
-
   if (response.status == 200) {
     return true;
   }
-
   return response.data.error ?? "internet-connection-error";
 }
 
@@ -58,7 +56,31 @@ export async function GetCurrentAttendance(
     } as AttendanceModel;
   }
 
-  console.log(response.status);
-  console.log(response.data.error);
+  return response.data.error ?? "internet-connection-error";
+}
+
+export async function GetStudentCountByAttendanceId(
+  attendanceId: number
+): Promise<number | string> {
+  const token = await GetUserToken();
+  const response = await axios.get(
+    `${
+      import.meta.env.VITE_API_URL
+    }/Attendance/StudentCount/AttendanceId/${attendanceId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+      validateStatus: (status) => status < 500,
+    }
+  );
+
+  if (response.status == 200) {
+    const data = response.data;
+    return data;
+  }
+
   return response.data.error ?? "internet-connection-error";
 }

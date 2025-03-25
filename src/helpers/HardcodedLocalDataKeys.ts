@@ -1,4 +1,6 @@
 export const LocalKeys = {
-  userProfile: "@user_profile",
-  localToken: "@loginToken",
+  userProfile: "userProfile",
+  localToken: "loginToken",
+  currentLanguage: "currentLanguage",
+  tempToken: "tempToken",
 };

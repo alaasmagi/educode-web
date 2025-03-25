@@ -2,7 +2,11 @@ import CreateUserModel from "../models/CreateUserModel";
 import OnlineUserModel from "../models/OnlineUserModel";
 import LocalUserData from "../models/LocalUserDataModel";
 import axios from "axios";
-import { GetUserToken, SaveOfflineUserData } from "./UserDataOffline";
+import {
+  GetUserToken,
+  SaveOfflineUserData,
+  SaveUserToken,
+} from "./UserDataOffline";
 
 export async function TestConnection(): Promise<boolean> {
   const response = await axios.get(
@@ -29,6 +33,7 @@ export async function UserLogin(
     }
   );
   if (response.status === 200) {
+    await SaveUserToken(response.data.token);
     return true;
   }
 
@@ -65,10 +70,13 @@ export async function CreateUserAccount(
 export async function FetchAndSaveUserDataByUniId(
   uniId: string
 ): Promise<boolean | string> {
+  const token = await GetUserToken();
   const response = await axios.get(
     `${import.meta.env.VITE_API_URL}/User/UniId/${uniId}`,
     {
-      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       validateStatus: (status) => status < 500,
     }
   );
