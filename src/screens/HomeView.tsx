@@ -56,7 +56,7 @@ function HomeView() {
   const fetchCurrentAttdencanceData = async () => {
     const status = localData != null ? await GetCurrentAttendance(String(localData.uniId)) : "Local data not found";
     if (typeof status === "string") {
-      setNormalMessage(status);
+      setCurrentAttendanceData(null);
     } else {
       const studentStatus = await GetStudentCountByAttendanceId(Number(status.attendanceId));
 
@@ -69,7 +69,6 @@ function HomeView() {
       }
     }
     setTimeout(() => setErrorMessage(null), 3000);
-    setTimeout(() => setNormalMessage(null), 3000);
   };
 
   const fetchMostRecentAttendace = async () => {

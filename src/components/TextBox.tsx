@@ -33,22 +33,11 @@ export default function TextBox({
           className="outline-none text-main-text md:w-10/12 text-lg"
         />
         {isPassword && (
-          <button
-            onClick={() => setIsTextVisible((prev) => !prev)}
-            className="pr-1 hover:cursor-pointer"
-          >
+          <button onClick={() => setIsTextVisible((prev) => !prev)} className="pr-1 hover:cursor-pointer">
             {isTextVisible ? (
-              <img
-                src={Icons["visibility-on"]}
-                className="h-7"
-                alt="User Icon"
-              />
+              <img src={Icons["visibility-on"]} className="h-7" alt="User Icon" />
             ) : (
-              <img
-                src={Icons["visibility-off"]}
-                className="h-7"
-                alt="User Icon"
-              />
+              <img src={Icons["visibility-off"]} className="h-7" alt="User Icon" />
             )}
           </button>
         )}

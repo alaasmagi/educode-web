@@ -12,16 +12,10 @@ function InitialSelectionView() {
       <div className="max-h-screen max-w-screen flex items-center justify-center gap-10">
         <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
           <img src="../logos/splash-logo.png" className="w-xl" />
-          <LanguageSwitch />
           <div className="flex flex-col gap-3.5">
-            <NormalButton
-              text={t("log-in")}
-              onClick={() => navigate("/Login")}
-            />
-            <NormalButton
-              text={t("register-as-teacher")}
-              onClick={() => navigate("/Home")}
-            />
+            <NormalButton text={t("log-in")} onClick={() => navigate("/Login")} />
+            <NormalButton text={t("register-as-teacher")} onClick={() => navigate("/Home")} />
+            <LanguageSwitch linkStyle={true} />
           </div>
         </div>
       </div>

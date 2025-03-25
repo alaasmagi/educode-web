@@ -181,3 +181,20 @@ export async function AddAttendances(attendances: MultipleCourseAttendances): Pr
 
   return response.data.error ?? "internet-connection-error";
 }
+
+export async function GetAttendancesByCourseCode(courseCode: string): Promise<CourseAttendance[] | string> {
+  console.log("UGFIUEY");
+  const token = await GetUserToken();
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/Attendance/CourseCode/${courseCode}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    validateStatus: (status) => status < 500,
+  });
+  if (response.status == 200) {
+    const courses: CourseAttendance[] = response.data;
+    return courses;
+  }
+  return response.data.error ?? "internet-connection-error";
+}

@@ -38,11 +38,7 @@ export default function SideBar() {
         } md:translate-x-0 md:block`}
       >
         <div className="p-5 mt-10 flex items-center gap-2">
-          <img
-            src="./logos/splash-logo.png"
-            alt="EduCode Logo"
-            className="md:h-15 max-md:h-12 w-auto"
-          />
+          <img src="/logos/splash-logo.png" alt="EduCode Logo" className="md:h-15 max-md:h-12 w-auto" />
         </div>
 
         <nav className="flex flex-col mt-5">
@@ -57,9 +53,7 @@ export default function SideBar() {
                   navigate(item.path);
                 }}
               />
-              {index !== navItems.length - 1 && (
-                <div className="w-55 h-[2px] bg-main-blue"></div>
-              )}
+              {index !== navItems.length - 1 && <div className="w-55 h-[2px] bg-main-blue"></div>}
             </div>
           ))}
         </nav>

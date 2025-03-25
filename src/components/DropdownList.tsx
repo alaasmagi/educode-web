@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Icons } from "./Icons";
 
 interface DropDownListProperties {

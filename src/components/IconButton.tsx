@@ -6,11 +6,7 @@ interface IconButtonProperties {
   onClick: () => void;
 }
 
-const IconButton: React.FC<IconButtonProperties> = ({
-  icon,
-  isDisabled = false,
-  onClick,
-}) => {
+const IconButton: React.FC<IconButtonProperties> = ({ icon, isDisabled = false, onClick }) => {
   return (
     <button
       disabled={isDisabled}

@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
 import { Icons } from "./Icons";
 import i18next from "../../services/i18next";
+import NormalLink from "./Link";
 
-const LanguageSwitch = () => {
+interface LanguageSwitchProperties {
+  linkStyle?: boolean;
+}
+
+const LanguageSwitch: React.FC<LanguageSwitchProperties> = ({ linkStyle = false }) => {
   const [currentLang, setCurrentLang] = useState(i18next.language);
 
   useEffect(() => {
-    const handleLanguageChange = (lng:string) => {
+    const handleLanguageChange = (lng: string) => {
       setCurrentLang(lng);
     };
 
@@ -23,14 +28,19 @@ const LanguageSwitch = () => {
   };
 
   return (
-    <button
-      className="hover:bg-button-hover hover:cursor-pointer px-3 py-2 bg-button-dark border-main-blue rounded-2xl border-2"
-      onClick={toggleLanguage}
-    >
-      <img src={currentLang === "en" ? Icons["eng-flag"] : Icons["est-flag"]} className="w-10" />
-    </button>
+    <>
+      {linkStyle == false ? (
+        <button
+          className="hover:bg-button-hover hover:cursor-pointer px-3 py-2 bg-button-dark border-main-blue rounded-2xl border-2"
+          onClick={toggleLanguage}
+        >
+          <img src={currentLang === "en" ? Icons["eng-flag"] : Icons["est-flag"]} className="w-10" />
+        </button>
+      ) : (
+        <NormalLink text={currentLang === "en" ? "Eesti keeles" : "In english"} onClick={toggleLanguage} />
+      )}
+    </>
   );
 };
 
 export default LanguageSwitch;
-

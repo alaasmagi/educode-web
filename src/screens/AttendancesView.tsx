@@ -21,6 +21,7 @@ import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import {
   AddAttendances,
   GetAttendanceById,
+  GetAttendancesByCourseCode,
   GetAttendanceTypes,
   GetStudentCountByAttendanceId,
 } from "../businesslogic/AttendanceDataFetch";
@@ -54,6 +55,7 @@ function AttendancesView() {
   const [date, setDate] = useState<string | null>(null);
 
   const [availableCourses, setAvailableCourses] = useState<Course[] | null>(null);
+  const [courseAttendances, setCourseAttendances] = useState<CourseAttendance[] | null>(null);
   const [availableAttendanceTypes, setAvailableAttendanceTypes] = useState<AttendanceType[] | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -62,13 +64,20 @@ function AttendancesView() {
     fetchUserData();
     if (status) {
       setNavState(status);
+    } else {
+      setNavState("Main");
     }
   }, [status]);
 
   useEffect(() => {
     const fetchData = async () => {
       switch (navState) {
+        case "Main":
+          fetchAllAttendances();
+          break;
         case "Details":
+          fetchAttendanceDetails();
+          break;
         case "Edit":
           fetchAllCoursesByUser();
           fetchAttendanceTypes();
@@ -118,6 +127,21 @@ function AttendancesView() {
       setTimeout(() => setNormalMessage(null), 3000);
     }
   };
+
+  const fetchAllAttendances = async () => {
+    const localData = await GetOfflineUserData();
+    const courses = await GetCoursesByUser(localData?.uniId!);
+    let attendances: CourseAttendance[] = [];
+    if (typeof courses === "string") return;
+    for (const course of courses) {
+      const response = await GetAttendancesByCourseCode(course.courseCode);
+      if (typeof response !== "string") {
+        attendances.push(...response);
+      }
+    }
+    setCourseAttendances(attendances);
+  };
+
   const fetchAllCoursesByUser = async () => {
     const userData = await GetOfflineUserData();
     const response = await GetCoursesByUser(userData?.uniId!);
@@ -183,7 +207,7 @@ function AttendancesView() {
   return (
     <>
       <SideBar />
-      <div className="flex max-h-screen max-w-screen items-center justify-center md:pl-90">
+      <div className="flex max-w-screen items-center justify-center md:pl-90">
         <div className="flex flex-col gap-5">
           {navState === "Main" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
@@ -191,34 +215,16 @@ function AttendancesView() {
                 <TextBox icon="search-icon" placeHolder="Course name or code" />
                 <IconButton icon="search-icon" onClick={console.log} />
               </div>
-              <ContainerCardLarge
-                boldLabelA="Kasutajaliidesed"
-                boldLabelB="Lecture"
-                extraData={{ fieldName: "Date", data: "18.01.2025" }}
-                linkText="View"
-                onClick={() => setNavState("Details")}
-              />
-              <ContainerCardLarge
-                boldLabelA="Kasutajaliidesed"
-                boldLabelB="Practice"
-                extraData={{ fieldName: "Date", data: "18.01.2025" }}
-                linkText="View"
-                onClick={console.log}
-              />
-              <ContainerCardLarge
-                boldLabelA="Kasutajaliidesed"
-                boldLabelB="Lecture"
-                extraData={{ fieldName: "Date", data: "18.01.2025" }}
-                linkText="View"
-                onClick={console.log}
-              />
-              <ContainerCardLarge
-                boldLabelA="Kasutajaliidesed"
-                boldLabelB="Lecture + practice"
-                extraData={{ fieldName: "Date", data: "18.01.2025" }}
-                linkText="View"
-                onClick={console.log}
-              />
+              {courseAttendances?.map((attendance) => (
+                <ContainerCardLarge
+                  key={attendance.attendanceId}
+                  boldLabelA={String(attendance.courseName)}
+                  boldLabelB={String(attendance.attendanceType)}
+                  extraData={{ fieldName: t("date"), data: String(attendance.date) }}
+                  linkText={t("view-attendance")}
+                  onClick={() => navigate(`/Attendance/Details/${attendance.attendanceId}`)}
+                />
+              ))}
               <NormalLink text="Add new attendance" onClick={() => setNavState("Create")} />
             </div>
           )}

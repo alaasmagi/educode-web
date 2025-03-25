@@ -6,10 +6,7 @@ import NormalLink from "../components/Link";
 import ErrorMessage from "../components/ErrorMessage";
 import { useState } from "react";
 import { dismissKeyboard } from "../hooks/DismissKeyboard";
-import {
-  FetchAndSaveUserDataByUniId,
-  UserLogin,
-} from "../businesslogic/UserDataFetch";
+import { FetchAndSaveUserDataByUniId, UserLogin } from "../businesslogic/UserDataFetch";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import { useTranslation } from "react-i18next";
 import LanguageSwitch from "../components/LanguageSwitch";
@@ -30,9 +27,7 @@ function LoginView() {
       if (fetchStatus === true) {
         const localData = await GetOfflineUserData();
         if (localData) {
-          localData.userType === "Teacher"
-            ? navigate("/Home")
-            : setErrorMessage(t("students-not-allowed"));
+          localData.userType === "Teacher" ? navigate("/Home") : setErrorMessage(t("students-not-allowed"));
         }
       } else {
         setErrorMessage(t(String(fetchStatus)));
@@ -51,13 +46,7 @@ function LoginView() {
         <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
           <img src="../logos/splash-logo.png" className="md:w-xl" />
           <div className="flex flex-col gap-3.5">
-            <LanguageSwitch />
-            <TextBox
-              icon="person-icon"
-              placeHolder={"UniID"}
-              value={uniIdInput}
-              onChange={setUniIdInput}
-            />
+            <TextBox icon="person-icon" placeHolder={"UniID"} value={uniIdInput} onChange={setUniIdInput} />
             <TextBox
               icon="lock-icon"
               placeHolder={t("password")}
@@ -68,16 +57,13 @@ function LoginView() {
             {errorMessage && <ErrorMessage text={errorMessage} />}
             <div className="flex flex-col gap-0.5">
               <div className="flex justify-end pr-2">
-                <NormalLink
-                  text={t("forgot-password")}
-                  onClick={() => console.log("LINK PRESSED")}
-                />
+                <NormalLink text={t("forgot-password")} onClick={() => console.log("LINK PRESSED")} />
               </div>
               <NormalButton text={"Log in"} onClick={handleLogin} />
-              <NormalLink
-                text={t("register-now")}
-                onClick={() => console.log("LINK PRESSED")}
-              />
+              <div className="flex flex-col gap-4">
+                <NormalLink text={t("register-now")} onClick={() => console.log("LINK PRESSED")} />
+                <LanguageSwitch linkStyle={true} />
+              </div>
             </div>
           </div>
         </div>
