@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.14",
+    "@types/luxon": "^3.4.2",
     "axios": "^1.8.4",
+    "date-fns-tz": "^3.2.0",
     "fs": "^0.0.1-security",
     "i18next": "^24.2.3",
     "localStorage": "^1.0.4",
+    "luxon": "^3.5.0",
     "path": "^0.12.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

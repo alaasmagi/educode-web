@@ -18,7 +18,7 @@ import {
   RequestOTP,
   VerifyOTP,
   ChangeUserPassword,
-} from "../businesslogic/UserDataOnline";
+} from "../businesslogic/UserDataFetch";
 import ErrorMessage from "../components/ErrorMessage";
 import KeyboardVisibilityHandler from "../../hooks/KeyboardVisibilityHandler";
 import NormalMessage from "../components/NormalMessage";

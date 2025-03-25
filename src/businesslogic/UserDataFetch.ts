@@ -2,23 +2,14 @@ import CreateUserModel from "../models/CreateUserModel";
 import OnlineUserModel from "../models/OnlineUserModel";
 import LocalUserData from "../models/LocalUserDataModel";
 import axios from "axios";
-import {
-  GetUserToken,
-  SaveOfflineUserData,
-  SaveUserToken,
-} from "./UserDataOffline";
+import { GetUserToken, SaveOfflineUserData, SaveUserToken } from "./UserDataOffline";
 
 export async function TestConnection(): Promise<boolean> {
-  const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/User/TestConnection`
-  );
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/User/TestConnection`);
   return response.status === 200;
 }
 
-export async function UserLogin(
-  uniId: string,
-  password: string
-): Promise<boolean | string> {
+export async function UserLogin(uniId: string, password: string): Promise<boolean | string> {
   const response = await axios.post(
     `${import.meta.env.VITE_API_URL}/Auth/Login`,
     {
@@ -40,9 +31,7 @@ export async function UserLogin(
   return response.data.error ?? "internet-connection-error";
 }
 
-export async function CreateUserAccount(
-  model: CreateUserModel
-): Promise<boolean | string> {
+export async function CreateUserAccount(model: CreateUserModel): Promise<boolean | string> {
   const response = await axios.post(
     `${import.meta.env.VITE_API_URL}/Auth/Register`,
     {
@@ -50,8 +39,8 @@ export async function CreateUserAccount(
       uniId: model.uniId,
       studentCode: model.studentCode,
       password: model.password,
-      userRole: "Student",
-      creator: "educode-mobile",
+      userRole: "Teacher",
+      creator: "educode-webapp",
     },
     {
       headers: {
@@ -67,19 +56,14 @@ export async function CreateUserAccount(
   return response.data.error ?? "internet-connection-error";
 }
 
-export async function FetchAndSaveUserDataByUniId(
-  uniId: string
-): Promise<boolean | string> {
+export async function FetchAndSaveUserDataByUniId(uniId: string): Promise<boolean | string> {
   const token = await GetUserToken();
-  const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/User/UniId/${uniId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      validateStatus: (status) => status < 500,
-    }
-  );
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/User/UniId/${uniId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    validateStatus: (status) => status < 500,
+  });
 
   if (response.status === 200) {
     const data: OnlineUserModel = response.data;

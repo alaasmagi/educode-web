@@ -14,7 +14,7 @@ import NormalButton from "../components/NormalButton";
 import FormHeader from "../layout/FormHeader";
 import Greeting from "../components/Greeting";
 import NormalLink from "../components/NormalLink";
-import { CreateUserAccount } from "../businesslogic/UserDataOnline";
+import { CreateUserAccount } from "../businesslogic/UserDataFetch";
 import ErrorMessage from "../components/ErrorMessage";
 import KeyboardVisibilityHandler from "../../hooks/KeyboardVisibilityHandler";
 import NormalMessage from "../components/NormalMessage";

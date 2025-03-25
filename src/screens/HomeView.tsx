@@ -10,14 +10,18 @@ import SideBar from "../layout/SideBar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
+  AddAttendanceCheck,
   GetCurrentAttendance,
+  GetMostRecentAttendance,
   GetStudentCountByAttendanceId,
-} from "../businesslogic/CourseAttendanceData";
+} from "../businesslogic/AttendanceDataFetch";
 import LocalUserData from "../models/LocalUserDataModel";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
-import AttendanceModel from "../models/AttendanceModel";
 import NormalMessage from "../components/NormalMessage";
 import ErrorMessage from "../components/ErrorMessage";
+import { RegexFilters } from "../helpers/RegexFilters";
+import CreateAttendanceCheckModel from "../models/CreateAttendanceCheckModel";
+import { CourseAttendance } from "../models/CourseAttendanceModel";
 
 function HomeView() {
   const navigate = useNavigate();
@@ -26,11 +30,12 @@ function HomeView() {
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
-  const [currentStudentCount, setCurrentStudentCount] = useState<string | null>(
-    null
-  );
-  const [currentAttendanceData, setCurrentAttendanceData] =
-    useState<AttendanceModel | null>(null);
+  const [currentStudentCount, setCurrentStudentCount] = useState<string | null>(null);
+  const [currentAttendanceData, setCurrentAttendanceData] = useState<CourseAttendance | null>(null);
+
+  const [studentCodeInput, setStudentCodeInput] = useState<string>("");
+  const [workplaceInput, setWorkplaceInput] = useState<string>("");
+  const [recentAttendanceId, setRecentAttendanceId] = useState<string>("");
 
   useEffect(() => {
     fetchUserData();
@@ -39,6 +44,7 @@ function HomeView() {
   useEffect(() => {
     if (localData != null) {
       fetchCurrentAttdencanceData();
+      fetchMostRecentAttendace();
       const interval = setInterval(() => {
         fetchCurrentAttdencanceData();
       }, 120000);
@@ -48,17 +54,11 @@ function HomeView() {
   }, [localData]);
 
   const fetchCurrentAttdencanceData = async () => {
-    const status =
-      localData != null
-        ? await GetCurrentAttendance(String(localData.uniId))
-        : "Local data not found";
-
+    const status = localData != null ? await GetCurrentAttendance(String(localData.uniId)) : "Local data not found";
     if (typeof status === "string") {
       setNormalMessage(status);
     } else {
-      const studentStatus = await GetStudentCountByAttendanceId(
-        status.attendanceId
-      );
+      const studentStatus = await GetStudentCountByAttendanceId(Number(status.attendanceId));
 
       if (typeof status === "string") {
         setErrorMessage(t(String(studentStatus)));
@@ -72,17 +72,37 @@ function HomeView() {
     setTimeout(() => setNormalMessage(null), 3000);
   };
 
-  const getCurrentStudentCount = async () => {
-    if (currentAttendanceData) {
-      const status = await GetStudentCountByAttendanceId(
-        currentAttendanceData.attendanceId
-      );
-      if (typeof status === "string") {
-        setErrorMessage(t(String(status)));
-      } else {
-        setCurrentStudentCount(String(status));
-      }
+  const fetchMostRecentAttendace = async () => {
+    const status = localData != null ? await GetMostRecentAttendance(String(localData.uniId)) : "Local data not found";
+
+    if (typeof status !== "string") {
+      setRecentAttendanceId(String(status.attendanceId));
     }
+  };
+
+  const handleAddAttendanceCheck = async () => {
+    let response;
+    if (workplaceInput !== "" && !RegexFilters.defaultId.test(workplaceInput)) {
+      setErrorMessage(t("wrong-workplace-id"));
+      setTimeout(() => setErrorMessage(null), 3000);
+    } else {
+      const model: CreateAttendanceCheckModel = {
+        studentCode: studentCodeInput,
+        courseAttendanceId: currentAttendanceData!.attendanceId!,
+        workplaceId: parseInt(workplaceInput) ?? null,
+      };
+      response = await AddAttendanceCheck(model);
+    }
+
+    if (typeof response === "string") {
+      setErrorMessage(t(String(response)));
+      setTimeout(() => setErrorMessage(null), 3000);
+    } else {
+      setSuccessMessage(t("attendance-check-add-success") + `${studentCodeInput}`);
+      setTimeout(() => setSuccessMessage(null), 3000);
+    }
+    setStudentCodeInput("");
+    setWorkplaceInput("");
   };
 
   const fetchUserData = async () => {
@@ -96,26 +116,15 @@ function HomeView() {
       <div className="flex max-h-screen max-w-screen items-center justify-center md:pl-90">
         <div className="flex flex-col gap-5">
           <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-            <span className="text-2xl font-bold self-start">
-              {t("ongoing-attendance") + ":"}
-            </span>
+            <span className="text-2xl font-bold self-start">{t("ongoing-attendance") + ":"}</span>
             {currentAttendanceData && (
               <div className="flex flex-col gap-2 items-start">
-                <DataField
-                  fieldName={t("course-name")}
-                  data={currentAttendanceData.courseName}
-                />
-                <DataField
-                  fieldName={t("course-code")}
-                  data={currentAttendanceData.courseCode}
-                />
-                <DataField
-                  fieldName={t("no-of-students")}
-                  data={String(currentStudentCount)}
-                />
+                <DataField fieldName={t("course-name")} data={currentAttendanceData.courseName} />
+                <DataField fieldName={t("course-code")} data={currentAttendanceData.courseCode} />
+                <DataField fieldName={t("no-of-students")} data={String(currentStudentCount)} />
                 <NormalLink
                   text={t("view-attendance-details")}
-                  onClick={() => navigate("/Attendances")}
+                  onClick={() => navigate(`/Attendances/Details/${currentAttendanceData.attendanceId}`)}
                 />
               </div>
             )}
@@ -125,20 +134,36 @@ function HomeView() {
               {errorMessage && <ErrorMessage text={t(errorMessage)} />}
             </div>
             {currentAttendanceData && (
-              <div className="flex flex-col w-9/12 self-center items-center gap-3">
-                <TextBox icon="person-icon" placeHolder={t("student-code")} />
-                <NormalButton text={t("add-student")} onClick={console.log} />
+              <div className="flex flex-col md:w-7/12 max-md:w-11/12 self-center items-center gap-3">
+                <TextBox
+                  icon="person-icon"
+                  placeHolder={t("student-code")}
+                  value={studentCodeInput}
+                  onChange={setStudentCodeInput}
+                />
+                <TextBox
+                  icon="work-icon"
+                  placeHolder={t("workplace-id")}
+                  value={workplaceInput}
+                  onChange={setWorkplaceInput}
+                />
+                <NormalButton
+                  text={t("add-student")}
+                  onClick={handleAddAttendanceCheck}
+                  isDisabled={!RegexFilters.studentCode.test(studentCodeInput)}
+                />
               </div>
             )}
           </div>
           <QuickNavigation
             quickNavItemA={{
               label: t("add-new-attendance"),
-              onClick: () => navigate("/Attendances"),
+              onClick: () => navigate("/Attendances/Create"),
             }}
             quickNavItemB={{
               label: t("view-recent-attendance"),
-              onClick: () => navigate("/Attendances"),
+              onClick: () =>
+                recentAttendanceId ? navigate(`/Attendances/Details/${recentAttendanceId}`) : navigate("/Attendances"),
             }}
           />
         </div>

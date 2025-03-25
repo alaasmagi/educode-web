@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import ContainerCardLarge from "../components/ContainerCardLarge";
 import NormalLink from "../components/Link";
@@ -8,7 +8,7 @@ import NormalButton from "../components/NormalButton";
 import DropDownList from "../components/DropdownList";
 import DataField from "../components/DataField";
 import QuickNavigation from "../layout/QuickNavigation";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SuccessMessage from "../components/SuccessMessage";
 import { useTranslation } from "react-i18next";
 import DateSelector from "../components/DateSelector";
@@ -17,39 +17,169 @@ import IconButton from "../components/IconButton";
 import DetailedDataField from "../components/DetailedDataField";
 import QrGenerator from "../components/QrGenerator";
 import { Icons } from "../components/Icons";
+import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import {
+  AddAttendances,
+  GetAttendanceById,
+  GetAttendanceTypes,
+  GetStudentCountByAttendanceId,
+} from "../businesslogic/AttendanceDataFetch";
+import LocalUserData from "../models/LocalUserDataModel";
+import { CourseAttendance, MultipleCourseAttendances } from "../models/CourseAttendanceModel";
+import ToSixDigit from "../helpers/NumberConverter";
+import { GetCoursesByUser } from "../businesslogic/CourseDataFetch";
+import Course from "../models/CourseModel";
+import AttendanceType from "../models/AttendanceTypeModel";
+import NormalMessage from "../components/NormalMessage";
+import ErrorMessage from "../components/ErrorMessage";
+import { FormatDateOnlyToBackendFormat } from "../helpers/DateHandlers";
 
 function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
+  const { status, attendanceId } = useParams();
+  const [localData, setLocalData] = useState<LocalUserData | null>(null);
+  const [studentCount, setStudentCount] = useState<string | null>(null);
+  const [attendanceData, setAttendanceData] = useState<CourseAttendance | null>(null);
+  const [normalMessage, setNormalMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [editCourse, setEditCourse] = useState<string | null>(null);
-  const [dates, setDates] = useState([{ id: Date.now(), date: "" }]);
   const [submitted, setSubmitted] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string>("");
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
+
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const [selectedAttendanceTypeId, setSelectedAttendanceTypeId] = useState<string | null>(null);
+  const [startTime, setStartTime] = useState<string | null>(null);
+  const [endTime, setEndTime] = useState<string | null>(null);
+  const [dates, setDates] = useState([{ id: 1, date: "" }]);
+  const [date, setDate] = useState<string | null>(null);
+
+  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(null);
+  const [availableAttendanceTypes, setAvailableAttendanceTypes] = useState<AttendanceType[] | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const updateDateField = (id: number, newDate: string) => {
-    setDates((prevDates) =>
-      prevDates.map((entry) =>
-        entry.id === id ? { ...entry, date: newDate } : entry
-      )
-    );
+  useEffect(() => {
+    fetchUserData();
+    if (status) {
+      setNavState(status);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      switch (navState) {
+        case "Details":
+        case "Edit":
+          fetchAllCoursesByUser();
+          fetchAttendanceTypes();
+          fetchAttendanceDetails();
+          break;
+        case "Create":
+          fetchAllCoursesByUser();
+          fetchAttendanceTypes();
+          break;
+        case "Students":
+          break;
+        case "QR":
+          break;
+        default:
+          break;
+      }
+      setTimeout(() => setErrorMessage(null), 3000);
+      setTimeout(() => setNormalMessage(null), 3000);
+    };
+
+    fetchData();
+  }, [navState, attendanceId]);
+
+  const fetchAttendanceDetails = async () => {
+    if (attendanceId) {
+      const status = await GetAttendanceById(Number(attendanceId));
+      if (typeof status === "string") {
+        setErrorMessage(status);
+      } else {
+        setAttendanceData(status);
+        setSelectedAttendanceTypeId(status.attendanceTypeId);
+        setSelectedCourseId(String(status.courseId));
+        setStartTime(String(status.startTime));
+        setEndTime(String(status.endTime));
+        setDate(String(status.date));
+
+        const studentStatus = await GetStudentCountByAttendanceId(Number(attendanceId));
+
+        if (typeof status === "string") {
+          setErrorMessage(t(String(studentStatus)));
+          setStudentCount("0");
+        } else {
+          setStudentCount(String(studentStatus));
+        }
+      }
+      setTimeout(() => setErrorMessage(null), 3000);
+      setTimeout(() => setNormalMessage(null), 3000);
+    }
   };
+  const fetchAllCoursesByUser = async () => {
+    const userData = await GetOfflineUserData();
+    const response = await GetCoursesByUser(userData?.uniId!);
+    if (typeof response !== "string") {
+      setAvailableCourses(response);
+    }
+  };
+  const fetchUserData = async () => {
+    const userData = await GetOfflineUserData();
+    setLocalData(userData);
+  };
+  const fetchAttendanceTypes = async () => {
+    const response = await GetAttendanceTypes();
+
+    if (typeof response === "string") {
+      setErrorMessage(t(response));
+    } else {
+      setAvailableAttendanceTypes(response);
+    }
+  };
+
+  const validateForm = () => {
+    if (!selectedCourseId || !selectedAttendanceTypeId || !startTime || !endTime || dates.some((d) => !d.date)) {
+      setNormalMessage(t("fill-all-fields"));
+      setTimeout(() => setNormalMessage(null), 3000);
+      return false;
+    }
+    return true;
+  };
+  const handleAttendanceAdd = async () => {
+    if (!validateForm()) return;
+
+    const attendanceData: MultipleCourseAttendances = {
+      courseId: Number(selectedCourseId),
+      attendanceTypeId: String(selectedAttendanceTypeId),
+      startTime: String(startTime),
+      endTime: String(endTime),
+      dates: dates.map((entry) => FormatDateOnlyToBackendFormat(entry.date)),
+    };
+    const result = await AddAttendances(attendanceData);
+
+    if (typeof result === "string") {
+      setErrorMessage(t(String(result)));
+      setTimeout(() => setErrorMessage(null), 3000);
+    } else {
+      setSuccessMessage(t("Attendances added successfully"));
+      setTimeout(() => setSuccessMessage(null), 3000);
+      setTimeout(() => setNavState("Main"), 3000);
+    }
+  };
+
+  // Handle adding and editing use cases
   const addDateField = () => {
     setDates([...dates, { id: Date.now(), date: "" }]);
   };
-
   const removeDateField = (id: number) => {
     setDates(dates.filter((entry) => entry.id !== id));
   };
-
-  const handleSubmit = () => {
-    if (dates.every((d) => d.date)) {
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 3000);
-    }
+  const updateDateField = (id: number, newDate: string) => {
+    setDates((prevDates) => prevDates.map((entry) => (entry.id === id ? { ...entry, date: newDate } : entry)));
   };
+
   return (
     <>
       <SideBar />
@@ -89,107 +219,81 @@ function AttendancesView() {
                 linkText="View"
                 onClick={console.log}
               />
-              <NormalLink
-                text="Add new attendance"
-                onClick={() => setNavState("Create")}
-              />
+              <NormalLink text="Add new attendance" onClick={() => setNavState("Create")} />
             </div>
           )}
           {navState === "Create" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">
-                {"Add attendance"}
-              </span>
+              <span className="text-2xl font-bold self-start">{"Add attendance"}</span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <DropDownList
                   icon="school-icon"
-                  options={[]}
-                  onChange={(e) => setSelectedOption(e.target.value)}
+                  options={
+                    availableCourses?.map((course) => ({
+                      label: course.courseName,
+                      value: String(course.id),
+                    })) || []
+                  }
+                  onChange={(e) => setSelectedCourseId(e.target.value)}
                   label="Course"
                 />
                 <DropDownList
                   icon="attendance-type-icon"
-                  options={[]}
-                  onChange={(e) => setSelectedOption(e.target.value)}
+                  options={
+                    availableAttendanceTypes?.map((type) => ({
+                      label: type.attendanceType,
+                      value: String(type.id),
+                    })) || []
+                  }
+                  onChange={(e) => setSelectedAttendanceTypeId(e.target.value)}
                   label="Attendance type"
                 />
                 <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs gap-4">
                   <div className="flex flex-col items-start">
                     <div>
-                      <span className="text-xl font-semibold mr-2">
-                        {"Start time:"}
-                      </span>
-                      <TimeSelector
-                        value={startTime}
-                        onChange={(e) => setStartTime(e.target.value)}
-                      />
+                      <span className="text-xl font-semibold mr-2">{"Start time:"}</span>
+                      <TimeSelector value={String(startTime)} onChange={(e) => setStartTime(e.target.value)} />
                     </div>
                     <div>
-                      <span className="text-xl font-semibold mr-2">
-                        {"End time:"}
-                      </span>
-                      <TimeSelector
-                        value={endTime}
-                        onChange={(e) => setEndTime(e.target.value)}
-                      />
+                      <span className="text-xl font-semibold mr-2">{"End time:"}</span>
+                      <TimeSelector value={String(endTime)} onChange={(e) => setEndTime(e.target.value)} />
                     </div>
                   </div>
                 </div>
-                <span className="text-xl mr-2 font-semibold self-start">
-                  {"Kuupäevad:"}
-                </span>
+                <span className="text-xl mr-2 font-semibold self-start">{"Kuupäevad:"}</span>
                 <div className="flex flex-col">
                   {dates.map((entry) => (
                     <div key={entry.id} className="flex flex-row gap-0">
-                      <DateSelector
-                        value={entry.date}
-                        onChange={(e) =>
-                          updateDateField(entry.id, e.target.value)
-                        }
-                      />
-                      {dates.length > 1 && (
-                        <NormalLink
-                          text={"Remove"}
-                          onClick={() => removeDateField(entry.id)}
-                        />
-                      )}
+                      <DateSelector value={entry.date} onChange={(e) => updateDateField(entry.id, e.target.value)} />
+                      {dates.length > 1 && <NormalLink text={"Remove"} onClick={() => removeDateField(entry.id)} />}
                     </div>
                   ))}
                 </div>
                 <NormalLink text={"Add more dates"} onClick={addDateField} />
                 <div className="py-4 flex justify-center">
-                  <SuccessMessage text={t("student-add-success")} />
+                  {successMessage && <SuccessMessage text={t(successMessage)} />}
+                  {normalMessage && <NormalMessage text={t(normalMessage)} />}
+                  {errorMessage && <ErrorMessage text={t(errorMessage)} />}
                 </div>
-                <NormalButton text="Add attendance" onClick={console.log} />
+                <NormalButton text="Add attendance" onClick={handleAttendanceAdd} />
               </div>
             </div>
           )}
           {navState === "Details" && (
             <>
               <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-                <span className="text-2xl font-bold self-start">
-                  {"Course details"}
-                </span>
+                <span className="text-2xl font-bold self-start">{"Course details"}</span>
                 <div>
-                  <DataField fieldName="Course name" data="Kasutajaliidesed" />
-                  <DataField fieldName="Course code" data="ITI0209" />
-                  <DataField
-                    fieldName="Attendance type"
-                    data="Course + Lecture"
-                  />
-                  <DataField fieldName="Date" data="18.03.2025" />
-                  <DataField fieldName="Start time" data="12:30" />
-                  <DataField fieldName="End time" data="15:45" />
-                  <DataField fieldName="ID" data="000002" />
+                  <DataField fieldName="Course name" data={String(attendanceData?.courseName)} />
+                  <DataField fieldName="Course code" data={String(attendanceData?.courseCode)} />
+                  <DataField fieldName="Attendance type" data={String(attendanceData?.attendanceType)} />
+                  <DataField fieldName="Date" data={String(attendanceData?.date)} />
+                  <DataField fieldName="Start time" data={String(attendanceData?.startTime)} />
+                  <DataField fieldName="End time" data={String(attendanceData?.endTime)} />
+                  <DataField fieldName="ID" data={ToSixDigit(Number(attendanceData?.attendanceId))} />
                   <div className="flex flex-col items-start mt-3">
-                    <NormalLink
-                      text="View students"
-                      onClick={() => setNavState("Students")}
-                    />
-                    <NormalLink
-                      text="View QR"
-                      onClick={() => setNavState("QR")}
-                    />
+                    <NormalLink text="View students" onClick={() => setNavState("Students")} />
+                    <NormalLink text="View QR" onClick={() => setNavState("QR")} />
                   </div>
                 </div>
                 <div className="flex justify-between">
@@ -217,106 +321,86 @@ function AttendancesView() {
           )}
           {navState === "Edit" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">
-                {"Edit attendance"}
-              </span>
+              <span className="text-2xl font-bold self-start">{"Edit attendance"}</span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <DropDownList
                   icon="school-icon"
-                  options={[]}
-                  onChange={(e) => setSelectedOption(e.target.value)}
+                  options={
+                    availableCourses?.map((course) => ({
+                      label: course.courseName,
+                      value: String(course.id),
+                    })) || []
+                  }
+                  onChange={(e) => setSelectedCourseId(e.target.value)}
+                  value={String(selectedCourseId)}
                   label="Course"
                 />
                 <DropDownList
                   icon="attendance-type-icon"
-                  options={[]}
-                  onChange={(e) => setSelectedOption(e.target.value)}
+                  options={
+                    availableAttendanceTypes?.map((type) => ({
+                      label: type.attendanceType,
+                      value: String(type.id),
+                    })) || []
+                  }
+                  onChange={(e) => setSelectedAttendanceTypeId(e.target.value)}
+                  value={String(selectedAttendanceTypeId)}
                   label="Attendance type"
                 />
                 <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs gap-4">
                   <div className="flex flex-col items-start">
                     <div>
-                      <span className="text-xl font-semibold mr-2">
-                        {"Start time:"}
-                      </span>
-                      <TimeSelector
-                        value={startTime}
-                        onChange={(e) => setStartTime(e.target.value)}
-                      />
+                      <span className="text-xl font-semibold mr-2">{"Start time:"}</span>
+                      <TimeSelector value={String(startTime)} onChange={(e) => setStartTime(e.target.value)} />
                     </div>
                     <div>
-                      <span className="text-xl font-semibold mr-2">
-                        {"End time:"}
-                      </span>
-                      <TimeSelector
-                        value={endTime}
-                        onChange={(e) => setEndTime(e.target.value)}
-                      />
+                      <span className="text-xl font-semibold mr-2">{"End time:"}</span>
+                      <TimeSelector value={String(endTime)} onChange={(e) => setEndTime(e.target.value)} />
                     </div>
                     <div>
-                      <span className="text-xl font-semibold mr-2">
-                        {"Kuupäev:"}
-                      </span>
-                      <DateSelector
-                        value={""}
-                        onChange={(e) => updateDateField(2, e.target.value)}
-                      />
+                      <span className="text-xl font-semibold mr-2">{"Kuupäev:"}</span>
+                      <DateSelector value={String(date)} onChange={(e) => setDate(e.target.value)} />
                     </div>
                   </div>
                 </div>
                 <div className="my-4">
-                  <SuccessMessage text={t("student-add-success")} />
+                  {successMessage && <SuccessMessage text={t(successMessage)} />}
+                  {normalMessage && <NormalMessage text={t(normalMessage)} />}
+                  {errorMessage && <ErrorMessage text={t(errorMessage)} />}
                 </div>
-                <NormalButton text="Edit attendance" onClick={console.log} />
+                <NormalButton
+                  text="Edit attendance"
+                  onClick={() => navigate(`/Attendances/Edit/${attendanceData?.attendanceId}`)}
+                />
               </div>
             </div>
           )}
           {navState === "Students" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">
-                {"Students in this attendance"}
-              </span>
+              <span className="text-2xl font-bold self-start">{"Students in this attendance"}</span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <div className="flex flex-row gap-5">
-                  <DetailedDataField
-                    dataA="213453IACB"
-                    dataB="Aleksander Laasmägi"
-                  />
+                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
                   <NormalLink text="Remove" onClick={console.log} />
                 </div>
                 <div className="flex flex-row gap-5">
-                  <DetailedDataField
-                    dataA="213453IACB"
-                    dataB="Aleksander Laasmägi"
-                  />
+                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
                   <NormalLink text="Remove" onClick={console.log} />
                 </div>
                 <div className="flex flex-row gap-5">
-                  <DetailedDataField
-                    dataA="213453IACB"
-                    dataB="Aleksander Laasmägi"
-                  />
+                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
                   <NormalLink text="Remove" onClick={console.log} />
                 </div>
                 <div className="flex flex-row gap-5">
-                  <DetailedDataField
-                    dataA="213453IACB"
-                    dataB="Aleksander Laasmägi"
-                  />
+                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
                   <NormalLink text="Remove" onClick={console.log} />
                 </div>
                 <div className="flex flex-row gap-5">
-                  <DetailedDataField
-                    dataA="213453IACB"
-                    dataB="Aleksander Laasmägi"
-                  />
+                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
                   <NormalLink text="Remove" onClick={console.log} />
                 </div>
                 <div className="flex flex-row gap-5">
-                  <DetailedDataField
-                    dataA="213453IACB"
-                    dataB="Aleksander Laasmägi"
-                  />
+                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
                   <NormalLink text="Remove" onClick={console.log} />
                 </div>
               </div>
@@ -333,16 +417,12 @@ function AttendancesView() {
           )}
           {navState === "QR" && (
             <div className="flex flex-col max-md:w-90 md:w-7xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">
-                {"QR of this attendance"}
-              </span>
+              <span className="text-2xl font-bold self-start">{"QR of this attendance"}</span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <QrGenerator value="000002" />
                 <div className="flex flex-row gap-8 items-center justify-items-center">
                   <img src={Icons["key-icon"]} className="h-15" />
-                  <span className="md:text-6xl max-md:text-3xl font-bold">
-                    {"000002"}
-                  </span>
+                  <span className="md:text-6xl max-md:text-3xl font-bold">{"000002"}</span>
                 </div>
               </div>
               <div className="flex justify-center">

@@ -14,10 +14,16 @@ function App() {
         <Route path="/" element={<InitialSelectionView />} />
         <Route path="/Login" element={<LoginView />} />
         <Route path="/Home" element={<HomeView />} />
-        <Route path="/Courses" element={<CoursesView />} />
-        <Route path="/Attendances" element={<AttendancesView />} />
-        <Route path="/Statistics" element={<StatisticsView />} />
-        <Route path="/Settings" element={<SettingsView />} />
+        <Route path="/Courses/:status?/:courseId?" element={<CoursesView />} />
+        <Route
+          path="/Attendances/:status?/:attendanceId?"
+          element={<AttendancesView />}
+        />
+        <Route
+          path="/Statistics/:status?/:courseId?"
+          element={<StatisticsView />}
+        />
+        <Route path="/Settings/:userId?" element={<SettingsView />} />
       </Routes>
     </Router>
   );

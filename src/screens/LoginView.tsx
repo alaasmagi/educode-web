@@ -9,7 +9,7 @@ import { dismissKeyboard } from "../hooks/DismissKeyboard";
 import {
   FetchAndSaveUserDataByUniId,
   UserLogin,
-} from "../businesslogic/UserDataOnline";
+} from "../businesslogic/UserDataFetch";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import { useTranslation } from "react-i18next";
 import LanguageSwitch from "../components/LanguageSwitch";
