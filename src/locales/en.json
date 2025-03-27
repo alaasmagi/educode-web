@@ -93,5 +93,9 @@
   "student-add-success": "Student added successfully",
   "settings": "Settings",
   "register-as-teacher": "Register as teacher",
-  "students-not-allowed": "This application is meant for teachers only"
+  "students-not-allowed": "This application is meant for teachers only",
+  "date": "Date",
+  "time": "Time",
+  "date-time": "Time of occurrence",
+  "view-details": "View details"
 }

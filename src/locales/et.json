@@ -93,5 +93,9 @@
   "student-add-success": "Üliõpilase lisamine õnnestus",
   "settings": "Seaded",
   "register-as-teacher": "Registreeri õppejõuks",
-  "students-not-allowed": "See rakendus on mõeldud ainult õpetajatele"
+  "students-not-allowed": "See rakendus on mõeldud ainult õpetajatele",
+  "date": "Kuupäev",
+  "time": "Kellaaeg",
+  "date-time": "Toimumise aeg",
+  "view-details": "Kuva üksikasjad"
 }

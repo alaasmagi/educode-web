@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import "../App.css";
 import ContainerCardLarge from "../components/ContainerCardLarge";
 import NormalLink from "../components/Link";
@@ -46,6 +46,7 @@ function AttendancesView() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [editCourse, setEditCourse] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [qrValue, setQrValue] = useState<string>("");
 
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [selectedAttendanceTypeId, setSelectedAttendanceTypeId] = useState<string | null>(null);
@@ -89,8 +90,6 @@ function AttendancesView() {
           break;
         case "Students":
           break;
-        case "QR":
-          break;
         default:
           break;
       }
@@ -100,6 +99,17 @@ function AttendancesView() {
 
     fetchData();
   }, [navState, attendanceId]);
+
+  useEffect(() => {
+    if (!attendanceId) return;
+  
+    const interval = setInterval(() => {
+      setQrValue(generateQrValue());
+    }, 7000);
+  
+    return () => clearInterval(interval);
+  }, [attendanceId]);
+  
 
   const fetchAttendanceDetails = async () => {
     if (attendanceId) {
@@ -193,6 +203,13 @@ function AttendancesView() {
     }
   };
 
+  function generateQrValue() {
+    console.log(`${String(attendanceId)}-${Math.floor(Date.now() / 1000)}`)
+    return `${String(attendanceId)}-${Math.floor(Date.now() / 1000)}`;
+  }
+
+
+
   // Handle adding and editing use cases
   const addDateField = () => {
     setDates([...dates, { id: Date.now(), date: "" }]);
@@ -219,10 +236,10 @@ function AttendancesView() {
                 <ContainerCardLarge
                   key={attendance.attendanceId}
                   boldLabelA={String(attendance.courseName)}
-                  boldLabelB={String(attendance.attendanceType)}
-                  extraData={{ fieldName: t("date"), data: String(attendance.date) }}
-                  linkText={t("view-attendance")}
-                  onClick={() => navigate(`/Attendance/Details/${attendance.attendanceId}`)}
+                  boldLabelB={`(${String(attendance.courseCode)})`}
+                  extraData={{ fieldName: t("date-time"), data: String(attendance.date) }}
+                  linkText={t("view-details")}
+                  onClick={() => navigate(`/Attendances/Details/${attendance.attendanceId}`)}
                 />
               ))}
               <NormalLink text="Add new attendance" onClick={() => setNavState("Create")} />
@@ -288,7 +305,7 @@ function AttendancesView() {
           {navState === "Details" && (
             <>
               <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-                <span className="text-2xl font-bold self-start">{"Course details"}</span>
+                <span className="text-2xl font-bold self-start">{"Attendance details"}</span>
                 <div>
                   <DataField fieldName="Course name" data={String(attendanceData?.courseName)} />
                   <DataField fieldName="Course code" data={String(attendanceData?.courseCode)} />
@@ -310,6 +327,7 @@ function AttendancesView() {
                       setNavState("Edit");
                     }}
                   />
+                  <NormalLink text="Go back" onClick={() => navigate(-1)}/>
                   <NormalLink text="Delete course" onClick={console.log} />
                 </div>
               </div>
@@ -422,21 +440,19 @@ function AttendancesView() {
             </div>
           )}
           {navState === "QR" && (
-            <div className="flex flex-col max-md:w-90 md:w-7xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">{"QR of this attendance"}</span>
+            <div className="flex flex-col max-md:w-90 md:max-w-6xl bg-main-dark rounded-3xl gap-10 p-6">
+              <span className="md:text-5xl max-md:text-2xl font-bold self-center">{"QR of this attendance"}</span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
-                <QrGenerator value="000002" />
-                <div className="flex flex-row gap-8 items-center justify-items-center">
-                  <img src={Icons["key-icon"]} className="h-15" />
-                  <span className="md:text-6xl max-md:text-3xl font-bold">{"000002"}</span>
+                <QrGenerator value={qrValue} />
+                <div className="flex flex-row gap-5 justify-items-center">
+                  <img src={Icons["key-icon"]} className="md:h-13 max-md:h-8" />
+                  <span className="md:text-5xl max-md:text-2xl font-bold">{ToSixDigit(parseInt(attendanceId!))+  "-" + String(Math.floor(Date.now() / 1000))}</span>
                 </div>
               </div>
               <div className="flex justify-center">
                 <NormalLink
                   text="Go back"
-                  onClick={() => {
-                    setNavState("Details");
-                  }}
+                  onClick={() => navigate(-1)}
                 />
               </div>
             </div>

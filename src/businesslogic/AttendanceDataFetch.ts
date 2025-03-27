@@ -2,7 +2,7 @@ import CreateAttendanceCheckModel from "../models/CreateAttendanceCheckModel";
 import { GetUserToken } from "./UserDataOffline";
 import axios from "axios";
 import { CourseAttendance, MultipleCourseAttendances } from "../models/CourseAttendanceModel";
-import { ConvertDateTimeToDateOnly, ConvertDateTimeToTimeOnly } from "../helpers/DateHandlers";
+import { ConvertDateTimeToDateOnly, ConvertDateTimeToTimeOnly, ConvertUTCToLocalDateTime } from "../helpers/DateHandlers";
 import AttendanceType from "../models/AttendanceTypeModel";
 
 export async function AddAttendanceCheck(model: CreateAttendanceCheckModel): Promise<boolean | string> {
@@ -183,7 +183,6 @@ export async function AddAttendances(attendances: MultipleCourseAttendances): Pr
 }
 
 export async function GetAttendancesByCourseCode(courseCode: string): Promise<CourseAttendance[] | string> {
-  console.log("UGFIUEY");
   const token = await GetUserToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Attendance/CourseCode/${courseCode}`, {
     headers: {
@@ -193,8 +192,19 @@ export async function GetAttendancesByCourseCode(courseCode: string): Promise<Co
     validateStatus: (status) => status < 500,
   });
   if (response.status == 200) {
-    const courses: CourseAttendance[] = response.data;
-    return courses;
+    const courseAttendances: CourseAttendance[] = response.data.map((item: any) => ({
+      courseId: item.courseId,
+      courseCode: item.course.courseCode,
+      courseName: item.course.courseName,
+      attendanceId: item.id,
+      attendanceTypeId: item.attendanceTypeId,
+      attendanceType: item.attendanceType,
+      date: ConvertUTCToLocalDateTime(item.startTime),
+      startTime: item.startTime,
+      endTime: item.endTime,
+    }));
+    
+    return courseAttendances;
   }
   return response.data.error ?? "internet-connection-error";
 }

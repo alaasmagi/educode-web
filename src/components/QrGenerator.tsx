@@ -7,11 +7,11 @@ interface QrGeneratorProperties {
 }
 
 const QrGenerator: React.FC<QrGeneratorProperties> = ({ value }) => {
-  const [qrSize, setQrSize] = useState(400);
+  const [qrSize, setQrSize] = useState(250);
 
   useEffect(() => {
     const handleResize = () => {
-      setQrSize(window.innerWidth < 600 ? 250 : 500);
+      setQrSize(window.innerWidth < 768 ? 250 : 500);
     };
 
     handleResize();
