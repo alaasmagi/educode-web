@@ -1,7 +1,8 @@
 interface AttendanceCheckData {
-    studentCode: string;
-    courseAttendanceId: number;
-    workplaceId?: number;
+  id: number;
+  studentCode: string;
+  courseAttendanceId: number;
+  workplaceId?: number;
 }
 
 export default AttendanceCheckData;

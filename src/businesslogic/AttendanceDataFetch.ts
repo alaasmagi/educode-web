@@ -2,8 +2,13 @@ import CreateAttendanceCheckModel from "../models/CreateAttendanceCheckModel";
 import { GetUserToken } from "./UserDataOffline";
 import axios from "axios";
 import { CourseAttendance, MultipleCourseAttendances } from "../models/CourseAttendanceModel";
-import { ConvertDateTimeToDateOnly, ConvertDateTimeToTimeOnly, ConvertUTCToLocalDateTime } from "../helpers/DateHandlers";
+import {
+  ConvertDateTimeToDateOnly,
+  ConvertDateTimeToTimeOnly,
+  ConvertUTCToLocalDateTime,
+} from "../helpers/DateHandlers";
 import AttendanceType from "../models/AttendanceTypeModel";
+import AttendanceCheckData from "../models/AttendanceCheckData";
 
 export async function AddAttendanceCheck(model: CreateAttendanceCheckModel): Promise<boolean | string> {
   const token = await GetUserToken();
@@ -203,8 +208,64 @@ export async function GetAttendancesByCourseCode(courseCode: string): Promise<Co
       startTime: item.startTime,
       endTime: item.endTime,
     }));
-    
+
     return courseAttendances;
   }
+  return response.data.error ?? "internet-connection-error";
+}
+
+export async function DeleteAttendance(attendanceId: number): Promise<boolean | string> {
+  const token = await GetUserToken();
+  const response = await axios.delete(`${import.meta.env.VITE_API_URL}/Attendance/Delete/${attendanceId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    validateStatus: (status) => status < 500,
+  });
+  if (response.status == 200) {
+    return true;
+  }
+
+  return response.data.error ?? "internet-connection-error";
+}
+
+export async function DeleteAttendanceCheck(attendanceCheckId: number): Promise<boolean | string> {
+  const token = await GetUserToken();
+  const response = await axios.delete(
+    `${import.meta.env.VITE_API_URL}/Attendance/AttendanceCheck/Delete/${attendanceCheckId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      validateStatus: (status) => status < 500,
+    }
+  );
+  if (response.status == 200) {
+    return true;
+  }
+
+  return response.data.error ?? "internet-connection-error";
+}
+
+export async function GetAttendanceChecksByAttendanceId(attendanceId: number): Promise<AttendanceCheckData[] | string> {
+  const token = await GetUserToken();
+  const response = await axios.get(
+    `${import.meta.env.VITE_API_URL}/Attendance/AttendanceChecks/AttendanceId/${attendanceId}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+      validateStatus: (status) => status < 500,
+    }
+  );
+  if (response.status == 200) {
+    const data = response.data;
+    return data;
+  }
+
   return response.data.error ?? "internet-connection-error";
 }

@@ -20,7 +20,10 @@ import { Icons } from "../components/Icons";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import {
   AddAttendances,
+  DeleteAttendance,
+  DeleteAttendanceCheck,
   GetAttendanceById,
+  GetAttendanceChecksByAttendanceId,
   GetAttendancesByCourseCode,
   GetAttendanceTypes,
   GetStudentCountByAttendanceId,
@@ -34,6 +37,8 @@ import AttendanceType from "../models/AttendanceTypeModel";
 import NormalMessage from "../components/NormalMessage";
 import ErrorMessage from "../components/ErrorMessage";
 import { FormatDateOnlyToBackendFormat } from "../helpers/DateHandlers";
+import GetSixDigitTimeStamp from "../helpers/TimeStamp";
+import AttendanceCheckData from "../models/AttendanceCheckData";
 
 function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -58,6 +63,7 @@ function AttendancesView() {
   const [availableCourses, setAvailableCourses] = useState<Course[] | null>(null);
   const [courseAttendances, setCourseAttendances] = useState<CourseAttendance[] | null>(null);
   const [availableAttendanceTypes, setAvailableAttendanceTypes] = useState<AttendanceType[] | null>(null);
+  const [attendanceChecks, setAttendanceChecks] = useState<AttendanceCheckData[] | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -89,6 +95,7 @@ function AttendancesView() {
           fetchAttendanceTypes();
           break;
         case "Students":
+          fetchAllAttendanceChecksByAttendance();
           break;
         default:
           break;
@@ -102,14 +109,13 @@ function AttendancesView() {
 
   useEffect(() => {
     if (!attendanceId) return;
-  
+
     const interval = setInterval(() => {
       setQrValue(generateQrValue());
     }, 7000);
-  
+
     return () => clearInterval(interval);
   }, [attendanceId]);
-  
 
   const fetchAttendanceDetails = async () => {
     if (attendanceId) {
@@ -135,6 +141,17 @@ function AttendancesView() {
       }
       setTimeout(() => setErrorMessage(null), 3000);
       setTimeout(() => setNormalMessage(null), 3000);
+    }
+  };
+
+  const fetchAllAttendanceChecksByAttendance = async () => {
+    const status = await GetAttendanceChecksByAttendanceId(Number(attendanceId));
+
+    if (typeof status === "string") {
+      setErrorMessage(t("no-students-in-this-attendance"));
+      setTimeout(() => setErrorMessage(null), 3000);
+    } else {
+      setAttendanceChecks(status);
     }
   };
 
@@ -173,6 +190,18 @@ function AttendancesView() {
     }
   };
 
+  const deleteAttendanceCheck = async (attendanceCheckId: number) => {
+    const status = DeleteAttendanceCheck(attendanceCheckId);
+
+    if (typeof status === "string") {
+      setErrorMessage(t(String(status)));
+      setTimeout(() => setErrorMessage(null), 3000);
+    } else {
+      setSuccessMessage(t("Student removed successfully"));
+      setTimeout(() => setSuccessMessage(null), 3000);
+    }
+  };
+
   const validateForm = () => {
     if (!selectedCourseId || !selectedAttendanceTypeId || !startTime || !endTime || dates.some((d) => !d.date)) {
       setNormalMessage(t("fill-all-fields"));
@@ -203,12 +232,22 @@ function AttendancesView() {
     }
   };
 
+  const handleAttendanceDelete = async () => {
+    const status = DeleteAttendance(Number(attendanceId));
+
+    if (typeof status === "string") {
+      setErrorMessage(t(String(status)));
+      setTimeout(() => setErrorMessage(null), 3000);
+    } else {
+      setSuccessMessage(t("Attendances deleted successfully"));
+      setTimeout(() => setSuccessMessage(null), 3000);
+      setTimeout(() => navigate(`/Attendances`), 3000);
+    }
+  };
+
   function generateQrValue() {
-    console.log(`${String(attendanceId)}-${Math.floor(Date.now() / 1000)}`)
-    return `${String(attendanceId)}-${Math.floor(Date.now() / 1000)}`;
+    return `${ToSixDigit(Number(attendanceId))}-${ToSixDigit(GetSixDigitTimeStamp())}`;
   }
-
-
 
   // Handle adding and editing use cases
   const addDateField = () => {
@@ -293,7 +332,7 @@ function AttendancesView() {
                   ))}
                 </div>
                 <NormalLink text={"Add more dates"} onClick={addDateField} />
-                <div className="py-4 flex justify-center">
+                <div className="py-4">
                   {successMessage && <SuccessMessage text={t(successMessage)} />}
                   {normalMessage && <NormalMessage text={t(normalMessage)} />}
                   {errorMessage && <ErrorMessage text={t(errorMessage)} />}
@@ -319,6 +358,11 @@ function AttendancesView() {
                     <NormalLink text="View QR" onClick={() => setNavState("QR")} />
                   </div>
                 </div>
+                <div className="py-4 flex justify-center">
+                  {successMessage && <SuccessMessage text={t(successMessage)} />}
+                  {normalMessage && <NormalMessage text={t(normalMessage)} />}
+                  {errorMessage && <ErrorMessage text={t(errorMessage)} />}
+                </div>
                 <div className="flex justify-between">
                   <NormalLink
                     text="Edit details"
@@ -327,8 +371,8 @@ function AttendancesView() {
                       setNavState("Edit");
                     }}
                   />
-                  <NormalLink text="Go back" onClick={() => navigate(-1)}/>
-                  <NormalLink text="Delete course" onClick={console.log} />
+                  <NormalLink text="Go back" onClick={() => navigate(-1)} />
+                  <NormalLink text="Delete attendance" onClick={handleAttendanceDelete} />
                 </div>
               </div>
               <QuickNavigation
@@ -403,30 +447,23 @@ function AttendancesView() {
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
               <span className="text-2xl font-bold self-start">{"Students in this attendance"}</span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
-                <div className="flex flex-row gap-5">
-                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
-                  <NormalLink text="Remove" onClick={console.log} />
+                <div className="flex gap-20 w-9/12">
+                  <img src={Icons["person-icon"]} className="h-7" />
+                  <img src={Icons["work-icon"]} className="h-7" />
                 </div>
-                <div className="flex flex-row gap-5">
-                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
-                  <NormalLink text="Remove" onClick={console.log} />
-                </div>
-                <div className="flex flex-row gap-5">
-                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
-                  <NormalLink text="Remove" onClick={console.log} />
-                </div>
-                <div className="flex flex-row gap-5">
-                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
-                  <NormalLink text="Remove" onClick={console.log} />
-                </div>
-                <div className="flex flex-row gap-5">
-                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
-                  <NormalLink text="Remove" onClick={console.log} />
-                </div>
-                <div className="flex flex-row gap-5">
-                  <DetailedDataField dataA="213453IACB" dataB="Aleksander Laasmägi" />
-                  <NormalLink text="Remove" onClick={console.log} />
-                </div>
+                {attendanceChecks?.map((attendanceCheck) => (
+                  <div className="flex flex-row gap-5 justify-between w-full">
+                    <DetailedDataField
+                      dataA={attendanceCheck.studentCode}
+                      dataB={
+                        attendanceCheck.workplaceId === 0
+                          ? t("no-workplace")
+                          : String(ToSixDigit(Number(attendanceCheck.workplaceId)))
+                      }
+                    />
+                    <NormalLink text="Remove" onClick={() => deleteAttendanceCheck(attendanceCheck.id)} />
+                  </div>
+                ))}
               </div>
               <div className="flex justify-between">
                 <NormalLink
@@ -435,7 +472,7 @@ function AttendancesView() {
                     setNavState("Details");
                   }}
                 />
-                <NormalLink text="Download as PDF" onClick={console.log} />
+                <NormalLink text="View as PDF" onClick={console.log} />
               </div>
             </div>
           )}
@@ -446,14 +483,30 @@ function AttendancesView() {
                 <QrGenerator value={qrValue} />
                 <div className="flex flex-row gap-5 justify-items-center">
                   <img src={Icons["key-icon"]} className="md:h-13 max-md:h-8" />
-                  <span className="md:text-5xl max-md:text-2xl font-bold">{ToSixDigit(parseInt(attendanceId!))+  "-" + String(Math.floor(Date.now() / 1000))}</span>
+                  <span className="md:text-5xl max-md:text-2xl font-bold">
+                    {ToSixDigit(parseInt(attendanceId!)) + "-" + String(ToSixDigit(GetSixDigitTimeStamp()))}
+                  </span>
                 </div>
               </div>
               <div className="flex justify-center">
-                <NormalLink
-                  text="Go back"
-                  onClick={() => navigate(-1)}
-                />
+                <NormalLink text="Go back" onClick={() => navigate(-1)} />
+              </div>
+            </div>
+          )}
+          {navState === "PDF" && (
+            <div className="flex flex-col max-md:w-90 md:max-w-6xl bg-main-dark rounded-3xl gap-10 p-6">
+              <span className="md:text-5xl max-md:text-2xl font-bold self-center">{"QR of this attendance"}</span>
+              <div className="flex flex-col gap-5 items-center justify-center self-center">
+                <QrGenerator value={qrValue} />
+                <div className="flex flex-row gap-5 justify-items-center">
+                  <img src={Icons["key-icon"]} className="md:h-13 max-md:h-8" />
+                  <span className="md:text-5xl max-md:text-2xl font-bold">
+                    {ToSixDigit(parseInt(attendanceId!)) + "-" + String(ToSixDigit(GetSixDigitTimeStamp()))}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <NormalLink text="Go back" onClick={() => navigate(-1)} />
               </div>
             </div>
           )}

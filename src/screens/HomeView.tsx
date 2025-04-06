@@ -47,7 +47,7 @@ function HomeView() {
       fetchMostRecentAttendace();
       const interval = setInterval(() => {
         fetchCurrentAttdencanceData();
-      }, 120000);
+      }, 10000);
 
       return () => clearInterval(interval);
     }
