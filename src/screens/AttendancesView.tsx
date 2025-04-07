@@ -29,7 +29,10 @@ import {
   GetStudentCountByAttendanceId,
 } from "../businesslogic/AttendanceDataFetch";
 import LocalUserData from "../models/LocalUserDataModel";
-import { CourseAttendance, MultipleCourseAttendances } from "../models/CourseAttendanceModel";
+import {
+  CourseAttendance,
+  MultipleCourseAttendances,
+} from "../models/CourseAttendanceModel";
 import ToSixDigit from "../helpers/NumberConverter";
 import { GetCoursesByUser } from "../businesslogic/CourseDataFetch";
 import Course from "../models/CourseModel";
@@ -45,7 +48,9 @@ function AttendancesView() {
   const { status, attendanceId } = useParams();
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
   const [studentCount, setStudentCount] = useState<string | null>(null);
-  const [attendanceData, setAttendanceData] = useState<CourseAttendance | null>(null);
+  const [attendanceData, setAttendanceData] = useState<CourseAttendance | null>(
+    null
+  );
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -54,16 +59,26 @@ function AttendancesView() {
   const [qrValue, setQrValue] = useState<string>("");
 
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
-  const [selectedAttendanceTypeId, setSelectedAttendanceTypeId] = useState<string | null>(null);
+  const [selectedAttendanceTypeId, setSelectedAttendanceTypeId] = useState<
+    string | null
+  >(null);
   const [startTime, setStartTime] = useState<string | null>(null);
   const [endTime, setEndTime] = useState<string | null>(null);
   const [dates, setDates] = useState([{ id: 1, date: "" }]);
   const [date, setDate] = useState<string | null>(null);
 
-  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(null);
-  const [courseAttendances, setCourseAttendances] = useState<CourseAttendance[] | null>(null);
-  const [availableAttendanceTypes, setAvailableAttendanceTypes] = useState<AttendanceType[] | null>(null);
-  const [attendanceChecks, setAttendanceChecks] = useState<AttendanceCheckData[] | null>(null);
+  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(
+    null
+  );
+  const [courseAttendances, setCourseAttendances] = useState<
+    CourseAttendance[] | null
+  >(null);
+  const [availableAttendanceTypes, setAvailableAttendanceTypes] = useState<
+    AttendanceType[] | null
+  >(null);
+  const [attendanceChecks, setAttendanceChecks] = useState<
+    AttendanceCheckData[] | null
+  >(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -123,6 +138,7 @@ function AttendancesView() {
       if (typeof status === "string") {
         setErrorMessage(status);
       } else {
+        console.log(status);
         setAttendanceData(status);
         setSelectedAttendanceTypeId(status.attendanceTypeId);
         setSelectedCourseId(String(status.courseId));
@@ -130,7 +146,9 @@ function AttendancesView() {
         setEndTime(String(status.endTime));
         setDate(String(status.date));
 
-        const studentStatus = await GetStudentCountByAttendanceId(Number(attendanceId));
+        const studentStatus = await GetStudentCountByAttendanceId(
+          Number(attendanceId)
+        );
 
         if (typeof status === "string") {
           setErrorMessage(t(String(studentStatus)));
@@ -145,7 +163,9 @@ function AttendancesView() {
   };
 
   const fetchAllAttendanceChecksByAttendance = async () => {
-    const status = await GetAttendanceChecksByAttendanceId(Number(attendanceId));
+    const status = await GetAttendanceChecksByAttendanceId(
+      Number(attendanceId)
+    );
 
     if (typeof status === "string") {
       setErrorMessage(t("no-students-in-this-attendance"));
@@ -203,7 +223,13 @@ function AttendancesView() {
   };
 
   const validateForm = () => {
-    if (!selectedCourseId || !selectedAttendanceTypeId || !startTime || !endTime || dates.some((d) => !d.date)) {
+    if (
+      !selectedCourseId ||
+      !selectedAttendanceTypeId ||
+      !startTime ||
+      !endTime ||
+      dates.some((d) => !d.date)
+    ) {
       setNormalMessage(t("fill-all-fields"));
       setTimeout(() => setNormalMessage(null), 3000);
       return false;
@@ -246,10 +272,11 @@ function AttendancesView() {
   };
 
   function generateQrValue() {
-    return `${ToSixDigit(Number(attendanceId))}-${ToSixDigit(GetSixDigitTimeStamp())}`;
+    return `${ToSixDigit(Number(attendanceId))}-${ToSixDigit(
+      GetSixDigitTimeStamp()
+    )}`;
   }
 
-  // Handle adding and editing use cases
   const addDateField = () => {
     setDates([...dates, { id: Date.now(), date: "" }]);
   };
@@ -257,7 +284,11 @@ function AttendancesView() {
     setDates(dates.filter((entry) => entry.id !== id));
   };
   const updateDateField = (id: number, newDate: string) => {
-    setDates((prevDates) => prevDates.map((entry) => (entry.id === id ? { ...entry, date: newDate } : entry)));
+    setDates((prevDates) =>
+      prevDates.map((entry) =>
+        entry.id === id ? { ...entry, date: newDate } : entry
+      )
+    );
   };
 
   return (
@@ -276,17 +307,27 @@ function AttendancesView() {
                   key={attendance.attendanceId}
                   boldLabelA={String(attendance.courseName)}
                   boldLabelB={`(${String(attendance.courseCode)})`}
-                  extraData={{ fieldName: t("date-time"), data: String(attendance.date) }}
+                  extraData={{
+                    fieldName: t("date-time"),
+                    data: String(attendance.date),
+                  }}
                   linkText={t("view-details")}
-                  onClick={() => navigate(`/Attendances/Details/${attendance.attendanceId}`)}
+                  onClick={() =>
+                    navigate(`/Attendances/Details/${attendance.attendanceId}`)
+                  }
                 />
               ))}
-              <NormalLink text="Add new attendance" onClick={() => setNavState("Create")} />
+              <NormalLink
+                text="Add new attendance"
+                onClick={() => setNavState("Create")}
+              />
             </div>
           )}
           {navState === "Create" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">{"Add attendance"}</span>
+              <span className="text-2xl font-bold self-start">
+                {"Add attendance"}
+              </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <DropDownList
                   icon="school-icon"
@@ -313,53 +354,111 @@ function AttendancesView() {
                 <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs gap-4">
                   <div className="flex flex-col items-start">
                     <div>
-                      <span className="text-xl font-semibold mr-2">{"Start time:"}</span>
-                      <TimeSelector value={String(startTime)} onChange={(e) => setStartTime(e.target.value)} />
+                      <span className="text-xl font-semibold mr-2">
+                        {"Start time:"}
+                      </span>
+                      <TimeSelector
+                        value={String(startTime)}
+                        onChange={(e) => setStartTime(e.target.value)}
+                      />
                     </div>
                     <div>
-                      <span className="text-xl font-semibold mr-2">{"End time:"}</span>
-                      <TimeSelector value={String(endTime)} onChange={(e) => setEndTime(e.target.value)} />
+                      <span className="text-xl font-semibold mr-2">
+                        {"End time:"}
+                      </span>
+                      <TimeSelector
+                        value={String(endTime)}
+                        onChange={(e) => setEndTime(e.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
-                <span className="text-xl mr-2 font-semibold self-start">{"Kuupäevad:"}</span>
+                <span className="text-xl mr-2 font-semibold self-start">
+                  {"Kuupäevad:"}
+                </span>
                 <div className="flex flex-col">
                   {dates.map((entry) => (
                     <div key={entry.id} className="flex flex-row gap-0">
-                      <DateSelector value={entry.date} onChange={(e) => updateDateField(entry.id, e.target.value)} />
-                      {dates.length > 1 && <NormalLink text={"Remove"} onClick={() => removeDateField(entry.id)} />}
+                      <DateSelector
+                        value={entry.date}
+                        onChange={(e) =>
+                          updateDateField(entry.id, e.target.value)
+                        }
+                      />
+                      {dates.length > 1 && (
+                        <NormalLink
+                          text={"Remove"}
+                          onClick={() => removeDateField(entry.id)}
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
                 <NormalLink text={"Add more dates"} onClick={addDateField} />
                 <div className="py-4">
-                  {successMessage && <SuccessMessage text={t(successMessage)} />}
+                  {successMessage && (
+                    <SuccessMessage text={t(successMessage)} />
+                  )}
                   {normalMessage && <NormalMessage text={t(normalMessage)} />}
                   {errorMessage && <ErrorMessage text={t(errorMessage)} />}
                 </div>
-                <NormalButton text="Add attendance" onClick={handleAttendanceAdd} />
+                <NormalButton
+                  text="Add attendance"
+                  onClick={handleAttendanceAdd}
+                />
               </div>
             </div>
           )}
           {navState === "Details" && (
             <>
               <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-                <span className="text-2xl font-bold self-start">{"Attendance details"}</span>
+                <span className="text-2xl font-bold self-start">
+                  {"Attendance details"}
+                </span>
                 <div>
-                  <DataField fieldName="Course name" data={String(attendanceData?.courseName)} />
-                  <DataField fieldName="Course code" data={String(attendanceData?.courseCode)} />
-                  <DataField fieldName="Attendance type" data={String(attendanceData?.attendanceType)} />
-                  <DataField fieldName="Date" data={String(attendanceData?.date)} />
-                  <DataField fieldName="Start time" data={String(attendanceData?.startTime)} />
-                  <DataField fieldName="End time" data={String(attendanceData?.endTime)} />
-                  <DataField fieldName="ID" data={ToSixDigit(Number(attendanceData?.attendanceId))} />
+                  <DataField
+                    fieldName="Course name"
+                    data={String(attendanceData?.courseName)}
+                  />
+                  <DataField
+                    fieldName="Course code"
+                    data={String(attendanceData?.courseCode)}
+                  />
+                  <DataField
+                    fieldName="Attendance type"
+                    data={String(attendanceData?.attendanceType)}
+                  />
+                  <DataField
+                    fieldName="Date"
+                    data={String(attendanceData?.date)}
+                  />
+                  <DataField
+                    fieldName="Start time"
+                    data={String(attendanceData?.startTime)}
+                  />
+                  <DataField
+                    fieldName="End time"
+                    data={String(attendanceData?.endTime)}
+                  />
+                  <DataField
+                    fieldName="ID"
+                    data={ToSixDigit(Number(attendanceData?.attendanceId))}
+                  />
                   <div className="flex flex-col items-start mt-3">
-                    <NormalLink text="View students" onClick={() => setNavState("Students")} />
-                    <NormalLink text="View QR" onClick={() => setNavState("QR")} />
+                    <NormalLink
+                      text="View students"
+                      onClick={() => setNavState("Students")}
+                    />
+                    <NormalLink
+                      text="View QR"
+                      onClick={() => setNavState("QR")}
+                    />
                   </div>
                 </div>
                 <div className="py-4 flex justify-center">
-                  {successMessage && <SuccessMessage text={t(successMessage)} />}
+                  {successMessage && (
+                    <SuccessMessage text={t(successMessage)} />
+                  )}
                   {normalMessage && <NormalMessage text={t(normalMessage)} />}
                   {errorMessage && <ErrorMessage text={t(errorMessage)} />}
                 </div>
@@ -372,7 +471,10 @@ function AttendancesView() {
                     }}
                   />
                   <NormalLink text="Go back" onClick={() => navigate(-1)} />
-                  <NormalLink text="Delete attendance" onClick={handleAttendanceDelete} />
+                  <NormalLink
+                    text="Delete attendance"
+                    onClick={handleAttendanceDelete}
+                  />
                 </div>
               </div>
               <QuickNavigation
@@ -389,7 +491,9 @@ function AttendancesView() {
           )}
           {navState === "Edit" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">{"Edit attendance"}</span>
+              <span className="text-2xl font-bold self-start">
+                {"Edit attendance"}
+              </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <DropDownList
                   icon="school-icon"
@@ -418,34 +522,57 @@ function AttendancesView() {
                 <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs gap-4">
                   <div className="flex flex-col items-start">
                     <div>
-                      <span className="text-xl font-semibold mr-2">{"Start time:"}</span>
-                      <TimeSelector value={String(startTime)} onChange={(e) => setStartTime(e.target.value)} />
+                      <span className="text-xl font-semibold mr-2">
+                        {"Start time:"}
+                      </span>
+                      <TimeSelector
+                        value={String(startTime)}
+                        onChange={(e) => setStartTime(e.target.value)}
+                      />
                     </div>
                     <div>
-                      <span className="text-xl font-semibold mr-2">{"End time:"}</span>
-                      <TimeSelector value={String(endTime)} onChange={(e) => setEndTime(e.target.value)} />
+                      <span className="text-xl font-semibold mr-2">
+                        {"End time:"}
+                      </span>
+                      <TimeSelector
+                        value={String(endTime)}
+                        onChange={(e) => setEndTime(e.target.value)}
+                      />
                     </div>
                     <div>
-                      <span className="text-xl font-semibold mr-2">{"Kuupäev:"}</span>
-                      <DateSelector value={String(date)} onChange={(e) => setDate(e.target.value)} />
+                      <span className="text-xl font-semibold mr-2">
+                        {"Kuupäev:"}
+                      </span>
+                      <DateSelector
+                        value={String(date)}
+                        onChange={(e) => setDate(e.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
                 <div className="my-4">
-                  {successMessage && <SuccessMessage text={t(successMessage)} />}
+                  {successMessage && (
+                    <SuccessMessage text={t(successMessage)} />
+                  )}
                   {normalMessage && <NormalMessage text={t(normalMessage)} />}
                   {errorMessage && <ErrorMessage text={t(errorMessage)} />}
                 </div>
                 <NormalButton
                   text="Edit attendance"
-                  onClick={() => navigate(`/Attendances/Edit/${attendanceData?.attendanceId}`)}
+                  onClick={() =>
+                    navigate(
+                      `/Attendances/Edit/${attendanceData?.attendanceId}`
+                    )
+                  }
                 />
               </div>
             </div>
           )}
           {navState === "Students" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">{"Students in this attendance"}</span>
+              <span className="text-2xl font-bold self-start">
+                {"Students in this attendance"}
+              </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <div className="flex gap-20 w-9/12">
                   <img src={Icons["person-icon"]} className="h-7" />
@@ -458,10 +585,15 @@ function AttendancesView() {
                       dataB={
                         attendanceCheck.workplaceId === 0
                           ? t("no-workplace")
-                          : String(ToSixDigit(Number(attendanceCheck.workplaceId)))
+                          : String(
+                              ToSixDigit(Number(attendanceCheck.workplaceId))
+                            )
                       }
                     />
-                    <NormalLink text="Remove" onClick={() => deleteAttendanceCheck(attendanceCheck.id)} />
+                    <NormalLink
+                      text="Remove"
+                      onClick={() => deleteAttendanceCheck(attendanceCheck.id)}
+                    />
                   </div>
                 ))}
               </div>
@@ -478,13 +610,17 @@ function AttendancesView() {
           )}
           {navState === "QR" && (
             <div className="flex flex-col max-md:w-90 md:max-w-6xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="md:text-5xl max-md:text-2xl font-bold self-center">{"QR of this attendance"}</span>
+              <span className="md:text-5xl max-md:text-2xl font-bold self-center">
+                {"QR of this attendance"}
+              </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <QrGenerator value={qrValue} />
                 <div className="flex flex-row gap-5 justify-items-center">
                   <img src={Icons["key-icon"]} className="md:h-13 max-md:h-8" />
                   <span className="md:text-5xl max-md:text-2xl font-bold">
-                    {ToSixDigit(parseInt(attendanceId!)) + "-" + String(ToSixDigit(GetSixDigitTimeStamp()))}
+                    {ToSixDigit(parseInt(attendanceId!)) +
+                      "-" +
+                      String(ToSixDigit(GetSixDigitTimeStamp()))}
                   </span>
                 </div>
               </div>
@@ -495,13 +631,17 @@ function AttendancesView() {
           )}
           {navState === "PDF" && (
             <div className="flex flex-col max-md:w-90 md:max-w-6xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="md:text-5xl max-md:text-2xl font-bold self-center">{"QR of this attendance"}</span>
+              <span className="md:text-5xl max-md:text-2xl font-bold self-center">
+                {"QR of this attendance"}
+              </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <QrGenerator value={qrValue} />
                 <div className="flex flex-row gap-5 justify-items-center">
                   <img src={Icons["key-icon"]} className="md:h-13 max-md:h-8" />
                   <span className="md:text-5xl max-md:text-2xl font-bold">
-                    {ToSixDigit(parseInt(attendanceId!)) + "-" + String(ToSixDigit(GetSixDigitTimeStamp()))}
+                    {ToSixDigit(parseInt(attendanceId!)) +
+                      "-" +
+                      String(ToSixDigit(GetSixDigitTimeStamp()))}
                   </span>
                 </div>
               </div>

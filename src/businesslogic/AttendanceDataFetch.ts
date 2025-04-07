@@ -126,6 +126,7 @@ export async function GetAttendanceById(attendanceId: number): Promise<CourseAtt
   });
   if (response.status == 200) {
     const data = response.data;
+    console.log(data)
     return {
       courseId: data.course.id,
       courseCode: data.course.courseCode,
