@@ -138,6 +138,7 @@ function HomeView() {
                   icon="person-icon"
                   placeHolder={t("student-code")}
                   value={studentCodeInput}
+                  autofocus={true}
                   onChange={setStudentCodeInput}
                 />
                 <TextBox

@@ -17,3 +17,19 @@ export async function GetCoursesByUser(uniId: string): Promise<Course[] | string
   }
   return response.data.error ?? "internet-connection-error";
 }
+
+export async function GetCoursebyId(courseId: number): Promise<Course | string> {
+  const token = await GetUserToken();
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/Course/UniId/${courseId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    validateStatus: (status) => status < 500,
+  });
+  if (response.status == 200) {
+    const course: Course = response.data;
+    return course;
+  }
+  return response.data.error ?? "internet-connection-error";
+}

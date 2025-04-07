@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import ContainerCardSmall from "../components/ContainerCardSmall";
 import NormalLink from "../components/Link";
@@ -8,17 +8,144 @@ import NormalButton from "../components/NormalButton";
 import DropDownList from "../components/DropdownList";
 import DataField from "../components/DataField";
 import QuickNavigation from "../layout/QuickNavigation";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SuccessMessage from "../components/SuccessMessage";
 import { useTranslation } from "react-i18next";
 import IconButton from "../components/IconButton";
+import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import Course from "../models/CourseModel";
+import LocalUserData from "../models/LocalUserDataModel";
+import { GetCoursebyId, GetCoursesByUser } from "../businesslogic/CourseDataFetch";
 
 function CoursesView() {
   const [navState, setNavState] = useState<string>("Main");
+  const { status, attendanceId } = useParams();
+  const [localData, setLocalData] = useState<LocalUserData | null>(null);
+  const [normalMessage, setNormalMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const [selectedCourseStatus, setSelectedCourseStatus] = useState<string | null>(null);
   const [editCourse, setEditCourse] = useState<string | null>(null);
-  const [selectedOption, setSelectedOption] = useState<string>("");
+  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    fetchUserData();
+    if (status) {
+      setNavState(status);
+    } else {
+      setNavState("Main");
+    }
+  }, [status]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      switch (navState) {
+        case "Main":
+          fetchUserData();
+          fetchAllCoursesByUser();
+          break;
+        case "Details":
+          fetchCourseDetails();
+          break;
+        case "Edit":
+          fetchAllCoursesByUser();
+          //fetchAttendanceTypes();
+          break;
+        case "Create":
+          fetchAllCoursesByUser();
+          //fetchAttendanceTypes();
+          break;
+        default:
+          break;
+      }
+      setTimeout(() => setErrorMessage(null), 3000);
+      setTimeout(() => setNormalMessage(null), 3000);
+    };
+
+    fetchData();
+  }, [navState, selectedCourseId]);
+
+  const fetchCourseDetails = async () => {
+    if (selectedCourseId) {
+      const status = await GetCoursebyId(Number(selectedCourseId));
+      if (typeof status === "string") {
+        setErrorMessage(status);
+      } else {
+        setSelectedCourse(status);
+      }
+      setTimeout(() => setErrorMessage(null), 3000);
+      setTimeout(() => setNormalMessage(null), 3000);
+    }
+  };
+
+  const fetchAllCoursesByUser = async () => {
+    const userData = await GetOfflineUserData();
+    const response = await GetCoursesByUser(userData?.uniId!);
+    if (typeof response !== "string") {
+      setAvailableCourses(response);
+    }
+  };
+  const fetchUserData = async () => {
+    const userData = await GetOfflineUserData();
+    setLocalData(userData);
+  };
+  /* const fetchCourseStatuses = async () => {
+    const response = await CourseStatuses();
+
+    if (typeof response === "string") {
+      setErrorMessage(t(response));
+    } else {
+      setAvailableCourseStatuses(response);
+    }
+  };*/
+
+  /*const validateForm = () => {
+    if (!selectedCourseId || !selectedAttendanceTypeId || !startTime || !endTime || dates.some((d) => !d.date)) {
+      setNormalMessage(t("fill-all-fields"));
+      setTimeout(() => setNormalMessage(null), 3000);
+      return false;
+    }
+    return true;
+  };*/
+  /*const handleCourseAdd = async () => {
+    if (!validateForm()) return;
+
+    const attendanceData: MultipleCourseAttendances = {
+      courseId: Number(selectedCourseId),
+      attendanceTypeId: String(selectedAttendanceTypeId),
+      startTime: String(startTime),
+      endTime: String(endTime),
+      dates: dates.map((entry) => FormatDateOnlyToBackendFormat(entry.date)),
+    };
+    const result = await AddAttendances(attendanceData);
+
+    if (typeof result === "string") {
+      setErrorMessage(t(String(result)));
+      setTimeout(() => setErrorMessage(null), 3000);
+    } else {
+      setSuccessMessage(t("Attendances added successfully"));
+      setTimeout(() => setSuccessMessage(null), 3000);
+      setTimeout(() => setNavState("Main"), 3000);
+    }
+  };*/
+  const handleCourseDelete = async () => {
+    //const status = DeleteCourse(Number(attendanceId));
+
+    if (typeof status === "string") {
+      setErrorMessage(t(String(status)));
+      setTimeout(() => setErrorMessage(null), 3000);
+    } else {
+      setSuccessMessage(t("Attendances deleted successfully"));
+      setTimeout(() => setSuccessMessage(null), 3000);
+      setTimeout(() => navigate(`/Attendances`), 3000);
+    }
+  };
 
   return (
     <>
@@ -31,41 +158,21 @@ function CoursesView() {
                 <TextBox icon="search-icon" placeHolder="Course name or code" />
                 <IconButton icon="search-icon" onClick={console.log} />
               </div>
-              <ContainerCardSmall
-                boldLabelA="Kasutajaliidesed"
-                boldLabelB="(ITI0209)"
-                linkText="View"
-                onClick={() => setNavState("Details")}
-              />
-              <ContainerCardSmall
-                boldLabelA="Kasutajaliidesed"
-                boldLabelB="(ITI0209)"
-                linkText="View"
-                onClick={console.log}
-              />
-              <ContainerCardSmall
-                boldLabelA="Kasutajaliidesed"
-                boldLabelB="(ITI0209)"
-                linkText="View"
-                onClick={console.log}
-              />
-              <ContainerCardSmall
-                boldLabelA="Kasutajaliidesed"
-                boldLabelB="(ITI0209)"
-                linkText="View"
-                onClick={console.log}
-              />
-              <NormalLink
-                text="Add new course"
-                onClick={() => setNavState("Edit")}
-              />
+              {availableCourses?.map((course) => (
+                <ContainerCardSmall
+                  key={course.id}
+                  boldLabelA={String(course.courseName)}
+                  boldLabelB={`(${String(course.courseCode)})`}
+                  linkText={t("view-details")}
+                  onClick={() => navigate(`/Courses/Details/${course.id}`)}
+                />
+              ))}
+              <NormalLink text="Add new course" onClick={() => setNavState("Edit")} />
             </div>
           )}
           {navState === "Edit" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">
-                {editCourse ? "Edit course" : "Add course"}
-              </span>
+              <span className="text-2xl font-bold self-start">{editCourse ? "Edit course" : "Add course"}</span>
 
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <TextBox icon="school-icon" placeHolder="Course name" />
@@ -73,7 +180,7 @@ function CoursesView() {
                 <DropDownList
                   icon="event-status-icon"
                   options={[]}
-                  onChange={(e) => setSelectedOption(e.target.value)}
+                  onChange={(e) => setSelectedCourseStatus(e.target.value)}
                   label="course status"
                 />
                 <div className="py-4 flex justify-center">
@@ -90,9 +197,7 @@ function CoursesView() {
           {navState === "Details" && (
             <>
               <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-                <span className="text-2xl font-bold self-start">
-                  {"Course details"}
-                </span>
+                <span className="text-2xl font-bold self-start">{"Course details"}</span>
                 <div>
                   <DataField fieldName="Course name" data="Kasutajaliidesed" />
                   <DataField fieldName="Course code" data="ITI0209" />
@@ -102,11 +207,12 @@ function CoursesView() {
                   <NormalLink
                     text="Edit details"
                     onClick={() => {
-                      setEditCourse("ITI0209");
+                      setEditCourse(selectedCourseId);
                       setNavState("Edit");
                     }}
                   />
-                  <NormalLink text="Delete course" onClick={console.log} />
+                  <NormalLink text="Go back" onClick={() => navigate(-1)} />
+                  <NormalLink text="Delete course" onClick={handleCourseDelete} />
                 </div>
               </div>
               <QuickNavigation

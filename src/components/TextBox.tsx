@@ -7,6 +7,7 @@ interface TextBoxProperties {
   isPassword?: boolean;
   disabled?: boolean;
   value?: string;
+  autofocus?: boolean;
   onChange?: (text: string) => void;
 }
 
@@ -16,6 +17,7 @@ export default function TextBox({
   isPassword = false,
   value,
   disabled = false,
+  autofocus = false,
   onChange,
 }: TextBoxProperties) {
   const [isTextVisible, setIsTextVisible] = useState(!isPassword);
@@ -27,6 +29,7 @@ export default function TextBox({
         <input
           type={isTextVisible ? "text" : "password"}
           value={value}
+          autoFocus={autofocus}
           placeholder={placeHolder}
           onChange={(e) => onChange && onChange(e.target.value)}
           disabled={disabled}
