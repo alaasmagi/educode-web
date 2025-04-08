@@ -15,16 +15,19 @@ import IconButton from "../components/IconButton";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
-import { GetCoursebyId, GetCoursesByUser } from "../businesslogic/CourseDataFetch";
+import { GetCoursebyId, GetCoursesByUser, GetCourseStatuses } from "../businesslogic/CourseDataFetch";
+import { CourseStatus } from "../models/CourseStatus";
 
 function CoursesView() {
   const [navState, setNavState] = useState<string>("Main");
-  const { status, attendanceId } = useParams();
+  const { status, courseId } = useParams();
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const [availableCourseStatuses, setAvailableCourseStatuses] = useState<CourseStatus[] | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [selectedCourseStatus, setSelectedCourseStatus] = useState<string | null>(null);
   const [editCourse, setEditCourse] = useState<string | null>(null);
@@ -52,14 +55,16 @@ function CoursesView() {
           break;
         case "Details":
           fetchCourseDetails();
+          fetchCourseStatuses();
+          selectCourseStatus(0);
           break;
         case "Edit":
-          fetchAllCoursesByUser();
-          //fetchAttendanceTypes();
+          fetchCourseDetails();
+          fetchCourseStatuses();
           break;
         case "Create":
-          fetchAllCoursesByUser();
-          //fetchAttendanceTypes();
+          fetchCourseDetails();
+          fetchCourseStatuses();
           break;
         default:
           break;
@@ -69,11 +74,11 @@ function CoursesView() {
     };
 
     fetchData();
-  }, [navState, selectedCourseId]);
+  }, [navState, courseId]);
 
   const fetchCourseDetails = async () => {
-    if (selectedCourseId) {
-      const status = await GetCoursebyId(Number(selectedCourseId));
+    if (courseId) {
+      const status = await GetCoursebyId(Number(courseId));
       if (typeof status === "string") {
         setErrorMessage(status);
       } else {
@@ -95,15 +100,16 @@ function CoursesView() {
     const userData = await GetOfflineUserData();
     setLocalData(userData);
   };
-  /* const fetchCourseStatuses = async () => {
-    const response = await CourseStatuses();
+  const fetchCourseStatuses = async () => {
+    const response = await GetCourseStatuses();
 
     if (typeof response === "string") {
       setErrorMessage(t(response));
     } else {
       setAvailableCourseStatuses(response);
     }
-  };*/
+    setTimeout(() => setErrorMessage(null), 3000);
+  };
 
   /*const validateForm = () => {
     if (!selectedCourseId || !selectedAttendanceTypeId || !startTime || !endTime || dates.some((d) => !d.date)) {
@@ -145,6 +151,17 @@ function CoursesView() {
       setTimeout(() => setSuccessMessage(null), 3000);
       setTimeout(() => navigate(`/Attendances`), 3000);
     }
+  };
+
+  const selectCourseStatus = (id: number) => {
+    let status;
+    if (!selectedCourse) {
+      status = availableCourseStatuses?.find((status) => status.id === id)?.status || "Unknown";
+    } else {
+      status =
+        availableCourseStatuses?.find((status) => status.id === selectedCourse.courseValidStatus)?.status || "Unknown";
+    }
+    setSelectedCourseStatus(status);
   };
 
   return (
@@ -199,9 +216,9 @@ function CoursesView() {
               <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
                 <span className="text-2xl font-bold self-start">{"Course details"}</span>
                 <div>
-                  <DataField fieldName="Course name" data="Kasutajaliidesed" />
-                  <DataField fieldName="Course code" data="ITI0209" />
-                  <DataField fieldName="Status" data="Available" />
+                  <DataField fieldName="Course name" data={selectedCourse?.courseName ?? ""} />
+                  <DataField fieldName="Course code" data={selectedCourse?.courseCode ?? ""} />
+                  <DataField fieldName="Status" data={selectedCourseStatus ?? ""} />
                 </div>
                 <div className="flex justify-between">
                   <NormalLink
