@@ -15,12 +15,7 @@ import IconButton from "../components/IconButton";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
-import {
-  AddCourse,
-  GetCoursebyId,
-  GetCoursesByUser,
-  GetCourseStatuses,
-} from "../businesslogic/CourseDataFetch";
+import { AddCourse, GetCoursebyId, GetCoursesByUser, GetCourseStatuses } from "../businesslogic/CourseDataFetch";
 import { CourseStatus } from "../models/CourseStatus";
 
 function CoursesView() {
@@ -31,23 +26,14 @@ function CoursesView() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const [availableCourseStatuses, setAvailableCourseStatuses] = useState<
-    CourseStatus[] | null
-  >(null);
+  const [availableCourseStatuses, setAvailableCourseStatuses] = useState<CourseStatus[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
-  const [selectedCourseName, setSelectedCourseName] = useState<string | null>(
-    null
-  );
-  const [selectedCourseCode, setSelectedCourseCode] = useState<string | null>(
-    null
-  );
-  const [selectedCourseStatus, setSelectedCourseStatus] =
-    useState<CourseStatus | null>(null);
+  const [selectedCourseName, setSelectedCourseName] = useState<string | null>(null);
+  const [selectedCourseCode, setSelectedCourseCode] = useState<string | null>(null);
+  const [selectedCourseStatus, setSelectedCourseStatus] = useState<CourseStatus | null>(null);
   const [editCourse, setEditCourse] = useState<string | null>(null);
-  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(
-    null
-  );
+  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
   const navigate = useNavigate();
@@ -140,7 +126,7 @@ function CoursesView() {
       courseCode: selectedCourseCode ?? "",
       courseValidStatus: selectedCourseStatus?.id ?? 0,
     };
-    console.log(courseData)
+    console.log(courseData);
     const result = await AddCourse(localData?.uniId ?? "", courseData);
 
     if (typeof result === "string") {
@@ -185,17 +171,12 @@ function CoursesView() {
                   onClick={() => navigate(`/Courses/Details/${course.id}`)}
                 />
               ))}
-              <NormalLink
-                text="Add new course"
-                onClick={() => setNavState("Create")}
-              />
+              <NormalLink text="Add new course" onClick={() => setNavState("Create")} />
             </div>
           )}
           {navState === "Edit" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">
-                {"Edit course"}
-              </span>
+              <span className="text-2xl font-bold self-start">{"Edit course"}</span>
 
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <TextBox icon="school-icon" placeHolder="Course name" />
@@ -224,9 +205,7 @@ function CoursesView() {
           )}
           {navState === "Create" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">
-                {"Add course"}
-              </span>
+              <span className="text-2xl font-bold self-start">{"Add course"}</span>
 
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <TextBox
@@ -253,33 +232,24 @@ function CoursesView() {
                   label="course status"
                 />
                 <div className="py-4 flex justify-center">
-                  {successMessage && <SuccessMessage text={t(successMessage)}/>} 
+                  {successMessage && <SuccessMessage text={t(successMessage)} />}
                 </div>
-                  <NormalButton text="Add course" onClick={handleCourseAdd} />
+                <NormalButton text="Add course" onClick={handleCourseAdd} />
               </div>
             </div>
           )}
           {navState === "Details" && (
             <>
               <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-                <span className="text-2xl font-bold self-start">
-                  {"Course details"}
-                </span>
+                <span className="text-2xl font-bold self-start">{"Course details"}</span>
                 <div>
-                  <DataField
-                    fieldName="Course name"
-                    data={selectedCourse?.courseName ?? ""}
-                  />
-                  <DataField
-                    fieldName="Course code"
-                    data={selectedCourse?.courseCode ?? ""}
-                  />
+                  <DataField fieldName="Course name" data={selectedCourse?.courseName ?? ""} />
+                  <DataField fieldName="Course code" data={selectedCourse?.courseCode ?? ""} />
                   <DataField
                     fieldName="Status"
                     data={
-                      availableCourseStatuses?.find(
-                        (status) => status.id === selectedCourse?.courseValidStatus
-                      )?.status ?? ""
+                      availableCourseStatuses?.find((status) => status.id === selectedCourse?.courseValidStatus)
+                        ?.status ?? ""
                     }
                   />
                 </div>
@@ -292,10 +262,7 @@ function CoursesView() {
                     }}
                   />
                   <NormalLink text="Go back" onClick={() => navigate(-1)} />
-                  <NormalLink
-                    text="Delete course"
-                    onClick={handleCourseDelete}
-                  />
+                  <NormalLink text="Delete course" onClick={handleCourseDelete} />
                 </div>
               </div>
               <QuickNavigation
