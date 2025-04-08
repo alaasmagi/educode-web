@@ -59,7 +59,7 @@ export async function AddCourse(uniId:string, courseModel:Course): Promise<boole
       uniId: uniId,
       courseName: courseModel.courseName,
       courseCode: courseModel.courseCode,
-      status: courseModel.status,
+      status: courseModel.courseValidStatus,
       creator: "educode-webapp",
     },
     {
