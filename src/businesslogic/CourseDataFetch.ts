@@ -50,3 +50,28 @@ export async function GetCourseStatuses(): Promise<CourseStatus[] | string> {
   }
   return response.data.error ?? "internet-connection-error";
 }
+
+export async function AddCourse(uniId:string, courseModel:Course): Promise<boolean | string> {
+  const token = await GetUserToken();
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_URL}/Course/Add`,
+    {
+      uniId: uniId,
+      courseName: courseModel.courseName,
+      courseCode: courseModel.courseCode,
+      status: courseModel.status,
+      creator: "educode-webapp",
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      validateStatus: (status) => status < 500,
+    }
+  );
+  if (response.status == 200) {
+    return true;
+  }
+  return response.data.error ?? "internet-connection-error";
+}

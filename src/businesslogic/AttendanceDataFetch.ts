@@ -270,3 +270,31 @@ export async function GetAttendanceChecksByAttendanceId(attendanceId: number): P
 
   return response.data.error ?? "internet-connection-error";
 }
+
+export async function EditAttendance(attendance: CourseAttendance): Promise<boolean | string> {
+  const token = await GetUserToken();
+  const response = await axios.patch(
+    `${import.meta.env.VITE_API_URL}/Attendance/Edit`,
+    {
+      attendanceId: attendance.attendanceId,
+      courseId: attendance.courseId,
+      attendanceTypeId: attendance.attendanceTypeId,
+      startTime: attendance.startTime,
+      endTime: attendance.endTime,
+      attendanceDates: attendance.date,
+      creator: "educode-webapp",
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      validateStatus: (status) => status < 500,
+    }
+  );
+  if (response.status == 200) {
+    return true;
+  }
+
+  return response.data.error ?? "internet-connection-error";
+}

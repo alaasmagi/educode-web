@@ -1,5 +1,5 @@
 interface Course {
-  id: number;
+  id?: number;
   courseCode: string;
   courseName: string;
   courseValidStatus: number;
