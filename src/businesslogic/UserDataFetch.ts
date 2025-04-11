@@ -2,7 +2,8 @@ import CreateUserModel from "../models/CreateUserModel";
 import OnlineUserModel from "../models/OnlineUserModel";
 import LocalUserData from "../models/LocalUserDataModel";
 import axios from "axios";
-import { GetUserToken, SaveOfflineUserData, SaveUserToken } from "./UserDataOffline";
+import { GetUserToken, SaveOfflineUserData, SaveTempToken, SaveUserToken } from "./UserDataOffline";
+import VerifyOTPModel from "../models/VerifyOTPModel";
 
 export async function TestConnection(): Promise<boolean> {
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/User/TestConnection`);
@@ -77,5 +78,51 @@ export async function FetchAndSaveUserDataByUniId(uniId: string): Promise<boolea
     SaveOfflineUserData(localData);
     return true;
   }
+  return response.data.error ?? "internet-connection-error";
+}
+
+
+export async function RequestOTP(uniId: string, fullName?: string): Promise<boolean | string> {
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_URL}/Auth/RequestOTP`,
+    {
+      uniId: uniId,
+      fullName: fullName ?? null,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      validateStatus: (status) => status < 500,
+    }
+  );
+
+  if (response.status === 200) {
+    return true;
+  }
+
+  return response.data.error ?? "internet-connection-error";
+}
+
+export async function VerifyOTP(model: VerifyOTPModel): Promise<boolean | string> {
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_URL}/Auth/VerifyOTP`,
+    {
+      uniId: model.uniId,
+      otp: model.otp,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      validateStatus: (status) => status < 500,
+    }
+  );
+
+  if (response.status === 200) {
+    response.data.token && SaveTempToken(response.data.token);
+    return true;
+  }
+
   return response.data.error ?? "internet-connection-error";
 }

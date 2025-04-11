@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Icons } from "./Icons"; // Assuming you have an Icons object
+import { Icons } from "./Icons";
 
 interface TextBoxProperties {
   placeHolder: string;
@@ -25,7 +25,7 @@ export default function TextBox({
   return (
     <div className="flex flex-col w-full">
       <div className="flex flex-row w-max-screen items-center gap-1.5">
-        <img src={Icons[icon]} className="h-7" alt="User Icon" />
+        <img src={Icons[icon]} className="h-7" alt={`${icon}-Icon`} />
         <input
           type={isTextVisible ? "text" : "password"}
           value={value}

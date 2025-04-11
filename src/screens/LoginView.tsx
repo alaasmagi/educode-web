@@ -1,6 +1,6 @@
 import "../App.css";
 import NormalButton from "../components/NormalButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TextBox from "../components/TextBox";
 import NormalLink from "../components/Link";
 import ErrorMessage from "../components/ErrorMessage";
@@ -10,8 +10,10 @@ import { FetchAndSaveUserDataByUniId, UserLogin } from "../businesslogic/UserDat
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import { useTranslation } from "react-i18next";
 import LanguageSwitch from "../components/LanguageSwitch";
+import SuccessMessage from "../components/SuccessMessage";
 
 function LoginView() {
+  const { successMessage } = useParams() ?? false;
   const [uniIdInput, setUniIdInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -61,13 +63,14 @@ function LoginView() {
               isPassword={true}
             />
             {errorMessage && <ErrorMessage text={errorMessage} />}
+            {successMessage && <SuccessMessage text={t("account-creation")} />}
             <div className="flex flex-col gap-0.5">
               <div className="flex justify-end pr-2">
                 <NormalLink text={t("forgot-password")} onClick={() => console.log("LINK PRESSED")} />
               </div>
               <NormalButton text={"Log in"} onClick={handleLogin} />
               <div className="flex flex-col gap-4">
-                <NormalLink text={t("register-now")} onClick={() => console.log("LINK PRESSED")} />
+                <NormalLink text={t("register-now")} onClick={() => navigate("/CreateAccount")} />
                 <LanguageSwitch linkStyle={true} />
               </div>
             </div>

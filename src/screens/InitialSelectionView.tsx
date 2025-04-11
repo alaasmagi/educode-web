@@ -14,7 +14,7 @@ function InitialSelectionView() {
           <img src="../logos/splash-logo.png" className="w-xl" />
           <div className="flex flex-col gap-3.5">
             <NormalButton text={t("log-in")} onClick={() => navigate("/Login")} />
-            <NormalButton text={t("register-as-teacher")} onClick={() => navigate("/Home")} />
+            <NormalButton text={t("register-as-teacher")} onClick={() => navigate("/CreateAccount")} />
             <LanguageSwitch linkStyle={true} />
           </div>
         </div>

@@ -6,13 +6,15 @@ import CoursesView from "./screens/CoursesView";
 import StatisticsView from "./screens/StatisticsView";
 import SettingsView from "./screens/SettingsView";
 import LoginView from "./screens/LoginView";
+import CreateAccountView from "./screens/CreateAccountView";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<InitialSelectionView />} />
-        <Route path="/Login" element={<LoginView />} />
+        <Route path="/Login/:successMessage?" element={<LoginView />} />
+        <Route path="/CreateAccount" element={<CreateAccountView />} />
         <Route path="/Home" element={<HomeView />} />
         <Route path="/Courses/:status?/:courseId?" element={<CoursesView />} />
         <Route
