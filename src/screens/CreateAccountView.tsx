@@ -1,199 +1,186 @@
-import React, { useState, useEffect } from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
-import { useTranslation } from "react-i18next";
-import NavigationProps from "../../types";
-import globalStyles from "../styles/GlobalStyles";
-import TextBox from "../components/TextBox";
+import "../App.css";
 import NormalButton from "../components/NormalButton";
-import FormHeader from "../layout/FormHeader";
-import Greeting from "../components/Greeting";
-import NormalLink from "../components/NormalLink";
-import { CreateUserAccount } from "../businesslogic/UserDataFetch";
+import { useNavigate } from "react-router-dom";
+import TextBox from "../components/TextBox";
+import NormalLink from "../components/Link";
 import ErrorMessage from "../components/ErrorMessage";
-import KeyboardVisibilityHandler from "../../hooks/KeyboardVisibilityHandler";
-import NormalMessage from "../components/NormalMessage";
-import DataText from "../components/DataText";
-import UnderlineText from "../components/Link";
-import CreateUserModel from "../models/CreateUserModel";
-import {
-  preventScreenCaptureAsync,
-  allowScreenCaptureAsync,
-} from "expo-screen-capture";
+import { useCallback, useEffect, useState } from "react";
+import { dismissKeyboard } from "../hooks/DismissKeyboard";
+import { FetchAndSaveUserDataByUniId, UserLogin } from "../businesslogic/UserDataFetch";
+import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { useTranslation } from "react-i18next";
+import LanguageSwitch from "../components/LanguageSwitch";
 import { RegexFilters } from "../helpers/RegexFilters";
+import NormalMessage from "../components/NormalMessage";
+import VerifyOTPModel from "../models/VerifyOTPModel";
 
-function CreateAccountView({ navigation }: NavigationProps) {
-  const [uniId, setUniId] = useState<string>("");
-  const [studentCode, setStudentCode] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [passwordAgain, setPasswordAgain] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
+function CreateAccountView() {
+  const [stepNr, setStepNr] = useState(1);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [uniIdInput, setUniIdInput] = useState("");
+  const [emailCode, setEmailCode] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordAgain, setPasswordAgain] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
 
+  const navigate = useNavigate();
   const { t } = useTranslation();
-  const isKeyboardVisible = KeyboardVisibilityHandler();
-  const [stepNr, setStepNr] = useState(1);
+
+  const showTemporaryError = useCallback((message: string) => {
+    setErrorMessage(message);
+    const timeout = setTimeout(() => setErrorMessage(null), 3000);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const isNameFormValid = () => firstName !== "" && lastName !== "";
+  const isStudentIDFormValid = () => RegexFilters.uniId.test(uniId);
+  const isPasswordFormValid = () => password.length >= 8 && password === passwordAgain;
+
   useEffect(() => {
-    if (!isNameFormValid()) {
-      setNormalMessage(t("all-fields-required-message"));
-    } else {
-      setNormalMessage("");
-    }
+    setNormalMessage(!isNameFormValid() ? t("all-fields-required-message") : "");
   }, [firstName, lastName]);
 
   useEffect(() => {
-    preventScreenCaptureAsync();
+    setNormalMessage(!isStudentIDFormValid() ? t("all-fields-required-message") : "");
+  }, [uniIdInput]);
 
-    return () => {
-      allowScreenCaptureAsync();
-    };
-  }, []);
-
-  const isStudentIDFormValid = () =>
-    (uniId !== "" || RegexFilters.uniId.test(uniId)) &&
-    (studentCode !== "" || RegexFilters.studentCode.test(studentCode));
-  useEffect(() => {
-    if (!isStudentIDFormValid()) {
-      setNormalMessage(t("all-fields-required-message"));
-    } else {
-      setNormalMessage("");
-    }
-  }, [uniId, studentCode]);
-
-  const isPasswordFormValid = () =>
-    password.length >= 8 && password === passwordAgain;
   useEffect(() => {
     if (password.length < 8 && password !== "") {
       setNormalMessage(t("password-length-message"));
-    } else if (
-      !isPasswordFormValid() &&
-      password !== "" &&
-      passwordAgain !== ""
-    ) {
+    } else if (!isPasswordFormValid() && password && passwordAgain) {
       setNormalMessage(t("password-match-message"));
     } else {
       setNormalMessage("");
     }
   }, [password, passwordAgain]);
 
-  const handleRegister = async () => {
-    Keyboard.dismiss();
-    let userData: CreateUserModel = {
-      uniId: uniId,
-      studentCode: studentCode,
-      fullName: firstName + " " + lastName,
-      password: password,
-    };
-
-    if (await CreateUserAccount(userData)) {
-      const successMessage = t("create-account-success");
-      navigation.navigate("LoginView", { successMessage });
+  const handleOTPRequest = useCallback(async () => {
+    const status = await Req(uniIdInput, firstName + lastName);
+    if (status === true) {
+      setStepNr(3);
     } else {
-      setErrorMessage(t("account-create-error"));
+      showTemporaryError(t(String(status)));
     }
-  };
+  }, [uniIdInput, firstName, lastName, t, showTemporaryError]);
 
-  return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView style={globalStyles.anrdoidSafeArea}>
-        <View style={styles.headerContainer}>
-          <FormHeader />
-          {!isKeyboardVisible && <Greeting text={t("welcome")} />}
-        </View>
-        {stepNr === 1 && (
+  const handleOTPVerification = useCallback(async () => {
+    const otpData: VerifyOTPModel = { uniIdInput, otp: emailCode };
+    const status = await VerifyOTP(otpData);
+    if (status === true) {
+      setStepNr(4);
+    } else {
+      showTemporaryError(t(String(status)));
+    }
+  }, [uniId, emailCode, t, showTemporaryError]);
+
+  const handleRegister = useCallback(async () => {
+    const userData: CreateUserModel = {
+      uniIdInput,
+      fullName: `${firstName} ${lastName}`,
+      password,
+    };
+    const status = await CreateAccountView(userData);
+    if (status === true) {
+      navigate("LoginView", { successMessage: t("create-account-success") });
+    } else {
+      showTemporaryError(t(String(status)));
+    }
+  }, [uniIdInput, firstName, lastName, password, navigate, t, showTemporaryError]);
+
+
+  const renderStep = () => {
+    const sharedMessage =  normalMessage || errorMessage;
+    const messageComponent = errorMessage ? (
+      <ErrorMessage text={errorMessage} />
+    ) : (
+      <NormalMessage text={normalMessage ?? ""} />
+    );
+
+    switch (stepNr) {
+      case 1:
+        return (
           <>
             <View style={styles.textBoxContainer}>
               <View style={styles.textBoxes}>
                 <TextBox
                   iconName="person-icon"
-                  placeHolder={t("first-name") + " *"}
-                  onChangeText={setFirstName}
+                  placeHolder={t("first-name")}
                   value={firstName}
+                  onChangeText={(text) => setFirstName(text.trim())}
                 />
                 <TextBox
                   iconName="person-icon"
-                  placeHolder={t("last-name") + " *"}
-                  onChangeText={setLastName}
+                  placeHolder={t("last-name")}
                   value={lastName}
+                  onChangeText={(text) => setLastName(text.trim())}
                 />
               </View>
-              {!isKeyboardVisible && normalMessage && (
-                <View style={styles.errorContainer}>
-                  <NormalMessage text={normalMessage} />
-                </View>
-              )}
+              {sharedMessage && <View style={styles.errorContainer}>{messageComponent}</View>}
             </View>
             <View style={styles.buttonContainer}>
-              <NormalButton
-                text={t("continue")}
-                onPress={() => {
-                  setStepNr(2);
-                }}
-                disabled={!isNameFormValid()}
-              />
-              <NormalLink
-                text={t("already-registered")}
-                onPress={() => navigation.navigate("LoginView")}
-              />
+              <NormalButton text={t("continue")} onPress={() => setStepNr(2)} disabled={!isNameFormValid()} />
+              <NormalLink text={t("already-registered")} onPress={() => navigation.navigate("LoginView")} />
             </View>
           </>
-        )}
-        {stepNr === 2 && (
+        );
+      case 2:
+        return (
           <>
             <View style={styles.textBoxContainer}>
               <View style={styles.textBoxes}>
                 <TextBox
                   iconName="person-icon"
-                  placeHolder="Uni-ID *"
-                  onChangeText={setUniId}
-                  value={uniId}
+                  placeHolder="Uni-ID"
                   autoCapitalize="none"
+                  value={uniId}
+                  onChangeText={(text) => setUniId(text.trim())}
                 />
                 <TextBox
                   iconName="person-icon"
-                  placeHolder={t("student-code") + " *"}
-                  onChangeText={setStudentCode}
-                  value={studentCode}
+                  placeHolder={t("student-code")}
                   autoCapitalize="characters"
+                  value={studentCode}
+                  onChangeText={(text) => setStudentCode(text.trim())}
                 />
               </View>
-              {!isKeyboardVisible && normalMessage && (
-                <View style={styles.errorContainer}>
-                  <NormalMessage text={normalMessage} />
-                </View>
-              )}
+              {sharedMessage && <View style={styles.errorContainer}>{messageComponent}</View>}
             </View>
             <View style={styles.buttonContainer}>
-              <NormalLink
-                text={t("something-wrong-back")}
-                onPress={() => {
-                  setStepNr(1);
-                }}
-              />
-              <NormalButton
-                text={t("continue")}
-                onPress={() => {
-                  setStepNr(3);
-                }}
-                disabled={uniId == "" || studentCode == ""}
-              />
-              <NormalLink
-                text={t("already-registered")}
-                onPress={() => navigation.navigate("LoginView")}
-              />
+              <NormalLink text={t("something-wrong-back")} onPress={() => setStepNr(1)} />
+              <NormalButton text={t("continue")} onPress={handleOTPRequest} disabled={!isStudentIDFormValid()} />
+              <NormalLink text={t("already-registered")} onPress={() => navigation.navigate("LoginView")} />
             </View>
           </>
-        )}
-        {stepNr === 3 && (
+        );
+      case 3:
+        return (
+          <>
+            <View style={styles.textBoxContainer}>
+              <UnderlineText text={`${t("one-time-key-prompt")} ${uniId}@taltech.ee`} />
+              <View style={styles.textBoxes}>
+                <TextBox
+                  iconName="pincode-icon"
+                  placeHolder={t("one-time-key")}
+                  value={emailCode}
+                  onChangeText={(text) => setEmailCode(text.trim())}
+                />
+              </View>
+              {sharedMessage && <View style={styles.errorContainer}>{messageComponent}</View>}
+            </View>
+            <View style={styles.buttonContainer}>
+              <NormalButton
+                text={t("continue")}
+                onPress={handleOTPVerification}
+                disabled={!RegexFilters.defaultId.test(emailCode)}
+              />
+              {!isKeyboardVisible && <NormalLink text={t("something-wrong-back")} onPress={() => setStepNr(2)} />}
+            </View>
+          </>
+        );
+      case 4:
+        return (
           <>
             <View style={styles.textBoxContainer}>
               <View style={styles.textBoxes}>
@@ -201,122 +188,84 @@ function CreateAccountView({ navigation }: NavigationProps) {
                   iconName="lock-icon"
                   placeHolder={t("password")}
                   isPassword
-                  onChangeText={setPassword}
                   value={password}
+                  onChangeText={(text) => setPassword(text.trim())}
                 />
                 <TextBox
                   iconName="lock-icon"
                   placeHolder={t("repeat-password")}
                   isPassword
-                  onChangeText={setPasswordAgain}
                   value={passwordAgain}
+                  onChangeText={(text) => setPasswordAgain(text.trim())}
                 />
               </View>
-              {!isKeyboardVisible && normalMessage && (
-                <View style={styles.errorContainer}>
-                  <NormalMessage text={normalMessage} />
-                </View>
-              )}
+              {sharedMessage && <View style={styles.errorContainer}>{messageComponent}</View>}
             </View>
             <View style={styles.buttonContainer}>
-              <NormalLink
-                text={t("something-wrong-back")}
-                onPress={() => {
-                  setStepNr(2);
-                }}
-              />
-              <NormalButton
-                text={t("continue")}
-                onPress={() => {
-                  setStepNr(4);
-                }}
-                disabled={!isPasswordFormValid()}
-              />
-              <NormalLink
-                text={t("already-registered")}
-                onPress={() => navigation.navigate("LoginView")}
-              />
+              <NormalLink text={t("something-wrong-back")} onPress={() => setStepNr(3)} />
+              <NormalButton text={t("continue")} onPress={() => setStepNr(5)} disabled={!isPasswordFormValid()} />
+              <NormalLink text={t("already-registered")} onPress={() => navigation.navigate("LoginView")} />
             </View>
           </>
-        )}
-        {stepNr === 4 && (
+        );
+      case 5:
+        return (
           <>
             <View style={styles.textBoxContainer}>
-              <UnderlineText text="Verify your details:" />
+              <UnderlineText text={t("verify-details")} />
               <View style={styles.data}>
-                <DataText
-                  iconName="person-icon"
-                  text={firstName + " " + lastName}
-                />
+                <DataText iconName="person-icon" text={`${firstName} ${lastName}`} />
                 <DataText iconName="person-icon" text={uniId} />
                 <DataText iconName="person-icon" text={studentCode} />
               </View>
-              {!isKeyboardVisible && errorMessage && (
-                <View style={styles.errorContainer}>
-                  <ErrorMessage text={errorMessage} />
-                </View>
-              )}
+              {sharedMessage && <View style={styles.errorContainer}>{messageComponent}</View>}
             </View>
             <View style={styles.buttonContainer}>
-              <NormalLink
-                text={t("something-wrong-back")}
-                onPress={() => {
-                  setStepNr(2);
-                }}
-              />
-              <NormalButton
-                text={t("create-account")}
-                onPress={handleRegister}
-              />
-              <NormalLink
-                text={t("already-registered")}
-                onPress={() => navigation.navigate("LoginView")}
-              />
+              <NormalLink text={t("something-wrong-back")} onPress={() => setStepNr(4)} />
+              <NormalButton text={t("create-account")} onPress={handleRegister} />
+              <NormalLink text={t("already-registered")} onPress={() => navigation.navigate("LoginView")} />
             </View>
           </>
-        )}
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
-  );
+        );
+    }
+  };
+  
+    return (
+      <>
+        <div className="max-h-screen max-w-screen flex items-center justify-center gap-10">
+          <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
+            <img src="../logos/splash-logo.png" className="md:w-xl" />
+            <div className="flex flex-col gap-3.5">
+              <TextBox
+                icon="person-icon"
+                placeHolder={"UniID"}
+                value={uniIdInput}
+                onChange={setUniIdInput}
+                autofocus={true}
+              />
+              <TextBox
+                icon="lock-icon"
+                placeHolder={t("password")}
+                value={passwordInput}
+                onChange={setPasswordInput}
+                isPassword={true}
+              />
+              {errorMessage && <ErrorMessage text={errorMessage} />}
+              <div className="flex flex-col gap-0.5">
+                <div className="flex justify-end pr-2">
+                  <NormalLink text={t("forgot-password")} onClick={() => console.log("LINK PRESSED")} />
+                </div>
+                <NormalButton text={"Log in"} onClick={handleLogin} />
+                <div className="flex flex-col gap-4">
+                  <NormalLink text={t("register-now")} onClick={() => console.log("LINK PRESSED")} />
+                  <LanguageSwitch linkStyle={true} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
 }
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    flex: 2.2,
-    gap: 70,
-    justifyContent: "flex-end",
-  },
-  textBoxContainer: {
-    flex: 2,
-    justifyContent: "center",
-  },
-  data: {
-    alignSelf: "center",
-    width: "80%",
-    borderWidth: 2,
-    borderColor: "#BCBCBD",
-    borderRadius: 20,
-    gap: 25,
-    padding: 10,
-  },
-  textBoxes: {
-    gap: 25,
-    alignItems: "center",
-  },
-  forgotPasswordContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    width: "90%",
-  },
-  errorContainer: {
-    marginTop: 10,
-  },
-  buttonContainer: {
-    flex: 1.1,
-    gap: 3,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
-
 export default CreateAccountView;

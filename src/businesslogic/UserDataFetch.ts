@@ -37,7 +37,6 @@ export async function CreateUserAccount(model: CreateUserModel): Promise<boolean
     {
       fullName: model.fullName,
       uniId: model.uniId,
-      studentCode: model.studentCode,
       password: model.password,
       userRole: "Teacher",
       creator: "educode-webapp",
