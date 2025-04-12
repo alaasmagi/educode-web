@@ -13,7 +13,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<InitialSelectionView />} />
-        <Route path="/Login/:successMessage?" element={<LoginView />} />
+        <Route path="/Login/:message?" element={<LoginView />} />
         <Route path="/CreateAccount" element={<CreateAccountView />} />
         <Route path="/Home" element={<HomeView />} />
         <Route path="/Courses/:status?/:courseId?" element={<CoursesView />} />

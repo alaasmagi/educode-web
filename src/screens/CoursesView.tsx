@@ -17,6 +17,7 @@ import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
 import { AddCourse, GetCoursebyId, GetCoursesByUser, GetCourseStatuses } from "../businesslogic/CourseDataFetch";
 import { CourseStatus } from "../models/CourseStatus";
+import ErrorMessage from "../components/ErrorMessage";
 
 function CoursesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -128,7 +129,6 @@ function CoursesView() {
     };
     console.log(courseData);
     const result = await AddCourse(localData?.uniId ?? "", courseData);
-
     if (typeof result === "string") {
       setErrorMessage(t(String(result)));
       setTimeout(() => setErrorMessage(null), 3000);
@@ -233,6 +233,7 @@ function CoursesView() {
                 />
                 <div className="py-4 flex justify-center">
                   {successMessage && <SuccessMessage text={t(successMessage)} />}
+                  {errorMessage && <ErrorMessage text={t(errorMessage)} />}
                 </div>
                 <NormalButton text="Add course" onClick={handleCourseAdd} />
               </div>

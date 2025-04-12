@@ -10,6 +10,7 @@
     "start": "vite"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/vite": "^4.0.14",
     "@types/luxon": "^3.4.2",
     "axios": "^1.8.4",

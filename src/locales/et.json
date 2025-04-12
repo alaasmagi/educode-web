@@ -97,5 +97,8 @@
   "date": "Kuupäev",
   "time": "Kellaaeg",
   "date-time": "Toimumise aeg",
-  "view-details": "Kuva üksikasjad"
+  "view-details": "Kuva üksikasjad",
+  "current-attendance-not-found": "Käimasolev ainetund puudub",
+  "workplace": "Töökoht",
+  "student": "Üliõpilane"
 }

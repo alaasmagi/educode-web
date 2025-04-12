@@ -97,5 +97,9 @@
   "date": "Date",
   "time": "Time",
   "date-time": "Time of occurrence",
-  "view-details": "View details"
+  "view-details": "View details",
+  "current-attendance-not-found": "No current attendances",
+  "workplace": "Workplace",
+  "student": "Student"
+
 }

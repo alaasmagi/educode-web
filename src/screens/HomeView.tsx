@@ -57,7 +57,9 @@ function HomeView() {
     const status = localData != null ? await GetCurrentAttendance(String(localData.uniId)) : "Local data not found";
     if (typeof status === "string") {
       setCurrentAttendanceData(null);
+      setNormalMessage(t(status));
     } else {
+      setNormalMessage(null);
       const studentStatus = await GetStudentCountByAttendanceId(Number(status.attendanceId));
 
       if (typeof status === "string") {

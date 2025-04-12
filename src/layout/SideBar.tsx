@@ -14,8 +14,8 @@ export default function SideBar() {
   const location = useLocation();
 
   useEffect(() => {
-    setSelected(location.pathname.slice(1));
-  }, []);
+    setSelected(location.pathname);
+  }, [location.pathname]);
 
   const navItems = [
     { label: t("home"), path: "/Home" },

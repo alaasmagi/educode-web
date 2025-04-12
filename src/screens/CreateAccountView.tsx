@@ -93,7 +93,7 @@ function CreateAccountView() {
     };
     const status = await CreateUserAccount(userData);
     if (typeof status !== "string") {
-      navigate("/Login");
+      navigate("/Login/create-account-success");
     } else {
       showTemporaryError(t(String(status)));
     }

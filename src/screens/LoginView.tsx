@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import TextBox from "../components/TextBox";
 import NormalLink from "../components/Link";
 import ErrorMessage from "../components/ErrorMessage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { dismissKeyboard } from "../hooks/DismissKeyboard";
 import { FetchAndSaveUserDataByUniId, UserLogin } from "../businesslogic/UserDataFetch";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
@@ -13,13 +13,19 @@ import LanguageSwitch from "../components/LanguageSwitch";
 import SuccessMessage from "../components/SuccessMessage";
 
 function LoginView() {
-  const { successMessage } = useParams() ?? false;
+  const { message } = useParams() ?? null;
   const [uniIdInput, setUniIdInput] = useState<string>("");
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    message && setSuccessMessage(String(message)); 
+    setTimeout (() => setSuccessMessage(null), 3000); 
+  }, []);
 
   const handleLogin = async () => {
     dismissKeyboard();
@@ -63,7 +69,7 @@ function LoginView() {
               isPassword={true}
             />
             {errorMessage && <ErrorMessage text={errorMessage} />}
-            {successMessage && <SuccessMessage text={t("account-creation")} />}
+            {successMessage && <SuccessMessage text={t(successMessage)} />}
             <div className="flex flex-col gap-0.5">
               <div className="flex justify-end pr-2">
                 <NormalLink text={t("forgot-password")} onClick={() => console.log("LINK PRESSED")} />
