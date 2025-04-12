@@ -15,7 +15,7 @@ import IconButton from "../components/IconButton";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
-import { AddCourse, GetCoursebyId, GetCoursesByUser, GetCourseStatuses } from "../businesslogic/CourseDataFetch";
+import { AddCourse, DeleteCourse, GetCoursebyId, GetCoursesByUser, GetCourseStatuses } from "../businesslogic/CourseDataFetch";
 import { CourseStatus } from "../models/CourseStatus";
 import ErrorMessage from "../components/ErrorMessage";
 
@@ -139,15 +139,15 @@ function CoursesView() {
     }
   };
   const handleCourseDelete = async () => {
-    //const status = DeleteCourse(Number(attendanceId));
+    const status = DeleteCourse(Number(courseId));
 
     if (typeof status === "string") {
       setErrorMessage(t(String(status)));
       setTimeout(() => setErrorMessage(null), 3000);
     } else {
-      setSuccessMessage(t("Attendances deleted successfully"));
+      setSuccessMessage(t("Course deleted successfully"));
       setTimeout(() => setSuccessMessage(null), 3000);
-      setTimeout(() => navigate(`/Attendances`), 3000);
+      setTimeout(() => navigate(`/Courses`), 3000);
     }
   };
 
@@ -158,10 +158,9 @@ function CoursesView() {
         <div className="flex flex-col gap-5">
           {navState === "Main" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-              <div className="flex flex-row w-full justify-between items-center gap-3">
-                <TextBox icon="search-icon" placeHolder="Course name or code" />
-                <IconButton icon="search-icon" onClick={console.log} />
-              </div>
+              <span className="text-2xl font-bold self-start">
+                {"All courses"}
+              </span>
               {availableCourses?.map((course) => (
                 <ContainerCardSmall
                   key={course.id}
@@ -206,7 +205,6 @@ function CoursesView() {
           {navState === "Create" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
               <span className="text-2xl font-bold self-start">{"Add course"}</span>
-
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <TextBox
                   icon="school-icon"

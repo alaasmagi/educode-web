@@ -8,17 +8,13 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
+import StudentCountModel from "../models/StudentCountModel";
 
-const data = [
-  { attendancedate: "Jan", Students: 20 },
-  { attendancedate: "Feb", Students: 20 },
-  { attendancedate: "Mar", Students: 10 },
-  { attendancedate: "Apr", Students: 40 },
-  { attendancedate: "May", Students: 30 },
-  { attendancedate: "May", Students: 180 },
-];
+interface StatisticChartProperties {
+  data: StudentCountModel[];
+}
 
-const StatisticChart = () => {
+const StatisticChart: React.FC<StatisticChartProperties> = ({ data }) => {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <BarChart
@@ -26,10 +22,10 @@ const StatisticChart = () => {
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="attendancedate" />
+        <XAxis dataKey="attendanceDate" />
         <YAxis />
         <Tooltip />
-        <Bar dataKey="Students" fill="#4492EA" barSize={50} />
+        <Bar dataKey="studentCount" fill="#4492EA" barSize={50} />
       </BarChart>
     </ResponsiveContainer>
   );
