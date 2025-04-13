@@ -15,7 +15,7 @@ function InitialSelectionView() {
 
   useEffect(() => {
       fetchUserData();
-        message && setSuccessMessage(String(message)); 
+        message && setSuccessMessage(t(String(message))); 
         setTimeout (() => setSuccessMessage(null), 3000); 
     }, []);
   

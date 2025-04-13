@@ -40,7 +40,6 @@ function CreateAccountView() {
   }, []);
 
   const isNameFormValid = () => firstName !== "" && lastName !== "";
-  const isStudentIDFormValid = () => true; //RegexFilters.uniId.test(uniIdInput);
   const isPasswordFormValid = () =>
     password.length >= 8 && password === passwordAgain;
 
@@ -49,12 +48,6 @@ function CreateAccountView() {
       !isNameFormValid() ? t("all-fields-required-message") : ""
     );
   }, [firstName, lastName]);
-
-  useEffect(() => {
-    setNormalMessage(
-      !isStudentIDFormValid() ? t("all-fields-required-message") : ""
-    );
-  }, [uniIdInput]);
 
   useEffect(() => {
     if (password.length < 8 && password !== "") {
@@ -170,7 +163,6 @@ function CreateAccountView() {
               <NormalButton
                 text={t("continue")}
                 onClick={handleOTPRequest}
-                isDisabled={!isStudentIDFormValid()}
               />
               <div className="flex flex-col gap-4">
                 <NormalLink

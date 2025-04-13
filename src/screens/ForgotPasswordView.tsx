@@ -40,12 +40,11 @@ function ForgotPasswordView() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const isStudentIDFormValid = () => 1; //RegexFilters.uniId.test(uniId);
   const isPasswordFormValid = () =>
     password.length >= 8 && password === passwordAgain;
 
   useEffect(() => {
-    if (!isStudentIDFormValid() && uniId !== "") {
+    if (uniId !== "") {
       setNormalMessage(t("all-fields-required-message"));
     } else {
       setNormalMessage("");
@@ -74,22 +73,22 @@ function ForgotPasswordView() {
   const handleOTPVerification = useCallback(async () => {
     const otpData: VerifyOTPModel = { uniId, otp: emailCode };
     const status = await VerifyOTP(otpData);
-    if (status) {
+    if (typeof(status) !== "string") {
       setStepNr(3);
     } else {
-      showTemporaryError(t("wrong-otp"));
+      showTemporaryError(t(status));
     }
   }, [uniId, emailCode, t, showTemporaryError]);
 
   const handlePasswordChange = useCallback(async () => {
     const model: ChangePasswordModel = { uniId, newPassword: password };
     const status = await ChangeUserPassword(model);
-    if (status) {
+    if (typeof(status) !== "string") {
       navigate("/Login", {
         state: { successMessage: t("password-change-success") },
       });
     } else {
-      showTemporaryError(t("account-create-error"));
+      showTemporaryError(t(status));
     }
   }, [uniId, password, t, navigate, showTemporaryError]);
 
@@ -120,7 +119,6 @@ function ForgotPasswordView() {
                 <NormalButton
                   text={t("continue")}
                   onClick={handleOTPRequest}
-                  isDisabled={!isStudentIDFormValid()}
                 />
                 <div className="flex flex-col gap-4">
                   <NormalLink

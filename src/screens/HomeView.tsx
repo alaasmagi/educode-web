@@ -123,8 +123,8 @@ function HomeView() {
             <span className="text-2xl font-bold self-start">{t("ongoing-attendance")}</span>
             {currentAttendanceData && (
               <div className="flex flex-col gap-2 items-start">
-                <DataField fieldName={t("course-name")} data={currentAttendanceData.courseName} />
-                <DataField fieldName={t("course-code")} data={currentAttendanceData.courseCode} />
+                <DataField fieldName={t("course-name")} data={String(currentAttendanceData.courseName)} />
+                <DataField fieldName={t("course-code")} data={String(currentAttendanceData.courseCode)} />
                 <DataField fieldName={t("no-of-students")} data={String(currentStudentCount)} />
                 <NormalLink
                   text={t("view-attendance-details")}

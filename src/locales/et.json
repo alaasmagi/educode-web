@@ -174,5 +174,6 @@
   "attendance-edit-success": "Ainetund edukalt muudetud",
   "student-removed-successfully": "Üliõpilane edukalt eemaldatud",
   "no-students-in-this-attendance": "Selles ainetunnis ei ole õpilasi",
-  "attendance-add-success": "Ainetund edukalt lisatud"
+  "attendance-add-success": "Ainetund edukalt lisatud",
+  "log-out-success": "Oled edukalt väljalogitud"
 }

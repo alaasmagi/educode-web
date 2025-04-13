@@ -174,5 +174,6 @@
   "attendance-edit-success": "Attendance edited successfully",
   "student-removed-success": "Student removed successfully",
   "no-students-in-this-attendance": "This attendance has no students",
-  "attendance-add-success": "Attendance added successfully"
+  "attendance-add-success": "Attendance added successfully",
+  "log-out-success": "Logged out successfully"
 }
