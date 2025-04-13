@@ -11,7 +11,6 @@ import QuickNavigation from "../layout/QuickNavigation";
 import { useNavigate, useParams } from "react-router-dom";
 import SuccessMessage from "../components/SuccessMessage";
 import { useTranslation } from "react-i18next";
-import IconButton from "../components/IconButton";
 import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
@@ -377,11 +376,11 @@ function CoursesView() {
               <QuickNavigation
                 quickNavItemA={{
                   label: t("add-new-attendance"),
-                  onClick: () => navigate("/Statistics"),
+                  onClick: () => navigate("/Attendances/Create"),
                 }}
                 quickNavItemB={{
                   label: t("view-statistics"),
-                  onClick: () => navigate("/Statistics"),
+                  onClick: () => navigate(`Statistics/View/${courseId}`),
                 }}
               />
             </>

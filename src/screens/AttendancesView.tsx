@@ -220,7 +220,7 @@ function AttendancesView() {
 
   const deleteAttendanceCheck = async (attendanceCheckId: number) => {
     const status = await DeleteAttendanceCheck(attendanceCheckId);
-  
+
     if (typeof status === "string") {
       setErrorMessage(t(String(status)));
       setTimeout(() => setErrorMessage(null), 3000);
@@ -554,7 +554,7 @@ function AttendancesView() {
               <QuickNavigation
                 quickNavItemA={{
                   label: t("add-new-attendance"),
-                  onClick: () => navigate("/Statistics"),
+                  onClick: () => navigate("/Attendance/Add"),
                 }}
                 quickNavItemB={{
                   label: t("view-statistics"),
@@ -595,6 +595,16 @@ function AttendancesView() {
               {successMessage && (
                 <div className="flex self-center">
                   <SuccessMessage text={successMessage} />
+                </div>
+              )}
+              {normalMessage && (
+                <div className="flex self-center">
+                  <NormalMessage text={normalMessage} />
+                </div>
+              )}
+              {errorMessage && (
+                <div className="flex self-center">
+                  <ErrorMessage text={t(errorMessage)} />
                 </div>
               )}
               <div className="flex justify-between">
