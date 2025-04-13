@@ -63,7 +63,7 @@
   "attendance-check-add-fail": "Kohaloleku kontroll ebaõnnestus",
   "no-last-added-student": "Viimati lisatud üliõpilasi pole",
   "timestamp-error": "Skänneeritud QR kood on kehtetu",
-  "attendance-add-success": "Kohaloleku kontroll oli edukas",
+  "attendance-check-add-successfully": "Kohaloleku kontroll oli edukas",
   "login-again": "Palun logi uuesti sisse",
   "account-deletion-error": "Konto kustutamine ebaõnnestus",
   "go-back": "Mine tagasi",
@@ -99,7 +99,7 @@
   "date-time": "Toimumise aeg",
   "view-details": "Kuva üksikasjad",
   "workplace": "Töökoht",
-  "student": "Üliõpilane", 
+  "student": "Üliõpilane",
 
   "internet-connection-error": "Viga internetiühenduses",
   "user-not-found": "Kasutajat ei leitud",
@@ -146,10 +146,13 @@
   "delete-course": "Kustuta õppeaine",
   "view-statistics": "Kuva statistika",
   "edit-course": "Muuda õppeainet",
+  "course-delete-success": "Õppeaine edukalt kustutatud",
+  "course-add-success": "Õppeaine edukalt lisatud",
+  "course-edit-success": "Õppeaine edukalt muudetud",
 
   "attendance-details": "Ainetunni üksikasjad",
   "attendance-type": "Ainetunni tüüp",
-  "start-time":" Alguse aeg",
+  "start-time": " Alguse aeg",
   "end-time": "Lõpuaeg",
   "view-students": "Kuva üliõpilased",
   "view-qr": "Kuva QR kood",
@@ -166,6 +169,10 @@
   "view-as-pdf": "Vaata PDF-ina",
   "students-in-this-attendance": "Üliõpilased selles ainetunnis",
   "qr-of-this-attendance": "Selle ainetunni QR kood",
-  "edit-attendance": "Muuda ainetundi"
-
+  "edit-attendance": "Muuda ainetundi",
+  "attendance-delete-success": "Ainetund edukalt kustutatud",
+  "attendance-edit-success": "Ainetund edukalt muudetud",
+  "student-removed-successfully": "Üliõpilane edukalt eemaldatud",
+  "no-students-in-this-attendance": "Selles ainetunnis ei ole õpilasi",
+  "attendance-add-success": "Ainetund edukalt lisatud"
 }

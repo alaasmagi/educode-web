@@ -120,6 +120,33 @@ export async function GetCourseStudentCounts(
   return response.data.error ?? "internet-connection-error";
 }
 
+export async function EditCourse(courseId: number, uniId:string, course:Course): Promise<boolean | string> {
+  const token = await GetUserToken();
+  const response = await axios.patch(   
+    `${import.meta.env.VITE_API_URL}/Course/Edit`,
+    {
+      id: courseId,
+      uniId: uniId,
+      courseName: course.courseName,
+      courseCode: course.courseCode,
+      status: course.courseValidStatus,
+      creator: "educode-webapp",
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      validateStatus: (status) => status < 500,
+    }
+  );  
+  if (response.status == 200) {
+    return true;
+  }
+
+  return response.data.error ?? "internet-connection-error";
+}
+
 export async function DeleteCourse(courseId: number): Promise<boolean | string> {
   const token = await GetUserToken();
   const response = await axios.delete(`${import.meta.env.VITE_API_URL}/Course/Delete/${courseId}`, {

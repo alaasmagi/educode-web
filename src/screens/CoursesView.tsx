@@ -18,6 +18,7 @@ import LocalUserData from "../models/LocalUserDataModel";
 import {
   AddCourse,
   DeleteCourse,
+  EditCourse,
   GetCoursebyId,
   GetCoursesByUser,
   GetCourseStatuses,
@@ -38,7 +39,6 @@ function CoursesView() {
     CourseStatus[] | null
   >(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [selectedCourseName, setSelectedCourseName] = useState<string | null>(
     null
   );
@@ -47,7 +47,6 @@ function CoursesView() {
   );
   const [selectedCourseStatus, setSelectedCourseStatus] =
     useState<CourseStatus | null>(null);
-  const [editCourse, setEditCourse] = useState<string | null>(null);
   const [availableCourses, setAvailableCourses] = useState<Course[] | null>(
     null
   );
@@ -64,6 +63,15 @@ function CoursesView() {
       setNavState("Main");
     }
   }, [status]);
+
+  useEffect(() => {
+    if (selectedStatus && availableCourseStatuses) {
+      const statusObj = availableCourseStatuses.find(
+        (s) => String(s.id) === selectedStatus
+      );
+      setSelectedCourseStatus(statusObj ?? null);
+    }
+  }, [selectedStatus, availableCourseStatuses]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,6 +96,7 @@ function CoursesView() {
           break;
       }
       setTimeout(() => setErrorMessage(null), 3000);
+      setTimeout(() => setNormalMessage(null), 3000);
     };
 
     fetchData();
@@ -100,6 +109,8 @@ function CoursesView() {
         setErrorMessage(status);
       } else {
         setSelectedCourse(status);
+        setSelectedCourseName(status.courseName),
+          setSelectedCourseCode(status.courseCode);
       }
       setTimeout(() => setErrorMessage(null), 3000);
       setTimeout(() => setNormalMessage(null), 3000);
@@ -136,7 +147,7 @@ function CoursesView() {
 
   const validateForm = () => {
     if (!selectedCourseName || !selectedCourseCode || !selectedCourseStatus) {
-      setNormalMessage(t("fill-all-fields"));
+      setNormalMessage(t("all-fields-required-message"));
       setTimeout(() => setNormalMessage(null), 3000);
       return false;
     }
@@ -157,9 +168,10 @@ function CoursesView() {
       setSelectedCourseName(null);
       setSelectedCourseCode(null);
       setSelectedCourseStatus(null);
-      setSuccessMessage(t("Course added successfully"));
+      setSuccessMessage(t("course-add-success"));
       setTimeout(() => setSuccessMessage(null), 3000);
       setTimeout(() => setNavState("Main"), 3000);
+      setTimeout(() => navigate(`/Courses`), 3000);
     }
   };
   const handleCourseDelete = async () => {
@@ -169,8 +181,35 @@ function CoursesView() {
       setErrorMessage(t(String(status)));
       setTimeout(() => setErrorMessage(null), 3000);
     } else {
-      setSuccessMessage(t("Course deleted successfully"));
+      setSuccessMessage(t("course-delete-success"));
       setTimeout(() => setSuccessMessage(null), 3000);
+      setTimeout(() => setNavState("Main"), 3000);
+      setTimeout(() => navigate(`/Courses`), 3000);
+    }
+  };
+
+  const handleCourseEdit = async () => {
+    const courseData: Course = {
+      courseName: selectedCourseName ?? "",
+      courseCode: selectedCourseCode ?? "",
+      courseValidStatus: selectedCourseStatus?.id ?? 0,
+    };
+    console.log(courseData);
+    const result = await EditCourse(
+      Number(courseId),
+      localData?.uniId ?? "",
+      courseData
+    );
+    if (typeof result === "string") {
+      setErrorMessage(t(String(result)));
+      setTimeout(() => setErrorMessage(null), 3000);
+    } else {
+      setSelectedCourseName(null);
+      setSelectedCourseCode(null);
+      setSelectedCourseStatus(null);
+      setSuccessMessage(t("course-edit-success"));
+      setTimeout(() => setSuccessMessage(null), 3000);
+      setTimeout(() => setNavState("Main"), 3000);
       setTimeout(() => navigate(`/Courses`), 3000);
     }
   };
@@ -210,36 +249,6 @@ function CoursesView() {
               <span className="text-2xl font-bold self-start">
                 {t("edit-course")}
               </span>
-
-              <div className="flex flex-col gap-5 items-center justify-center self-center">
-                <TextBox icon="school-icon" placeHolder={t("course-name")} />
-                <TextBox icon="pincode-icon" placeHolder={t("course-code")} />
-                <DropDownList
-                  icon="event-status-icon"
-                  options={
-                    availableCourseStatuses?.map((courseStatus) => ({
-                      label: t(courseStatus.status),
-                      value: String(courseStatus.id),
-                    })) || []
-                  }
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  label={t("course-status")}
-                />
-                <div className="py-4 flex justify-center">
-                  {successMessage && (
-                    <SuccessMessage text={t(successMessage)} />
-                  )}
-                </div>
-                {/*TODO*/}
-                <NormalButton text={t("edit-course")} onClick={console.log} />
-              </div>
-            </div>
-          )}
-          {navState === "Create" && (
-            <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">
-                {t("add-course")}
-              </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <TextBox
                   icon="school-icon"
@@ -262,6 +271,47 @@ function CoursesView() {
                     })) || []
                   }
                   onChange={(e) => setSelectedStatus(e.target.value)}
+                  value={selectedStatus ?? ""}
+                  label={t("course-status")}
+                />
+                <div className="py-4 flex justify-center">
+                  {successMessage && (
+                    <SuccessMessage text={t(successMessage)} />
+                  )}
+                </div>
+                <NormalButton
+                  text={t("edit-course")}
+                  onClick={handleCourseEdit}
+                />
+              </div>
+            </div>
+          )}
+          {navState === "Create" && (
+            <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
+              <span className="text-2xl font-bold self-start">
+                {t("add-course")}
+              </span>
+              <div className="flex flex-col gap-5 items-center justify-center self-center">
+                <TextBox
+                  icon="school-icon"
+                  placeHolder={t("course-name")}
+                  onChange={setSelectedCourseName}
+                />
+                <TextBox
+                  icon="pincode-icon"
+                  placeHolder={t("course-code")}
+                  onChange={setSelectedCourseCode}
+                />
+                <DropDownList
+                  icon="event-status-icon"
+                  options={
+                    availableCourseStatuses?.map((courseStatus) => ({
+                      label: t(courseStatus.status),
+                      value: String(courseStatus.id),
+                    })) || []
+                  }
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  value={selectedStatus ?? ""}
                   label={t("course-status")}
                 />
                 <div className="py-4 flex justify-center">
@@ -302,11 +352,15 @@ function CoursesView() {
                     )}
                   />
                 </div>
+                <div className="py-4 flex justify-center">
+                  {successMessage && (
+                    <SuccessMessage text={t(successMessage)} />
+                  )}
+                </div>
                 <div className="flex justify-between">
                   <NormalLink
                     text={t("edit-details")}
                     onClick={() => {
-                      setEditCourse(selectedCourseId);
                       setNavState("Edit");
                     }}
                   />

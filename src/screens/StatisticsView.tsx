@@ -57,6 +57,8 @@ function StatisticsView() {
           break;
       }
       setTimeout(() => setErrorMessage(null), 3000);
+      setTimeout(() => setNormalMessage(null), 3000);
+
     };
 
     fetchData();

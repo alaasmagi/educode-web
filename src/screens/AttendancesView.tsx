@@ -13,7 +13,6 @@ import SuccessMessage from "../components/SuccessMessage";
 import { useTranslation } from "react-i18next";
 import DateSelector from "../components/DateSelector";
 import TimeSelector from "../components/TimeSelector";
-import IconButton from "../components/IconButton";
 import DetailedDataField from "../components/DetailedDataField";
 import QrGenerator from "../components/QrGenerator";
 import { Icons } from "../components/Icons";
@@ -59,7 +58,6 @@ function AttendancesView() {
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [editCourse, setEditCourse] = useState<string | null>(null);
   const [qrValue, setQrValue] = useState<string>("");
   const [studentCodeInput, setStudentCodeInput] = useState<string>("");
   const [workplaceInput, setWorkplaceInput] = useState<string>("");
@@ -106,11 +104,6 @@ function AttendancesView() {
         case "Details":
           fetchAttendanceDetails();
           break;
-        case "Edit":
-          fetchAllCoursesByUser();
-          fetchAttendanceTypes();
-          fetchAttendanceDetails();
-          break;
         case "Create":
           fetchAllCoursesByUser();
           fetchAttendanceTypes();
@@ -122,6 +115,7 @@ function AttendancesView() {
           break;
       }
       setTimeout(() => setErrorMessage(null), 3000);
+      setTimeout(() => setNormalMessage(null), 3000);
     };
 
     fetchData();
@@ -172,7 +166,7 @@ function AttendancesView() {
     );
 
     if (typeof status === "string") {
-      setErrorMessage("no-students-in-this-attendance");
+      setNormalMessage(t("no-students-in-this-attendance"));
       setTimeout(() => setErrorMessage(null), 3000);
     } else {
       setAttendanceChecks(status);
@@ -231,7 +225,7 @@ function AttendancesView() {
       setTimeout(() => setErrorMessage(null), 3000);
     } else {
       fetchAllAttendanceChecksByAttendance();
-      setSuccessMessage(t("Student removed successfully"));
+      setSuccessMessage(t("student-remove-success"));
       setTimeout(() => setSuccessMessage(null), 3000);
     }
   };
@@ -241,10 +235,8 @@ function AttendancesView() {
       !selectedCourseId ||
       !selectedAttendanceTypeId ||
       !startTime ||
-      !endTime ||
-      dates.some((d) => !d.date)
-    ) {
-      setNormalMessage(t("fill-all-fields"));
+      !endTime) {
+      setNormalMessage(t("all-fields-required-message"));
       setTimeout(() => setNormalMessage(null), 3000);
       return false;
     }
@@ -271,7 +263,7 @@ function AttendancesView() {
       setStartTime(null);
       setStartTime(null);
       setDates([]);
-      setSuccessMessage(t("Attendances added successfully"));
+      setSuccessMessage(t("attendance-add-success"));
       setTimeout(() => setSuccessMessage(null), 3000);
       setTimeout(() => setNavState("Main"), 3000);
     }
@@ -284,7 +276,7 @@ function AttendancesView() {
       setErrorMessage(t(String(status)));
       setTimeout(() => setErrorMessage(null), 3000);
     } else {
-      setSuccessMessage(t("Attendances deleted successfully"));
+      setSuccessMessage(t("attendance-delete-success"));
       setTimeout(() => setSuccessMessage(null), 3000);
       setTimeout(() => navigate(`/Attendances`), 3000);
     }
@@ -547,13 +539,6 @@ function AttendancesView() {
                 )}
                 <div className="flex justify-between">
                   <NormalLink
-                    text={t("edit-details")}
-                    onClick={() => {
-                      setEditCourse("ITI0209");
-                      setNavState("Edit");
-                    }}
-                  />
-                  <NormalLink
                     text={t("go-back")}
                     onClick={() => navigate(-1)}
                   />
@@ -574,85 +559,6 @@ function AttendancesView() {
                 }}
               />
             </>
-          )}
-          {navState === "Edit" && (
-            <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-              <span className="text-2xl font-bold self-start">
-                {t("edit-attendance")}
-              </span>
-              <div className="flex flex-col gap-5 items-center justify-center self-center">
-                <DropDownList
-                  icon="school-icon"
-                  options={
-                    availableCourses?.map((course) => ({
-                      label: course.courseName,
-                      value: String(course.id),
-                    })) || []
-                  }
-                  onChange={(e) => setSelectedCourseId(e.target.value)}
-                  value={String(selectedCourseId)}
-                  label={t("course")}
-                />
-                <DropDownList
-                  icon="attendance-type-icon"
-                  options={
-                    availableAttendanceTypes?.map((type) => ({
-                      label: t(type.attendanceType),
-                      value: String(type.id),
-                    })) || []
-                  }
-                  onChange={(e) => setSelectedAttendanceTypeId(e.target.value)}
-                  value={String(selectedAttendanceTypeId)}
-                  label={t("attendance-type")}
-                />
-                <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs gap-4">
-                  <div className="flex flex-col items-start">
-                    <div>
-                      <span className="text-xl font-semibold mr-2">
-                        {t("start-time") + ": "}
-                      </span>
-                      <TimeSelector
-                        value={String(startTime)}
-                        onChange={(e) => setStartTime(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <span className="text-xl font-semibold mr-2">
-                        {t("end-time") + ": "}
-                      </span>
-                      <TimeSelector
-                        value={String(endTime)}
-                        onChange={(e) => setEndTime(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <span className="text-xl font-semibold mr-2">
-                        {t("date") + ": "}
-                      </span>
-                      <DateSelector
-                        value={String(date)}
-                        onChange={(e) => setDate(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="my-4">
-                  {successMessage && (
-                    <SuccessMessage text={t(successMessage)} />
-                  )}
-                  {normalMessage && <NormalMessage text={t(normalMessage)} />}
-                  {errorMessage && <ErrorMessage text={t(errorMessage)} />}
-                </div>
-                <NormalButton
-                  text={t("edit-attendance")}
-                  onClick={() =>
-                    navigate(
-                      `/Attendances/Edit/${attendanceData?.attendanceId}`
-                    )
-                  }
-                />
-              </div>
-            </div>
           )}
           {navState === "Students" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">

@@ -63,7 +63,7 @@
   "attendance-check-add-fail": "Failed to complete the check-in",
   "no-last-added-student": "No last added students",
   "timestamp-error": "Scanned QR is expired",
-  "attendance-add-success": "Check-in completed successfully",
+  "attendance-check-add-successfully": "Check-in completed successfully",
   "login-again": "Please log in again",
   "account-deletion-error": "Account deletion failed",
   "go-back": "Go back",
@@ -146,6 +146,9 @@
   "delete-course": "Delete course",
   "view-statistics": "View statistics",
   "edit-course": "Edit course",
+  "course-delete-success": "Course deleted successfully",
+  "course-add-success": "Course added successfully",
+  "course-edit-success": "Course edited successfully",
 
   "attendance-details": "Attendance details",
   "attendance-type": "Attendance type",
@@ -166,5 +169,10 @@
   "view-as-pdf": "View as PDF",
   "students-in-this-attendance": "Students in this attendance",
   "qr-of-this-attendance": "QR of this attendance",
-  "edit-attendance": "Edit attendance"
+  "edit-attendance": "Edit attendance",
+  "attendance-delete-success": "Attendance deleted successfully",
+  "attendance-edit-success": "Attendance edited successfully",
+  "student-removed-success": "Student removed successfully",
+  "no-students-in-this-attendance": "This attendance has no students",
+  "attendance-add-success": "Attendance added successfully"
 }
