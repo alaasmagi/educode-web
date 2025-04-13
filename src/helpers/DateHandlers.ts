@@ -3,6 +3,10 @@ import { toZonedTime, format } from "date-fns-tz";
 export const ConvertUTCToLocalDateTime = (utcDate: string): string => {
   const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
   const zonedDate = toZonedTime(utcDate, timeZone);
+
+  console.log("INPUT:", utcDate);
+  console.log("TIMEZONE:", timeZone);
+  console.log("LOCAL:", zonedDate.toString());
   return format(zonedDate, "dd.MM.yyyy HH:mm", { timeZone });
 };
 

@@ -7,12 +7,13 @@ import StatisticsView from "./screens/StatisticsView";
 import SettingsView from "./screens/SettingsView";
 import LoginView from "./screens/LoginView";
 import CreateAccountView from "./screens/CreateAccountView";
+import ForgotPasswordView from "./screens/ForgotPasswordView";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<InitialSelectionView />} />
+        <Route path="/:message?" element={<InitialSelectionView />} />
         <Route path="/Login/:message?" element={<LoginView />} />
         <Route path="/CreateAccount" element={<CreateAccountView />} />
         <Route path="/Home" element={<HomeView />} />
@@ -26,6 +27,7 @@ function App() {
           element={<StatisticsView />}
         />
         <Route path="/Settings/:userId?" element={<SettingsView />} />
+        <Route path="/PasswordRecovery" element={<ForgotPasswordView />} />
       </Routes>
     </Router>
   );

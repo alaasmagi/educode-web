@@ -203,6 +203,10 @@ function AttendancesView() {
   };
   const fetchUserData = async () => {
     const userData = await GetOfflineUserData();
+    if (userData == null) {
+      navigate("/");
+      return;
+    }
     setLocalData(userData);
   };
   const fetchAttendanceTypes = async () => {
@@ -258,6 +262,11 @@ function AttendancesView() {
       setErrorMessage(t(String(result)));
       setTimeout(() => setErrorMessage(null), 3000);
     } else {
+      setSelectedCourseId(null);
+      setSelectedAttendanceTypeId(null);
+      setStartTime(null);
+      setStartTime(null);
+      setDates([]);
       setSuccessMessage(t("Attendances added successfully"));
       setTimeout(() => setSuccessMessage(null), 3000);
       setTimeout(() => setNavState("Main"), 3000);

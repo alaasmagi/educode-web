@@ -108,9 +108,12 @@ function HomeView() {
 
   const fetchUserData = async () => {
     const userData = await GetOfflineUserData();
+    if (userData == null) {
+      navigate("/");
+      return;
+    }
     setLocalData(userData);
   };
-
   return (
     <>
       <SideBar />

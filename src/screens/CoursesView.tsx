@@ -100,6 +100,10 @@ function CoursesView() {
   };
   const fetchUserData = async () => {
     const userData = await GetOfflineUserData();
+    if (userData == null) {
+      navigate("/");
+      return;
+    }
     setLocalData(userData);
   };
   const fetchCourseStatuses = async () => {
@@ -133,6 +137,9 @@ function CoursesView() {
       setErrorMessage(t(String(result)));
       setTimeout(() => setErrorMessage(null), 3000);
     } else {
+      setSelectedCourseName(null);
+      setSelectedCourseCode(null);
+      setSelectedCourseStatus(null);
       setSuccessMessage(t("Course added successfully"));
       setTimeout(() => setSuccessMessage(null), 3000);
       setTimeout(() => setNavState("Main"), 3000);

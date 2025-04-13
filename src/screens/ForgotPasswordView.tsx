@@ -1,293 +1,225 @@
-import React, { useState, useEffect } from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
+import "../App.css";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import NavigationProps from "../../types";
-import globalStyles from "../styles/GlobalStyles";
-import TextBox from "../components/TextBox";
+
 import NormalButton from "../components/NormalButton";
-import FormHeader from "../layout/FormHeader";
-import Greeting from "../components/Greeting";
-import NormalLink from "../components/NormalLink";
+import TextBox from "../components/TextBox";
+import NormalLink from "../components/Link";
+import ErrorMessage from "../components/ErrorMessage";
+import NormalMessage from "../components/NormalMessage";
+import UnderlineText from "../components/UnderlineText";
+import LanguageSwitch from "../components/LanguageSwitch";
+
 import {
   RequestOTP,
   VerifyOTP,
   ChangeUserPassword,
 } from "../businesslogic/UserDataFetch";
-import ErrorMessage from "../components/ErrorMessage";
-import KeyboardVisibilityHandler from "../../hooks/KeyboardVisibilityHandler";
-import NormalMessage from "../components/NormalMessage";
-import UnderlineText from "../components/Link";
-import ChangePasswordModel from "../models/ChangePasswordModel";
-import VerifyOTPModel from "../models/VerifyOTPModel";
-import {
-  preventScreenCaptureAsync,
-  allowScreenCaptureAsync,
-} from "expo-screen-capture";
+
 import { RegexFilters } from "../helpers/RegexFilters";
+import VerifyOTPModel from "../models/VerifyOTPModel";
+import ChangePasswordModel from "../models/ChangePasswordModel";
 
-function ForgotPasswordView({ navigation, route }: NavigationProps) {
-  const isNormalPassChange: boolean =
-    route?.params?.isNormalPassChange ?? false;
-  const [uniId, setUniId] = useState<string>("");
-  const [emailCode, setEmailCode] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [passwordAgain, setPasswordAgain] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [normalMessage, setNormalMessage] = useState<string | null>(null);
-
-  const { localData } = route.params ?? {};
-  const { t } = useTranslation();
-  const isKeyboardVisible = KeyboardVisibilityHandler();
+function ForgotPasswordView() {
   const [stepNr, setStepNr] = useState(1);
+  const [uniId, setUniId] = useState("");
+  const [emailCode, setEmailCode] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordAgain, setPasswordAgain] = useState("");
 
-  useEffect(() => {
-    preventScreenCaptureAsync();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [normalMessage, setNormalMessage] = useState<string | null>("");
 
-    return () => {
-      allowScreenCaptureAsync();
-    };
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const showTemporaryError = useCallback((message: string) => {
+    setErrorMessage(message);
+    const timeout = setTimeout(() => setErrorMessage(null), 3000);
+    return () => clearTimeout(timeout);
   }, []);
 
-  const isStudentIDFormValid = () => RegexFilters.uniId.test(uniId);
+  const isStudentIDFormValid = () => 1; //RegexFilters.uniId.test(uniId);
+  const isPasswordFormValid = () =>
+    password.length >= 8 && password === passwordAgain;
+
   useEffect(() => {
-    if (!isStudentIDFormValid()) {
+    if (!isStudentIDFormValid() && uniId !== "") {
       setNormalMessage(t("all-fields-required-message"));
     } else {
       setNormalMessage("");
     }
   }, [uniId]);
 
-  const isPasswordFormValid = () =>
-    password.length >= 8 && password === passwordAgain;
   useEffect(() => {
     if (password.length < 8 && password !== "") {
       setNormalMessage(t("password-length-message"));
-    } else if (
-      !isPasswordFormValid() &&
-      password !== "" &&
-      passwordAgain !== ""
-    ) {
+    } else if (!isPasswordFormValid() && password && passwordAgain) {
       setNormalMessage(t("password-match-message"));
     } else {
       setNormalMessage("");
     }
   }, [password, passwordAgain]);
 
-  const handleOTPRequest = async () => {
-    Keyboard.dismiss();
-
-    if (await RequestOTP(uniId)) {
+  const handleOTPRequest = useCallback(async () => {
+    const status = await RequestOTP(uniId);
+    if (status) {
       setStepNr(2);
     } else {
-      setErrorMessage(t("no-account-found"));
-      setTimeout(() => setErrorMessage(null), 3000);
+      showTemporaryError(t("no-account-found"));
     }
-  };
+  }, [uniId, t, showTemporaryError]);
 
-  const handleOTPVerification = async () => {
-    Keyboard.dismiss();
-    const otpData: VerifyOTPModel = {
-      uniId: uniId,
-      otp: emailCode,
-    };
-
-    if (await VerifyOTP(otpData)) {
+  const handleOTPVerification = useCallback(async () => {
+    const otpData: VerifyOTPModel = { uniId, otp: emailCode };
+    const status = await VerifyOTP(otpData);
+    if (status) {
       setStepNr(3);
     } else {
-      setErrorMessage(t("wrong-otp"));
-      setTimeout(() => setErrorMessage(null), 3000);
+      showTemporaryError(t("wrong-otp"));
     }
-  };
+  }, [uniId, emailCode, t, showTemporaryError]);
 
-  const handlePasswordChange = async () => {
-    const model: ChangePasswordModel = {
-      uniId: uniId,
-      newPassword: password,
-    };
-    const status: boolean = await ChangeUserPassword(model);
+  const handlePasswordChange = useCallback(async () => {
+    const model: ChangePasswordModel = { uniId, newPassword: password };
+    const status = await ChangeUserPassword(model);
     if (status) {
-      const successMessage = t("password-change-success");
-      isNormalPassChange
-        ? navigation.navigate("SettingsView", { localData, successMessage })
-        : navigation.navigate("LoginView", { successMessage });
+      navigate("/Login", {
+        state: { successMessage: t("password-change-success") },
+      });
     } else {
-      setErrorMessage(t("account-create-error"));
+      showTemporaryError(t("account-create-error"));
+    }
+  }, [uniId, password, t, navigate, showTemporaryError]);
+
+  const sharedMessage = errorMessage || normalMessage;
+  const messageComponent = errorMessage ? (
+    <ErrorMessage text={errorMessage} />
+  ) : (
+    <NormalMessage text={normalMessage ?? ""} />
+  );
+
+  const renderStep = () => {
+    switch (stepNr) {
+      case 1:
+        return (
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-10">
+              <div className="flex min-w-2xs flex-col gap-5">
+                <UnderlineText text={t("verify-account")} />
+                <TextBox
+                  icon="person-icon"
+                  placeHolder="Uni-ID"
+                  value={uniId}
+                  onChange={(text) => setUniId(text.trim())}
+                />
+                {sharedMessage && messageComponent}
+              </div>
+              <div className="flex flex-col self-center justify-center ">
+                <NormalButton
+                  text={t("continue")}
+                  onClick={handleOTPRequest}
+                  isDisabled={!isStudentIDFormValid()}
+                />
+                <div className="flex flex-col gap-4">
+                  <NormalLink
+                    text={t("something-wrong-back")}
+                    onClick={() => navigate(-1)}
+                  />
+                  <LanguageSwitch linkStyle={true} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-10">
+              <div className="flex min-w-2xs flex-col gap-5">
+                <UnderlineText
+                  text={`${t("one-time-key-prompt")} ${uniId}@taltech.ee`}
+                />
+                <TextBox
+                  icon="pincode-icon"
+                  placeHolder={t("one-time-key")}
+                  value={emailCode}
+                  onChange={(text) => setEmailCode(text.trim())}
+                />
+                {sharedMessage && messageComponent}
+              </div>
+              <div className="flex flex-col self-center justify-center ">
+                <NormalButton
+                  text={t("continue")}
+                  onClick={handleOTPVerification}
+                  isDisabled={!RegexFilters.defaultId.test(emailCode)}
+                />
+                <div className="flex flex-col gap-4">
+                  <NormalLink
+                    text={t("something-wrong-back")}
+                    onClick={() => setStepNr(1)}
+                  />
+                  <LanguageSwitch linkStyle={true} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-10">
+              <div className="flex min-w-2xs flex-col gap-5">
+                <UnderlineText text={t("set-new-password")} />
+                <div className="flex min-w-2xs flex-col gap-5">
+                  <TextBox
+                    icon="lock-icon"
+                    placeHolder={t("password")}
+                    isPassword
+                    value={password}
+                    onChange={(text) => setPassword(text.trim())}
+                  />
+                  <TextBox
+                    icon="lock-icon"
+                    placeHolder={t("repeat-password")}
+                    isPassword
+                    value={passwordAgain}
+                    onChange={(text) => setPasswordAgain(text.trim())}
+                  />
+                </div>
+                {sharedMessage && messageComponent}
+              </div>
+              <div className="flex flex-col self-center justify-center ">
+                <NormalButton
+                  text={t("continue")}
+                  onClick={handlePasswordChange}
+                  isDisabled={!isPasswordFormValid()}
+                />
+                <div className="flex flex-col gap-4">
+                  <NormalLink
+                    text={t("something-wrong-back")}
+                    onClick={() => setStepNr(2)}
+                  />
+                  <LanguageSwitch linkStyle={true} />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
     }
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView style={globalStyles.anrdoidSafeArea}>
-        <View style={styles.headerContainer}>
-          <FormHeader />
-          {!isKeyboardVisible && (
-            <Greeting
-              text={
-                isNormalPassChange ? t("change-password") : t("forgot-password")
-              }
-            />
-          )}
-        </View>
-        {stepNr === 1 && (
-          <>
-            <View style={styles.textBoxContainer}>
-              <UnderlineText text={t("verify-account")} />
-              <View style={styles.textBoxes}>
-                <TextBox
-                  iconName="person-icon"
-                  placeHolder="Uni-ID *"
-                  onChangeText={setUniId}
-                  value={uniId}
-                  autoCapitalize="none"
-                />
-              </View>
-              {!isKeyboardVisible && errorMessage && (
-                <View style={styles.errorContainer}>
-                  <ErrorMessage text={errorMessage} />
-                </View>
-              )}
-            </View>
-            <View style={styles.buttonContainer}>
-              <NormalButton
-                text={t("continue")}
-                onPress={handleOTPRequest}
-                disabled={uniId == ""}
-              />
-              <NormalLink
-                text={isNormalPassChange ? t("dont-change-password") : t("")}
-                onPress={() =>
-                  isNormalPassChange
-                    ? navigation.navigate("SettingsView", { localData })
-                    : navigation.navigate("LoginView")
-                }
-              />
-            </View>
-          </>
-        )}
-        {stepNr === 2 && (
-          <>
-            <View style={styles.textBoxContainer}>
-              <UnderlineText
-                text={t("one-time-key-prompt") + ` ${uniId}@taltech.ee`}
-              />
-              <View style={styles.textBoxes}>
-                <TextBox
-                  iconName="pincode-icon"
-                  placeHolder={t("one-time-key") + "*"}
-                  onChangeText={setEmailCode}
-                  value={emailCode}
-                />
-              </View>
-              {!isKeyboardVisible && errorMessage && (
-                <View style={styles.errorContainer}>
-                  <ErrorMessage text={errorMessage} />
-                </View>
-              )}
-            </View>
-            <View style={styles.buttonContainer}>
-              <NormalButton
-                text={t("continue")}
-                onPress={handleOTPVerification}
-                disabled={uniId == ""}
-              />
-              <NormalLink
-                text={t("something-wrong-back")}
-                onPress={() => {
-                  setStepNr(1);
-                }}
-              />
-            </View>
-          </>
-        )}
-        {stepNr === 3 && (
-          <>
-            <View style={styles.textBoxContainer}>
-              <UnderlineText text={t("set-new-password")}></UnderlineText>
-              <View style={styles.textBoxes}>
-                <TextBox
-                  iconName="lock-icon"
-                  placeHolder={t("password")}
-                  isPassword
-                  onChangeText={setPassword}
-                  value={password}
-                />
-                <TextBox
-                  iconName="lock-icon"
-                  placeHolder={t("repeat-password")}
-                  isPassword
-                  onChangeText={setPasswordAgain}
-                  value={passwordAgain}
-                />
-              </View>
-              {!isKeyboardVisible && normalMessage && (
-                <View style={styles.errorContainer}>
-                  <NormalMessage text={normalMessage} />
-                </View>
-              )}
-            </View>
-            <View style={styles.buttonContainer}>
-              <NormalButton
-                text={t("continue")}
-                onPress={handlePasswordChange}
-                disabled={!isPasswordFormValid()}
-              />
-              <NormalLink
-                text={t("something-wrong-back")}
-                onPress={() => {
-                  setStepNr(2);
-                }}
-              />
-            </View>
-          </>
-        )}
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+    <>
+      <div className="max-h-screen max-w-screen flex items-center justify-center gap-10">
+        <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
+          <img src="../logos/splash-logo.png" className="md:w-xl" />
+          {renderStep()}
+        </div>
+      </div>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    flex: 2.2,
-    gap: 70,
-    justifyContent: "flex-end",
-  },
-  textBoxContainer: {
-    flex: 2,
-    justifyContent: "center",
-    gap: 20,
-  },
-  data: {
-    alignSelf: "center",
-    width: "80%",
-    borderWidth: 2,
-    borderColor: "#BCBCBD",
-    borderRadius: 20,
-    gap: 25,
-    padding: 10,
-  },
-  textBoxes: {
-    gap: 25,
-    alignItems: "center",
-  },
-  forgotPasswordContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    width: "90%",
-  },
-  errorContainer: {
-    marginTop: 10,
-  },
-  buttonContainer: {
-    flex: 1.1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default ForgotPasswordView;

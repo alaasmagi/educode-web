@@ -40,7 +40,7 @@ function CreateAccountView() {
   }, []);
 
   const isNameFormValid = () => firstName !== "" && lastName !== "";
-  const isStudentIDFormValid = () => true//RegexFilters.uniId.test(uniIdInput);
+  const isStudentIDFormValid = () => true; //RegexFilters.uniId.test(uniIdInput);
   const isPasswordFormValid = () =>
     password.length >= 8 && password === passwordAgain;
 
@@ -134,9 +134,7 @@ function CreateAccountView() {
                   onChange={(text) => setLastName(text.trim())}
                 />
               </div>
-              {sharedMessage && (
-                <>{messageComponent}</>
-              )}
+              {sharedMessage && <>{messageComponent}</>}
             </div>
             <div className="flex flex-col self-center justify-center ">
               <NormalButton
@@ -144,14 +142,13 @@ function CreateAccountView() {
                 onClick={() => setStepNr(2)}
                 isDisabled={!isNameFormValid()}
               />
-              <NormalLink
-                text={t("already-registered")}
-                onClick={() => navigate("/Login")}
-              />
-              
-            </div>
-            <div>
-                <LanguageSwitch linkStyle={true}/> 
+              <div className="flex flex-col gap-4">
+                <NormalLink
+                  text={t("already-registered")}
+                  onClick={() => navigate("/Login")}
+                />
+                <LanguageSwitch linkStyle={true} />
+              </div>
             </div>
           </div>
         );
@@ -167,9 +164,7 @@ function CreateAccountView() {
                   onChange={(text) => setUniIdInput(text.trim())}
                 />
               </div>
-              {sharedMessage && (
-                <>{messageComponent}</>
-              )}
+              {sharedMessage && <>{messageComponent}</>}
             </div>
             <div className="flex flex-col self-center justify-center ">
               <NormalButton
@@ -177,17 +172,20 @@ function CreateAccountView() {
                 onClick={handleOTPRequest}
                 isDisabled={!isStudentIDFormValid()}
               />
-               <NormalLink
-                text={t("something-wrong-back")}
-                onClick={() => setStepNr(1)}
-              />
+              <div className="flex flex-col gap-4">
+                <NormalLink
+                  text={t("something-wrong-back")}
+                  onClick={() => setStepNr(1)}
+                />
+                <LanguageSwitch linkStyle={true} />
+              </div>
             </div>
           </div>
         );
       case 3:
         return (
           <div className="flex flex-col gap-6">
-              <div className="flex min-w-2xs flex-col gap-5">
+            <div className="flex min-w-2xs flex-col gap-5">
               <UnderlineText
                 text={`${t("one-time-key-prompt")} ${uniIdInput}@taltech.ee`}
               />
@@ -199,9 +197,7 @@ function CreateAccountView() {
                   onChange={(text) => setEmailCode(text.trim())}
                 />
               </div>
-              {sharedMessage && (
-                <>{messageComponent}</>
-              )}
+              {sharedMessage && <>{messageComponent}</>}
             </div>
             <div className="flex flex-col self-center justify-center ">
               <NormalButton
@@ -209,18 +205,21 @@ function CreateAccountView() {
                 onClick={handleOTPVerification}
                 isDisabled={!RegexFilters.defaultId.test(emailCode)}
               />
-              <NormalLink
-                text={t("something-wrong-back")}
-                onClick={() => setStepNr(2)}
-              />
+              <div className="flex flex-col gap-4">
+                <NormalLink
+                  text={t("something-wrong-back")}
+                  onClick={() => setStepNr(2)}
+                />
+                <LanguageSwitch linkStyle={true} />
+              </div>
             </div>
           </div>
         );
       case 4:
         return (
           <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-10">
-            <div className="flex min-w-2xs flex-col gap-5">
+            <div className="flex flex-col gap-10">
+              <div className="flex min-w-2xs flex-col gap-5">
                 <TextBox
                   icon="lock-icon"
                   placeHolder={t("password")}
@@ -236,9 +235,7 @@ function CreateAccountView() {
                   onChange={(text) => setPasswordAgain(text.trim())}
                 />
               </div>
-              {sharedMessage && (
-                <>{messageComponent}</>
-              )}
+              {sharedMessage && <>{messageComponent}</>}
             </div>
             <div className="flex flex-col self-center justify-center ">
               <NormalButton
@@ -246,10 +243,13 @@ function CreateAccountView() {
                 onClick={() => setStepNr(5)}
                 isDisabled={!isPasswordFormValid()}
               />
-               <NormalLink
-                text={t("something-wrong-back")}
-                onClick={() => setStepNr(3)}
-              />
+              <div className="flex flex-col gap-4">
+                <NormalLink
+                  text={t("something-wrong-back")}
+                  onClick={() => setStepNr(3)}
+                />
+                <LanguageSwitch linkStyle={true} />
+              </div>
             </div>
           </div>
         );
@@ -263,23 +263,22 @@ function CreateAccountView() {
                   icon={"person-icon"}
                   text={`${firstName} ${lastName}`}
                 />
-                <DataText  
-                icon={"person-icon"}
-                text={uniIdInput} />
+                <DataText icon={"person-icon"} text={uniIdInput} />
               </div>
-              {sharedMessage && (
-                <>{messageComponent}</>
-              )}
+              {sharedMessage && <>{messageComponent}</>}
             </div>
             <div className="flex flex-col self-center justify-center ">
-              <NormalLink
-                text={t("something-wrong-back")}
-                onClick={() => setStepNr(4)}
-              />
               <NormalButton
                 text={t("create-account")}
                 onClick={handleRegister}
               />
+              <div className="flex flex-col gap-4">
+                <NormalLink
+                  text={t("something-wrong-back")}
+                  onClick={() => setStepNr(4)}
+                />
+                <LanguageSwitch linkStyle={true} />
+              </div>
             </div>
           </>
         );

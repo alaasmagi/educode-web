@@ -133,7 +133,7 @@ export async function GetAttendanceById(attendanceId: number): Promise<CourseAtt
       attendanceId: data.id,
       attendanceTypeId: data.attendanceTypeId,
       attendanceType: data.attendanceType.attendanceType,
-      date: ConvertDateTimeToDateOnly(data.endTime),
+      date: ConvertDateTimeToDateOnly(data.startTime),
       startTime: ConvertDateTimeToTimeOnly(data.startTime),
       endTime: ConvertDateTimeToTimeOnly(data.endTime),
     } as CourseAttendance;
@@ -205,8 +205,8 @@ export async function GetAttendancesByCourseCode(courseCode: string): Promise<Co
       attendanceTypeId: item.attendanceTypeId,
       attendanceType: item.attendanceType,
       date: ConvertUTCToLocalDateTime(item.startTime),
-      startTime: item.startTime,
-      endTime: item.endTime,
+      startTime: ConvertDateTimeToTimeOnly(item.startTime),
+      endTime: ConvertDateTimeToTimeOnly(item.endTime),
     }));
 
     return courseAttendances;

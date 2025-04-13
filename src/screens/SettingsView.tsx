@@ -16,12 +16,13 @@ import {
   GetStudentCountByAttendanceId,
 } from "../businesslogic/AttendanceDataFetch";
 import LocalUserData from "../models/LocalUserDataModel";
-import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { DeleteCurrentLanguage, DeleteOfflineUserData, GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import NormalMessage from "../components/NormalMessage";
 import ErrorMessage from "../components/ErrorMessage";
 import { RegexFilters } from "../helpers/RegexFilters";
 import CreateAttendanceCheckModel from "../models/CreateAttendanceCheckModel";
 import { CourseAttendance } from "../models/CourseAttendanceModel";
+import { DeleteUser } from "../businesslogic/UserDataFetch";
 
 function SettingsView() {
   const navigate = useNavigate();
@@ -36,6 +37,37 @@ function SettingsView() {
   const [studentCodeInput, setStudentCodeInput] = useState<string>("");
   const [workplaceInput, setWorkplaceInput] = useState<string>("");
   const [recentAttendanceId, setRecentAttendanceId] = useState<string>("");
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    const userData = await GetOfflineUserData();
+    if (userData == null) {
+      navigate("/");
+      return;
+    }
+    setLocalData(userData);
+  };
+
+  const handleDelete = async () => {
+    const status = localData?.uniId && await DeleteUser(localData.uniId);
+    if (typeof(status) !== "string") {
+      await DeleteCurrentLanguage();
+      await DeleteOfflineUserData();
+      navigate("/delete-account-success");
+    } else {
+      setErrorMessage(t(String(status)));
+      setTimeout(() => setErrorMessage(null), 3000);
+    }
+  };
+
+  const handleLogout = async () => {
+    await DeleteOfflineUserData();
+    navigate("/account-logout-success");
+  };
+
   return (
     <>
       <SideBar />
@@ -45,12 +77,19 @@ function SettingsView() {
             <span className="text-2xl font-bold self-start">
               {t("settings")}
             </span>
-  
             <div className="py-4 flex justify-center">
               {successMessage && <SuccessMessage text={t(successMessage)} />}
               {normalMessage && <NormalMessage text={t(normalMessage)} />}
               {errorMessage && <ErrorMessage text={t(errorMessage)} />}
             </div>
+            <div className="flex flex-col self-center py-5">
+              <div className="flex flex-col gap-4">
+              <NormalButton text="change-password" onClick={() => navigate("/PasswordRecovery")} />
+              <NormalButton text="log-out" onClick={handleLogout} />
+              </div>
+              <NormalLink text="delete-account" onClick={handleDelete}/>
+            </div>
+           
           </div>
         </div>
       </div>
