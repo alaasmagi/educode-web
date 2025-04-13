@@ -46,6 +46,7 @@ import { RegexFilters } from "../helpers/RegexFilters";
 import CreateAttendanceCheckModel from "../models/CreateAttendanceCheckModel";
 import PDFDocument from "../components/PDFDocument";
 import { PDFViewer } from "@react-pdf/renderer";
+import { setSourceMapsEnabled } from "process";
 
 function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -177,10 +178,10 @@ function AttendancesView() {
     const localData = await GetOfflineUserData();
     const courses = await GetCoursesByUser(localData?.uniId!);
     let attendances: CourseAttendance[] = [];
-    if (typeof courses === "string"){ 
+    if (typeof courses === "string") {
       setNormalMessage("no-course-attendances-found");
-      return
-    };
+      return;
+    }
     for (const course of courses) {
       const response = await GetAttendancesByCourseCode(course.courseCode);
       if (typeof response !== "string") {
@@ -218,15 +219,15 @@ function AttendancesView() {
   };
 
   const deleteAttendanceCheck = async (attendanceCheckId: number) => {
-    const status = DeleteAttendanceCheck(attendanceCheckId);
-
+    const status = await DeleteAttendanceCheck(attendanceCheckId);
+  
     if (typeof status === "string") {
       setErrorMessage(t(String(status)));
       setTimeout(() => setErrorMessage(null), 3000);
     } else {
-      fetchAllAttendanceChecksByAttendance();
       setSuccessMessage(t("student-remove-success"));
       setTimeout(() => setSuccessMessage(null), 3000);
+      setNavState("Students");
     }
   };
 
@@ -235,7 +236,8 @@ function AttendancesView() {
       !selectedCourseId ||
       !selectedAttendanceTypeId ||
       !startTime ||
-      !endTime) {
+      !endTime
+    ) {
       setNormalMessage(t("all-fields-required-message"));
       setTimeout(() => setNormalMessage(null), 3000);
       return false;
@@ -287,6 +289,7 @@ function AttendancesView() {
     if (workplaceInput !== "" && !RegexFilters.defaultId.test(workplaceInput)) {
       setErrorMessage(t("wrong-workplace-id"));
       setTimeout(() => setErrorMessage(null), 3000);
+      return;
     } else {
       const model: CreateAttendanceCheckModel = {
         studentCode: studentCodeInput,
@@ -575,8 +578,8 @@ function AttendancesView() {
                     <DetailedDataField
                       dataA={attendanceCheck.studentCode}
                       dataB={
-                        attendanceCheck.workplaceId === 0
-                          ? t("no-workplace")
+                        attendanceCheck.workplaceId == null
+                          ? t("N/A")
                           : String(
                               ToSixDigit(Number(attendanceCheck.workplaceId))
                             )
@@ -589,6 +592,11 @@ function AttendancesView() {
                   </div>
                 ))}
               </div>
+              {successMessage && (
+                <div className="flex self-center">
+                  <SuccessMessage text={successMessage} />
+                </div>
+              )}
               <div className="flex justify-between">
                 <NormalLink
                   text={t("go-back")}

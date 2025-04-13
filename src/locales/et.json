@@ -172,8 +172,9 @@
   "edit-attendance": "Muuda ainetundi",
   "attendance-delete-success": "Ainetund edukalt kustutatud",
   "attendance-edit-success": "Ainetund edukalt muudetud",
-  "student-removed-successfully": "Üliõpilane edukalt eemaldatud",
+  "student-remove-success": "Üliõpilane edukalt eemaldatud",
   "no-students-in-this-attendance": "Selles ainetunnis ei ole õpilasi",
   "attendance-add-success": "Ainetund edukalt lisatud",
-  "account-logout-success": "Oled edukalt väljalogitud"
+  "account-logout-success": "Oled edukalt väljalogitud",
+  "wrong-workplace-id": "Vale töökoha ID"
 }
