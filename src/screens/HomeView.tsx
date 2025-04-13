@@ -120,7 +120,7 @@ function HomeView() {
       <div className="flex max-h-screen max-w-screen items-center justify-center md:pl-90">
         <div className="flex flex-col gap-5">
           <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-            <span className="text-2xl font-bold self-start">{t("ongoing-attendance") + ":"}</span>
+            <span className="text-2xl font-bold self-start">{t("ongoing-attendance")}</span>
             {currentAttendanceData && (
               <div className="flex flex-col gap-2 items-start">
                 <DataField fieldName={t("course-name")} data={currentAttendanceData.courseName} />

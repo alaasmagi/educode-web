@@ -27,7 +27,6 @@ function StatisticsView() {
   );
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [courseStatistics, setCourseStatistics] = useState<
     StudentCountModel[] | null
@@ -58,7 +57,6 @@ function StatisticsView() {
           break;
       }
       setTimeout(() => setErrorMessage(null), 3000);
-      setTimeout(() => setNormalMessage(null), 3000);
     };
 
     fetchData();
@@ -72,8 +70,6 @@ function StatisticsView() {
       } else {
         setCourseStatistics(status);
       }
-      setTimeout(() => setErrorMessage(null), 3000);
-      setTimeout(() => setNormalMessage(null), 3000);
     }
   };
 
@@ -82,6 +78,8 @@ function StatisticsView() {
     const response = await GetCoursesByUser(userData?.uniId!);
     if (typeof response !== "string") {
       setAvailableCourses(response);
+    } else {
+      setNormalMessage(response);
     }
   };
   const fetchUserData = async () => {
@@ -100,23 +98,26 @@ function StatisticsView() {
           {navState === "Main" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
               <span className="text-2xl font-bold self-start">
-                {"All attendances"}
+                {t("all-attendances")}
               </span>
               {availableCourses?.map((course) => (
                 <ContainerCardSmall
                   key={course.id}
                   boldLabelA={String(course.courseName)}
                   boldLabelB={`(${String(course.courseCode)})`}
-                  linkText={t("view-stats")}
+                  linkText={t("view-statistics")}
                   onClick={() => navigate(`/Statistics/View/${course.id}`)}
                 />
               ))}
+              <div className="flex self-center">
+                {normalMessage && <NormalMessage text={t(normalMessage)} />}
+              </div>
             </div>
           )}
           {navState === "View" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
               <span className="text-2xl font-bold self-start">
-                {"Statistics:"}
+                {t("statistics")}
               </span>
               {courseStatistics && <StatisticChart data={courseStatistics} />}
               {courseStatistics == null && (
@@ -124,7 +125,7 @@ function StatisticsView() {
                   <NormalMessage text={t("no-data-available")} />
                 </div>
               )}
-              <NormalLink text="Go back" onClick={() => navigate(-1)} />
+              <NormalLink text={t("go-back")} onClick={() => navigate(-1)} />
             </div>
           )}
         </div>

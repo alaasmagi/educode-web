@@ -122,7 +122,6 @@ function AttendancesView() {
           break;
       }
       setTimeout(() => setErrorMessage(null), 3000);
-      setTimeout(() => setNormalMessage(null), 3000);
     };
 
     fetchData();
@@ -173,7 +172,7 @@ function AttendancesView() {
     );
 
     if (typeof status === "string") {
-      setErrorMessage(t("no-students-in-this-attendance"));
+      setErrorMessage("no-students-in-this-attendance");
       setTimeout(() => setErrorMessage(null), 3000);
     } else {
       setAttendanceChecks(status);
@@ -184,11 +183,16 @@ function AttendancesView() {
     const localData = await GetOfflineUserData();
     const courses = await GetCoursesByUser(localData?.uniId!);
     let attendances: CourseAttendance[] = [];
-    if (typeof courses === "string") return;
+    if (typeof courses === "string"){ 
+      setNormalMessage("no-course-attendances-found");
+      return
+    };
     for (const course of courses) {
       const response = await GetAttendancesByCourseCode(course.courseCode);
       if (typeof response !== "string") {
         attendances.push(...response);
+      } else {
+        setNormalMessage(response);
       }
     }
     setCourseAttendances(attendances);
@@ -341,7 +345,7 @@ function AttendancesView() {
           {navState === "Main" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
               <span className="text-2xl font-bold self-start">
-                {"All attendances"}
+                {t("all-attendances")}
               </span>
               {courseAttendances?.map((attendance) => (
                 <ContainerCardLarge
@@ -358,8 +362,13 @@ function AttendancesView() {
                   }
                 />
               ))}
+              {normalMessage && (
+                <div className="flex self-center">
+                  <NormalMessage text={t(normalMessage)} />
+                </div>
+              )}
               <NormalLink
-                text="Add new attendance"
+                text={t("add-new-attendance")}
                 onClick={() => setNavState("Create")}
               />
             </div>
@@ -367,7 +376,7 @@ function AttendancesView() {
           {navState === "Create" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
               <span className="text-2xl font-bold self-start">
-                {"Add attendance"}
+                {t("add-attendance")}
               </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <DropDownList
@@ -379,24 +388,24 @@ function AttendancesView() {
                     })) || []
                   }
                   onChange={(e) => setSelectedCourseId(e.target.value)}
-                  label="Course"
+                  label={t("course")}
                 />
                 <DropDownList
                   icon="attendance-type-icon"
                   options={
                     availableAttendanceTypes?.map((type) => ({
-                      label: type.attendanceType,
+                      label: t(type.attendanceType),
                       value: String(type.id),
                     })) || []
                   }
                   onChange={(e) => setSelectedAttendanceTypeId(e.target.value)}
-                  label="Attendance type"
+                  label={t("attendance-type")}
                 />
                 <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs gap-4">
                   <div className="flex flex-col items-start">
                     <div>
                       <span className="text-xl font-semibold mr-2">
-                        {"Start time:"}
+                        {t("start-time") + ": "}
                       </span>
                       <TimeSelector
                         value={String(startTime)}
@@ -405,7 +414,7 @@ function AttendancesView() {
                     </div>
                     <div>
                       <span className="text-xl font-semibold mr-2">
-                        {"End time:"}
+                        {t("end-time") + ": "}
                       </span>
                       <TimeSelector
                         value={String(endTime)}
@@ -415,7 +424,7 @@ function AttendancesView() {
                   </div>
                 </div>
                 <span className="text-xl mr-2 font-semibold self-start">
-                  {"Kuupäevad:"}
+                  {t("dates") + ": "}
                 </span>
                 <div className="flex flex-col">
                   {dates.map((entry) => (
@@ -428,14 +437,14 @@ function AttendancesView() {
                       />
                       {dates.length > 1 && (
                         <NormalLink
-                          text={"Remove"}
+                          text={t("remove")}
                           onClick={() => removeDateField(entry.id)}
                         />
                       )}
                     </div>
                   ))}
                 </div>
-                <NormalLink text={"Add more dates"} onClick={addDateField} />
+                <NormalLink text={t("add-more-dates")} onClick={addDateField} />
                 <div className="py-4">
                   {successMessage && (
                     <SuccessMessage text={t(successMessage)} />
@@ -444,7 +453,7 @@ function AttendancesView() {
                   {errorMessage && <ErrorMessage text={t(errorMessage)} />}
                 </div>
                 <NormalButton
-                  text="Add attendance"
+                  text={t("add-attendance")}
                   onClick={handleAttendanceAdd}
                 />
               </div>
@@ -454,31 +463,31 @@ function AttendancesView() {
             <>
               <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
                 <span className="text-2xl font-bold self-start">
-                  {"Attendance details"}
+                  {t("attendance-details")}
                 </span>
                 <div>
                   <DataField
-                    fieldName="Course name"
+                    fieldName={t("course-name")}
                     data={String(attendanceData?.courseName)}
                   />
                   <DataField
-                    fieldName="Course code"
+                    fieldName={t("course-code")}
                     data={String(attendanceData?.courseCode)}
                   />
                   <DataField
-                    fieldName="Attendance type"
-                    data={String(attendanceData?.attendanceType)}
+                    fieldName={t("attendance-type")}
+                    data={t(String(attendanceData?.attendanceType))}
                   />
                   <DataField
-                    fieldName="Date"
+                    fieldName={t("date")}
                     data={String(attendanceData?.date)}
                   />
                   <DataField
-                    fieldName="Start time"
+                    fieldName={t("start-time")}
                     data={String(attendanceData?.startTime)}
                   />
                   <DataField
-                    fieldName="End time"
+                    fieldName={t("end-time")}
                     data={String(attendanceData?.endTime)}
                   />
                   <DataField
@@ -487,11 +496,11 @@ function AttendancesView() {
                   />
                   <div className="flex flex-col items-start mt-3">
                     <NormalLink
-                      text="View students"
+                      text={t("view-students")}
                       onClick={() => setNavState("Students")}
                     />
                     <NormalLink
-                      text="View QR"
+                      text={t("view-qr")}
                       onClick={() => setNavState("QR")}
                     />
                   </div>
@@ -538,26 +547,29 @@ function AttendancesView() {
                 )}
                 <div className="flex justify-between">
                   <NormalLink
-                    text="Edit details"
+                    text={t("edit-details")}
                     onClick={() => {
                       setEditCourse("ITI0209");
                       setNavState("Edit");
                     }}
                   />
-                  <NormalLink text="Go back" onClick={() => navigate(-1)} />
                   <NormalLink
-                    text="Delete attendance"
+                    text={t("go-back")}
+                    onClick={() => navigate(-1)}
+                  />
+                  <NormalLink
+                    text={t("delete-attendance")}
                     onClick={handleAttendanceDelete}
                   />
                 </div>
               </div>
               <QuickNavigation
                 quickNavItemA={{
-                  label: "Add new attendance in this course",
+                  label: t("add-new-attendance"),
                   onClick: () => navigate("/Statistics"),
                 }}
                 quickNavItemB={{
-                  label: "View statistics of this course",
+                  label: t("view-statistics"),
                   onClick: () => navigate("/Statistics"),
                 }}
               />
@@ -566,7 +578,7 @@ function AttendancesView() {
           {navState === "Edit" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
               <span className="text-2xl font-bold self-start">
-                {"Edit attendance"}
+                {t("edit-attendance")}
               </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <DropDownList
@@ -579,25 +591,25 @@ function AttendancesView() {
                   }
                   onChange={(e) => setSelectedCourseId(e.target.value)}
                   value={String(selectedCourseId)}
-                  label="Course"
+                  label={t("course")}
                 />
                 <DropDownList
                   icon="attendance-type-icon"
                   options={
                     availableAttendanceTypes?.map((type) => ({
-                      label: type.attendanceType,
+                      label: t(type.attendanceType),
                       value: String(type.id),
                     })) || []
                   }
                   onChange={(e) => setSelectedAttendanceTypeId(e.target.value)}
                   value={String(selectedAttendanceTypeId)}
-                  label="Attendance type"
+                  label={t("attendance-type")}
                 />
                 <div className="flex flex-col max-md:max-w-full max-md:min-w-5/6 md:min-w-xs gap-4">
                   <div className="flex flex-col items-start">
                     <div>
                       <span className="text-xl font-semibold mr-2">
-                        {"Start time:"}
+                        {t("start-time") + ": "}
                       </span>
                       <TimeSelector
                         value={String(startTime)}
@@ -606,7 +618,7 @@ function AttendancesView() {
                     </div>
                     <div>
                       <span className="text-xl font-semibold mr-2">
-                        {"End time:"}
+                        {t("end-time") + ": "}
                       </span>
                       <TimeSelector
                         value={String(endTime)}
@@ -615,7 +627,7 @@ function AttendancesView() {
                     </div>
                     <div>
                       <span className="text-xl font-semibold mr-2">
-                        {"Kuupäev:"}
+                        {t("date") + ": "}
                       </span>
                       <DateSelector
                         value={String(date)}
@@ -632,7 +644,7 @@ function AttendancesView() {
                   {errorMessage && <ErrorMessage text={t(errorMessage)} />}
                 </div>
                 <NormalButton
-                  text="Edit attendance"
+                  text={t("edit-attendance")}
                   onClick={() =>
                     navigate(
                       `/Attendances/Edit/${attendanceData?.attendanceId}`
@@ -645,7 +657,7 @@ function AttendancesView() {
           {navState === "Students" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
               <span className="text-2xl font-bold self-start">
-                {"Students in this attendance"}
+                {t("students-in-this-attendance")}
               </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <div className="flex gap-20 w-9/12">
@@ -665,7 +677,7 @@ function AttendancesView() {
                       }
                     />
                     <NormalLink
-                      text="Remove"
+                      text={t("remove")}
                       onClick={() => deleteAttendanceCheck(attendanceCheck.id)}
                     />
                   </div>
@@ -673,13 +685,13 @@ function AttendancesView() {
               </div>
               <div className="flex justify-between">
                 <NormalLink
-                  text="Go back"
+                  text={t("go-back")}
                   onClick={() => {
                     setNavState("Details");
                   }}
                 />
                 <NormalLink
-                  text="View as PDF"
+                  text={t("view-as-pdf")}
                   onClick={() => navigate(`/Attendances/PDF/`)}
                 />
               </div>
@@ -688,7 +700,7 @@ function AttendancesView() {
           {navState === "QR" && (
             <div className="flex flex-col max-md:w-90 md:max-w-6xl bg-main-dark rounded-3xl gap-10 p-6">
               <span className="md:text-5xl max-md:text-2xl font-bold self-center">
-                {"QR of this attendance"}
+                {t("qr-of-this-attendance")}
               </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <QrGenerator value={qrValue} />
@@ -702,24 +714,27 @@ function AttendancesView() {
                 </div>
               </div>
               <div className="flex justify-center">
-                <NormalLink text="Go back" onClick={() => navigate(-1)} />
+                <NormalLink text={t("go-back")} onClick={() => navigate(-1)} />
               </div>
             </div>
           )}
           {navState === "PDF" && (
-           <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
-           <span className="text-2xl font-bold self-start">
-             {"Students in this attendance"}
-           </span>
+            <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl gap-10 p-6">
+              <span className="text-2xl font-bold self-start">
+                {t("students-in-this-attendance")}
+              </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center w-full">
                 {attendanceChecks && attendanceData && (
                   <PDFViewer className="w-full h-170">
-                    <PDFDocument attendanceData={attendanceData} attendanceChecks={attendanceChecks} />
+                    <PDFDocument
+                      attendanceData={attendanceData}
+                      attendanceChecks={attendanceChecks}
+                    />
                   </PDFViewer>
                 )}
               </div>
               <div className="flex justify-center">
-                <NormalLink text="Go back" onClick={() => navigate(-1)} />
+                <NormalLink text={t("go-back")} onClick={() => navigate(-1)} />
               </div>
             </div>
           )}

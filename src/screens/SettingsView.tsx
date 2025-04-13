@@ -84,12 +84,11 @@ function SettingsView() {
             </div>
             <div className="flex flex-col self-center py-5">
               <div className="flex flex-col gap-4">
-              <NormalButton text="change-password" onClick={() => navigate("/PasswordRecovery")} />
-              <NormalButton text="log-out" onClick={handleLogout} />
+              <NormalButton text={t("change-password")} onClick={() => navigate("/PasswordRecovery")} />
+              <NormalButton text={t("log-out")} onClick={handleLogout} />
               </div>
-              <NormalLink text="delete-account" onClick={handleDelete}/>
+              <NormalLink text={t("delete-account")} onClick={handleDelete}/>
             </div>
-           
           </div>
         </div>
       </div>
