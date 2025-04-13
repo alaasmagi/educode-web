@@ -175,5 +175,5 @@
   "student-removed-successfully": "Üliõpilane edukalt eemaldatud",
   "no-students-in-this-attendance": "Selles ainetunnis ei ole õpilasi",
   "attendance-add-success": "Ainetund edukalt lisatud",
-  "log-out-success": "Oled edukalt väljalogitud"
+  "account-logout-success": "Oled edukalt väljalogitud"
 }
