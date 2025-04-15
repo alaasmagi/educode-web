@@ -1,4 +1,3 @@
-import CreateAttendanceCheckModel from "../models/CreateAttendanceCheckModel";
 import { GetUserToken } from "./UserDataOffline";
 import axios from "axios";
 import { CourseAttendance, MultipleCourseAttendances } from "../models/CourseAttendanceModel";
@@ -8,14 +7,16 @@ import {
   ConvertUTCToLocalDateTime,
 } from "../helpers/DateHandlers";
 import AttendanceType from "../models/AttendanceTypeModel";
-import AttendanceCheckData from "../models/AttendanceCheckData";
+import AttendanceCheckData from "../models/AttendanceCheckModel";
+import AttendanceCheckModel from "../models/AttendanceCheckModel";
 
-export async function AddAttendanceCheck(model: CreateAttendanceCheckModel): Promise<boolean | string> {
+export async function AddAttendanceCheck(model: AttendanceCheckModel): Promise<boolean | string> {
   const token = await GetUserToken();
   const response = await axios.post(
     `${import.meta.env.VITE_API_URL}/Attendance/AttendanceCheck/Add`,
     {
       studentCode: model.studentCode,
+      fullName: model.fullName,
       courseAttendanceId: model.courseAttendanceId,
       workplaceId: model.workplaceId,
       creator: "educode-webapp",

@@ -41,12 +41,11 @@ import NormalMessage from "../components/NormalMessage";
 import ErrorMessage from "../components/ErrorMessage";
 import { FormatDateOnlyToBackendFormat } from "../helpers/DateHandlers";
 import GetSixDigitTimeStamp from "../helpers/TimeStamp";
-import AttendanceCheckData from "../models/AttendanceCheckData";
+import AttendanceCheckData from "../models/AttendanceCheckModel";
 import { RegexFilters } from "../helpers/RegexFilters";
-import CreateAttendanceCheckModel from "../models/CreateAttendanceCheckModel";
 import PDFDocument from "../components/PDFDocument";
 import { PDFViewer } from "@react-pdf/renderer";
-import { setSourceMapsEnabled } from "process";
+import AttendanceCheckModel from "../models/AttendanceCheckModel";
 
 function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -61,6 +60,8 @@ function AttendancesView() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [qrValue, setQrValue] = useState<string>("");
   const [studentCodeInput, setStudentCodeInput] = useState<string>("");
+  const [firstNameInput, setFirstNameInput] = useState<string>("");
+  const [lastNameInput, setLastNameInput] = useState<string>("");
   const [workplaceInput, setWorkplaceInput] = useState<string>("");
 
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
@@ -291,8 +292,9 @@ function AttendancesView() {
       setTimeout(() => setErrorMessage(null), 3000);
       return;
     } else {
-      const model: CreateAttendanceCheckModel = {
+      const model: AttendanceCheckModel = {
         studentCode: studentCodeInput,
+        fullName: `${firstNameInput} ${lastNameInput}`,
         courseAttendanceId: attendanceData!.attendanceId!,
         workplaceId: parseInt(workplaceInput) ?? null,
       };
@@ -309,6 +311,8 @@ function AttendancesView() {
       setTimeout(() => setSuccessMessage(null), 3000);
     }
     setStudentCodeInput("");
+    setFirstNameInput("");
+    setLastNameInput("");
     setWorkplaceInput("");
   };
 
@@ -525,6 +529,20 @@ function AttendancesView() {
                       autofocus={true}
                       onChange={setStudentCodeInput}
                     />
+                     <TextBox
+                      icon="person-icon"
+                      placeHolder={t("first-name")}
+                      value={firstNameInput}
+                      autofocus={true}
+                      onChange={setFirstNameInput}
+                    />
+                     <TextBox
+                      icon="person-icon"
+                      placeHolder={t("last-name")}
+                      value={lastNameInput}
+                      autofocus={true}
+                      onChange={setLastNameInput}
+                    />
                     <TextBox
                       icon="work-icon"
                       placeHolder={t("workplace-id")}
@@ -554,7 +572,7 @@ function AttendancesView() {
               <QuickNavigation
                 quickNavItemA={{
                   label: t("add-new-attendance"),
-                  onClick: () => navigate("/Attendance/Add"),
+                  onClick: () => navigate("/Attendance/Create"),
                 }}
                 quickNavItemB={{
                   label: t("view-statistics"),
@@ -569,25 +587,15 @@ function AttendancesView() {
                 {t("students-in-this-attendance")}
               </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
-                <div className="flex gap-20 w-9/12">
-                  <img src={Icons["person-icon"]} className="h-7" />
-                  <img src={Icons["work-icon"]} className="h-7" />
-                </div>
                 {attendanceChecks?.map((attendanceCheck) => (
                   <div className="flex flex-row gap-5 justify-between w-full">
                     <DetailedDataField
-                      dataA={attendanceCheck.studentCode}
-                      dataB={
-                        attendanceCheck.workplaceId == null
-                          ? t("N/A")
-                          : String(
-                              ToSixDigit(Number(attendanceCheck.workplaceId))
-                            )
-                      }
+                      dataA= {attendanceCheck.fullName}
+                      dataB={attendanceCheck.studentCode}
                     />
                     <NormalLink
                       text={t("remove")}
-                      onClick={() => deleteAttendanceCheck(attendanceCheck.id)}
+                      onClick={() => deleteAttendanceCheck(Number(attendanceCheck.id))}
                     />
                   </div>
                 ))}

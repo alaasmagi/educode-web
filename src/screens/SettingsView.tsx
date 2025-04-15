@@ -1,26 +1,15 @@
 import { useEffect, useState } from "react";
 import "../App.css";
-import DataField from "../components/DataField";
 import NormalLink from "../components/Link";
 import NormalButton from "../components/NormalButton";
 import SuccessMessage from "../components/SuccessMessage";
-import TextBox from "../components/TextBox";
-import QuickNavigation from "../layout/QuickNavigation";
 import SideBar from "../layout/SideBar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-  AddAttendanceCheck,
-  GetCurrentAttendance,
-  GetMostRecentAttendance,
-  GetStudentCountByAttendanceId,
-} from "../businesslogic/AttendanceDataFetch";
 import LocalUserData from "../models/LocalUserDataModel";
 import { DeleteCurrentLanguage, DeleteOfflineUserData, GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import NormalMessage from "../components/NormalMessage";
 import ErrorMessage from "../components/ErrorMessage";
-import { RegexFilters } from "../helpers/RegexFilters";
-import CreateAttendanceCheckModel from "../models/CreateAttendanceCheckModel";
 import { CourseAttendance } from "../models/CourseAttendanceModel";
 import { DeleteUser } from "../businesslogic/UserDataFetch";
 
@@ -31,12 +20,6 @@ function SettingsView() {
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
-  const [currentStudentCount, setCurrentStudentCount] = useState<string | null>(null);
-  const [currentAttendanceData, setCurrentAttendanceData] = useState<CourseAttendance | null>(null);
-
-  const [studentCodeInput, setStudentCodeInput] = useState<string>("");
-  const [workplaceInput, setWorkplaceInput] = useState<string>("");
-  const [recentAttendanceId, setRecentAttendanceId] = useState<string>("");
 
   useEffect(() => {
     fetchUserData();

@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import "../App.css";
 import ContainerCardSmall from "../components/ContainerCardSmall";
-import TextBox from "../components/TextBox";
 import SideBar from "../layout/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import IconButton from "../components/IconButton";
 import StatisticChart from "../components/StatisticChart";
 import {
-  GetCoursebyId,
   GetCoursesByUser,
   GetCourseStudentCounts,
 } from "../businesslogic/CourseDataFetch";

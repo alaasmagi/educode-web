@@ -5,7 +5,7 @@ import {
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
-import AttendanceCheckData from "../models/AttendanceCheckData";
+import AttendanceCheckData from "../models/AttendanceCheckModel";
 import ToSixDigit from "../helpers/NumberConverter";
 import { useTranslation } from "react-i18next";
 import { CourseAttendance } from "../models/CourseAttendanceModel";
@@ -28,14 +28,16 @@ const PDFDocument: React.FC<PDFDocumentProperties> = ({ attendanceChecks, attend
 
           <View style={styles.tableHeader}>
             <Text style={[styles.cell, styles.headerText, styles.colNumber]}></Text>
-            <Text style={[styles.cell, styles.headerText, styles.colStudent]}>{t("student")}</Text>
+            <Text style={[styles.cell, styles.headerText, styles.colStudentName]}>{t("student")}</Text>
+            <Text style={[styles.cell, styles.headerText, styles.colStudentCode]}></Text>
             <Text style={[styles.cell, styles.headerText, styles.colWorkplace]}>{t("workplace")}</Text>
           </View>
 
           {attendanceChecks?.map((attendanceCheck, index) => (
             <View key={index} style={styles.tableRow}>
               <Text style={[styles.cell, styles.colNumber]}>{(index + 1) + "."}</Text>
-              <Text style={[styles.cell, styles.colStudent]}>{attendanceCheck.studentCode}</Text>
+              <Text style={[styles.cell, styles.colStudentName]}>{attendanceCheck.fullName}</Text>
+              <Text style={[styles.cell, styles.colStudentCode]}>{attendanceCheck.studentCode}</Text>
               <Text style={[styles.cell, styles.colWorkplace]}>
                 {attendanceCheck.workplaceId == null
                   ? t("no-workplace")
@@ -53,7 +55,7 @@ export default PDFDocument;
 
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
+    padding: 35,
     fontSize: 12,
   },
   section: {
@@ -75,13 +77,16 @@ const styles = StyleSheet.create({
     borderBottom: "0.5px solid #ccc",
   },
   cell: {
-    paddingRight: 2,
+    paddingRight: 1,
   },
   colNumber: {
-    width:"5%",
+    width:"3%",
   },
-  colStudent: {
-    width: "25%",
+  colStudentCode: {
+    width: "20%",
+  },
+  colStudentName: {
+    width:"26%"
   },
   colWorkplace: {
     width: "25%",
