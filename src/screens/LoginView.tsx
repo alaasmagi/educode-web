@@ -64,14 +64,14 @@ function LoginView() {
           <div className="flex flex-col gap-3.5">
             <TextBox
               icon="person-icon"
-              placeHolder={"UniID"}
+              label={"Uni-ID"}
               value={uniIdInput}
               onChange={setUniIdInput}
               autofocus={true}
             />
             <TextBox
               icon="lock-icon"
-              placeHolder={t("password")}
+              label={t("password")}
               value={passwordInput}
               onChange={setPasswordInput}
               isPassword={true}

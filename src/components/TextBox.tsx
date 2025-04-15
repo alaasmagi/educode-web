@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Icons } from "./Icons";
 
 interface TextBoxProperties {
-  placeHolder: string;
+  label: string;
   icon: keyof typeof Icons;
+  placeHolder?: string;
   isPassword?: boolean;
   disabled?: boolean;
   value?: string;
@@ -12,6 +13,7 @@ interface TextBoxProperties {
 }
 
 export default function TextBox({
+  label,
   placeHolder,
   icon,
   isPassword = false,
@@ -20,16 +22,21 @@ export default function TextBox({
   autofocus = false,
   onChange,
 }: TextBoxProperties) {
-  const [isTextVisible, setIsTextVisible] = useState(!isPassword);
+  const [isTextVisible, setIsTextVisible] = useState<boolean>(!isPassword);
+  const [isFocused, setIsFocused] = useState<boolean>(autofocus);
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex flex-row w-max-screen items-center gap-1.5">
+      <label className="self-start">{label}</label>
+      <div className= {isFocused ? "flex flex-row w-max-screen items-center gap-1.5 border-[1px] py-2 px-1 rounded-xl border-main-blue" : 
+        "flex flex-row w-max-screen items-center gap-1.5 border-[1px] py-2 px-1 rounded-xl border-main-text"}>
         <img src={Icons[icon]} className="h-7" alt={`${icon}-Icon`} />
         <input
           type={isTextVisible ? "text" : "password"}
           value={value}
           autoFocus={autofocus}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           placeholder={placeHolder}
           onChange={(e) => onChange && onChange(e.target.value)}
           disabled={disabled}
@@ -45,7 +52,6 @@ export default function TextBox({
           </button>
         )}
       </div>
-      <div className="w-full h-px bg-main-text mt-2"></div>
     </div>
   );
 }

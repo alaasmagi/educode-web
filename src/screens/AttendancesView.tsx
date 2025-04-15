@@ -524,28 +524,30 @@ function AttendancesView() {
                   <div className="flex flex-col md:w-7/12 max-md:w-11/12 self-center items-center gap-3">
                     <TextBox
                       icon="person-icon"
-                      placeHolder={t("student-code")}
+                      label={t("student-code")}
+                      placeHolder={t("for-example-abbr") + " 123456ABCD"}
                       value={studentCodeInput}
                       autofocus={true}
                       onChange={setStudentCodeInput}
                     />
                      <TextBox
                       icon="person-icon"
-                      placeHolder={t("first-name")}
+                      label={t("first-name")}
                       value={firstNameInput}
                       autofocus={true}
                       onChange={setFirstNameInput}
                     />
                      <TextBox
                       icon="person-icon"
-                      placeHolder={t("last-name")}
+                      label={t("last-name")}
                       value={lastNameInput}
                       autofocus={true}
                       onChange={setLastNameInput}
                     />
                     <TextBox
                       icon="work-icon"
-                      placeHolder={t("workplace-id")}
+                      label={t("workplace-id")}
+                      placeHolder={t("for-example-abbr") + " 123456"}
                       value={workplaceInput}
                       onChange={setWorkplaceInput}
                     />

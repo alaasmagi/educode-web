@@ -76,6 +76,8 @@
   "password-change-error": "Password change failed",
   "no-account-found": "User account not found",
   "password-change-success": "Password changed successfully",
+  "delete-account-success": "Account deleted successfully",
+
 
   "home": "Home",
   "courses": "Courses",
@@ -176,5 +178,7 @@
   "no-students-in-this-attendance": "This attendance has no students",
   "attendance-add-success": "Attendance added successfully",
   "account-logout-success": "Logged out successfully",
-  "wrong-workplace-id": "Wrong workplace ID"
+  "wrong-workplace-id": "Wrong workplace ID",
+  "for-example-abbr": "eg."
+
 }

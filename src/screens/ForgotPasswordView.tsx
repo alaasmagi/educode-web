@@ -109,7 +109,7 @@ function ForgotPasswordView() {
                 <UnderlineText text={t("verify-account")} />
                 <TextBox
                   icon="person-icon"
-                  placeHolder="Uni-ID"
+                  label="UNI-ID"
                   value={uniId}
                   onChange={(text) => setUniId(text.trim())}
                 />
@@ -141,7 +141,7 @@ function ForgotPasswordView() {
                 />
                 <TextBox
                   icon="pincode-icon"
-                  placeHolder={t("one-time-key")}
+                  label={t("one-time-key")}
                   value={emailCode}
                   onChange={(text) => setEmailCode(text.trim())}
                 />
@@ -173,14 +173,14 @@ function ForgotPasswordView() {
                 <div className="flex min-w-2xs flex-col gap-5">
                   <TextBox
                     icon="lock-icon"
-                    placeHolder={t("password")}
+                    label={t("password")}
                     isPassword
                     value={password}
                     onChange={(text) => setPassword(text.trim())}
                   />
                   <TextBox
                     icon="lock-icon"
-                    placeHolder={t("repeat-password")}
+                    label={t("repeat-password")}
                     isPassword
                     value={passwordAgain}
                     onChange={(text) => setPasswordAgain(text.trim())}

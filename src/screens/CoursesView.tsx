@@ -251,13 +251,13 @@ function CoursesView() {
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <TextBox
                   icon="school-icon"
-                  placeHolder={t("course-name")}
+                  label={t("course-name")}
                   value={selectedCourseName ?? ""}
                   onChange={setSelectedCourseName}
                 />
                 <TextBox
                   icon="pincode-icon"
-                  placeHolder={t("course-code")}
+                  label={t("course-code")}
                   value={selectedCourseCode ?? ""}
                   onChange={setSelectedCourseCode}
                 />
@@ -291,14 +291,14 @@ function CoursesView() {
                 {t("add-course")}
               </span>
               <div className="flex flex-col gap-5 items-center justify-center self-center">
-                <TextBox
+              <TextBox
                   icon="school-icon"
-                  placeHolder={t("course-name")}
+                  label={t("course-name")}
                   onChange={setSelectedCourseName}
                 />
                 <TextBox
                   icon="pincode-icon"
-                  placeHolder={t("course-code")}
+                  label={t("course-code")}
                   onChange={setSelectedCourseCode}
                 />
                 <DropDownList

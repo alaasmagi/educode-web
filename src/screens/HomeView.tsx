@@ -168,6 +168,44 @@ function HomeView() {
               {normalMessage && <NormalMessage text={t(normalMessage)} />}
               {errorMessage && <ErrorMessage text={t(errorMessage)} />}
             </div>
+            {currentAttendanceData && (
+              <div className="flex flex-col md:w-7/12 max-md:w-11/12 self-center items-center gap-3">
+                <TextBox
+                  icon="person-icon"
+                  label={t("student-code")}
+                  placeHolder={t("format 123456ABCD")}
+                  value={studentCodeInput}
+                  autofocus={true}
+                  onChange={setStudentCodeInput}
+                />
+                <TextBox
+                  icon="person-icon"
+                  label={t("first-name")}
+                  value={firstNameInput}
+                  autofocus={true}
+                  onChange={setFirstNameInput}
+                />
+                <TextBox
+                  icon="person-icon"
+                  label={t("last-name")}
+                  value={lastNameInput}
+                  autofocus={true}
+                  onChange={setLastNameInput}
+                />
+                <TextBox
+                  icon="work-icon"
+                  label={t("workplace-id")}
+                  placeHolder={t("format xxxxxx")}
+                  value={workplaceInput}
+                  onChange={setWorkplaceInput}
+                />
+                <NormalButton
+                  text={t("add-student")}
+                  onClick={handleAddAttendanceCheck}
+                  isDisabled={!RegexFilters.studentCode.test(studentCodeInput)}
+                />
+              </div>
+            )}
           </div>
           <QuickNavigation
             quickNavItemA={{

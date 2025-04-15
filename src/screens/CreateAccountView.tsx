@@ -18,6 +18,7 @@ import VerifyOTPModel from "../models/VerifyOTPModel";
 import CreateUserModel from "../models/CreateUserModel";
 import UnderlineText from "../components/UnderlineText";
 import DataText from "../components/DataText";
+import DataField from "../components/DataField";
 
 function CreateAccountView() {
   const [stepNr, setStepNr] = useState(1);
@@ -116,13 +117,13 @@ function CreateAccountView() {
               <div className="flex min-w-2xs flex-col gap-5">
                 <TextBox
                   icon="person-icon"
-                  placeHolder={t("first-name")}
+                  label={t("first-name")}
                   value={firstName}
                   onChange={(text) => setFirstName(text.trim())}
                 />
                 <TextBox
                   icon="person-icon"
-                  placeHolder={t("last-name")}
+                  label={t("last-name")}
                   value={lastName}
                   onChange={(text) => setLastName(text.trim())}
                 />
@@ -152,7 +153,7 @@ function CreateAccountView() {
               <div className="flex min-w-2xs flex-col gap-5">
                 <TextBox
                   icon="person-icon"
-                  placeHolder="Uni-ID"
+                  label="Uni-ID"
                   value={uniIdInput ?? ""}
                   onChange={(text) => setUniIdInput(text.trim())}
                 />
@@ -160,10 +161,7 @@ function CreateAccountView() {
               {sharedMessage && <>{messageComponent}</>}
             </div>
             <div className="flex flex-col self-center justify-center ">
-              <NormalButton
-                text={t("continue")}
-                onClick={handleOTPRequest}
-              />
+              <NormalButton text={t("continue")} onClick={handleOTPRequest} />
               <div className="flex flex-col gap-4">
                 <NormalLink
                   text={t("something-wrong-back")}
@@ -177,21 +175,21 @@ function CreateAccountView() {
       case 3:
         return (
           <div className="flex flex-col gap-6">
-            <div className="flex min-w-2xs flex-col gap-5">
+            <div className="flex flex-col gap-5">
               <UnderlineText
                 text={`${t("one-time-key-prompt")} ${uniIdInput}@taltech.ee`}
               />
-              <div>
+            </div>
+            <div className="flex flex-col self-center justify-center">
+              <div className="my-4">
+                {sharedMessage && <>{messageComponent}</>}
                 <TextBox
                   icon="pincode-icon"
-                  placeHolder={t("one-time-key")}
+                  label={t("one-time-key")}
                   value={emailCode}
                   onChange={(text) => setEmailCode(text.trim())}
                 />
               </div>
-              {sharedMessage && <>{messageComponent}</>}
-            </div>
-            <div className="flex flex-col self-center justify-center ">
               <NormalButton
                 text={t("continue")}
                 onClick={handleOTPVerification}
@@ -214,14 +212,14 @@ function CreateAccountView() {
               <div className="flex min-w-2xs flex-col gap-5">
                 <TextBox
                   icon="lock-icon"
-                  placeHolder={t("password")}
+                  label={t("password")}
                   isPassword
                   value={password}
                   onChange={(text) => setPassword(text.trim())}
                 />
                 <TextBox
                   icon="lock-icon"
-                  placeHolder={t("repeat-password")}
+                  label={t("repeat-password")}
                   isPassword
                   value={passwordAgain}
                   onChange={(text) => setPasswordAgain(text.trim())}
@@ -251,11 +249,14 @@ function CreateAccountView() {
             <div className="flex flex-col gap-5">
               <UnderlineText text={t("verify-details")} />
               <div className="flex flex-col gap-3 border-2 p-2 border-main-text rounded-2xl">
-                <DataText
-                  icon={"person-icon"}
-                  text={`${firstName} ${lastName}`}
+                <DataField
+                  fieldName={t("name")}
+                  data={`${firstName} ${lastName}`}
                 />
-                <DataText icon={"person-icon"} text={uniIdInput} />
+                <DataField
+                  fieldName={"Uni-ID"}
+                  data={uniIdInput}
+                />
               </div>
               {sharedMessage && <>{messageComponent}</>}
             </div>

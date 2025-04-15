@@ -134,6 +134,8 @@
   "course-does-not-exist": "Õppeainet ei eksisteeri",
   "users-not-found": "Kasutajaid ei leitud",
   "user-not-accessible": "Kasutajale ei ole võimalik juurde pääseda",
+  "delete-account-success": "Kasutaja kustutamine õnnestus",
+  "name": "Nimi",
 
   "all-courses": "Kõik õppeained",
   "add-new-course": "Lisa uus õppeaine",
@@ -176,5 +178,6 @@
   "no-students-in-this-attendance": "Selles ainetunnis ei ole õpilasi",
   "attendance-add-success": "Ainetund edukalt lisatud",
   "account-logout-success": "Oled edukalt väljalogitud",
-  "wrong-workplace-id": "Vale töökoha ID"
+  "wrong-workplace-id": "Vale töökoha ID",
+  "for-example-abbr": "nt."
 }
