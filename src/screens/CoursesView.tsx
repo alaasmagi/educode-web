@@ -95,7 +95,6 @@ function CoursesView() {
           break;
       }
       setTimeout(() => setErrorMessage(null), 3000);
-      setTimeout(() => setNormalMessage(null), 3000);
     };
 
     fetchData();
@@ -112,7 +111,6 @@ function CoursesView() {
           setSelectedCourseCode(status.courseCode);
       }
       setTimeout(() => setErrorMessage(null), 3000);
-      setTimeout(() => setNormalMessage(null), 3000);
     }
   };
 
@@ -259,7 +257,7 @@ function CoursesView() {
                   icon="pincode-icon"
                   label={t("course-code")}
                   value={selectedCourseCode ?? ""}
-                  onChange={setSelectedCourseCode}
+                  onChange={(text) => setSelectedCourseCode(text.trim())}
                 />
                 <DropDownList
                   icon="event-status-icon"
@@ -299,7 +297,7 @@ function CoursesView() {
                 <TextBox
                   icon="pincode-icon"
                   label={t("course-code")}
-                  onChange={setSelectedCourseCode}
+                  onChange={(text) => setSelectedCourseCode(text.trim())}
                 />
                 <DropDownList
                   icon="event-status-icon"
@@ -380,7 +378,7 @@ function CoursesView() {
                 }}
                 quickNavItemB={{
                   label: t("view-statistics"),
-                  onClick: () => navigate(`Statistics/View/${courseId}`),
+                  onClick: () => navigate(`/Statistics/View/${courseId}`),
                 }}
               />
             </>

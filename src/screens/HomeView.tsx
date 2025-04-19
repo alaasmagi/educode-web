@@ -36,8 +36,7 @@ function HomeView() {
   const [recentAttendanceId, setRecentAttendanceId] = useState<string>("");
 
   const [studentCodeInput, setStudentCodeInput] = useState<string>("");
-  const [firstNameInput, setFirstNameInput] = useState<string>("");
-  const [lastNameInput, setLastNameInput] = useState<string>("");
+  const [fullNameInput, setFullNameInput] = useState<string>("");
   const [workplaceInput, setWorkplaceInput] = useState<string>("");
 
   const setTempMessage = (setter: (msg: string | null) => void, msg: string) => {
@@ -68,7 +67,7 @@ function HomeView() {
 
       if (typeof current === "string") {
         setCurrentAttendanceData(null);
-        setTempMessage(setNormalMessage, t(current));
+        setNormalMessage(t(current));
       } else {
         setCurrentAttendanceData(current);
         const studentCount = await GetStudentCountByAttendanceId(Number(current.attendanceId));
@@ -97,7 +96,7 @@ function HomeView() {
 
     const model: AttendanceCheckModel = {
       studentCode: studentCodeInput,
-      fullName: `${firstNameInput} ${lastNameInput}`,
+      fullName: fullNameInput.trim(),
       courseAttendanceId: currentAttendanceData!.attendanceId!,
       workplaceId: workplaceInput ? parseInt(workplaceInput) : null,
     };
@@ -155,33 +154,26 @@ function HomeView() {
               <div className="flex flex-col md:w-7/12 max-md:w-11/12 self-center items-center gap-3">
                 <TextBox
                   icon="person-icon"
+                  label={t("name")}
+                  placeHolder={t("for-example-abbr") + "Andres Tamm"}
+                  value={fullNameInput}
+                  autofocus={true}
+                  onChange={setFullNameInput}
+                />
+                <TextBox
+                  icon="person-icon"
                   label={t("student-code")}
-                  placeHolder={t("format 123456ABCD")}
+                  placeHolder={t("for-example-abbr") + "123456ABCD"}
                   value={studentCodeInput}
                   autofocus={true}
-                  onChange={setStudentCodeInput}
-                />
-                <TextBox
-                  icon="person-icon"
-                  label={t("first-name")}
-                  value={firstNameInput}
-                  autofocus={true}
-                  onChange={setFirstNameInput}
-                />
-                <TextBox
-                  icon="person-icon"
-                  label={t("last-name")}
-                  value={lastNameInput}
-                  autofocus={true}
-                  onChange={setLastNameInput}
+                  onChange={(text) => setStudentCodeInput(text.trim())}
                 />
                 <TextBox
                   icon="work-icon"
                   label={t("workplace-id")}
-                  placeHolder={t("format xxxxxx")}
+                  placeHolder={t("for-example-abbr") + "123456"}
                   value={workplaceInput}
-                  onChange={setWorkplaceInput}
-                />
+                  onChange={(text) => setWorkplaceInput(text.trim())}                />
                 <NormalButton
                   text={t("add-student")}
                   onClick={handleAddAttendanceCheck}

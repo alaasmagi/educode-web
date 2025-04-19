@@ -22,8 +22,7 @@ import DataField from "../components/DataField";
 
 function CreateAccountView() {
   const [stepNr, setStepNr] = useState(1);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [fullName, setFullName] = useState("");
   const [uniIdInput, setUniIdInput] = useState("");
   const [emailCode, setEmailCode] = useState("");
   const [password, setPassword] = useState("");
@@ -40,15 +39,9 @@ function CreateAccountView() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const isNameFormValid = () => firstName !== "" && lastName !== "";
+  const isNameFormValid = () => fullName !== "" && !fullName.includes(";");
   const isPasswordFormValid = () =>
     password.length >= 8 && password === passwordAgain;
-
-  useEffect(() => {
-    setNormalMessage(
-      !isNameFormValid() ? t("all-fields-required-message") : ""
-    );
-  }, [firstName, lastName]);
 
   useEffect(() => {
     if (password.length < 8 && password !== "") {
@@ -61,13 +54,13 @@ function CreateAccountView() {
   }, [password, passwordAgain]);
 
   const handleOTPRequest = useCallback(async () => {
-    const status = await RequestOTP(uniIdInput, firstName + lastName);
+    const status = await RequestOTP(uniIdInput, fullName);
     if (status === true) {
       setStepNr(3);
     } else {
       showTemporaryError(t(String(status)));
     }
-  }, [uniIdInput, firstName, lastName, t, showTemporaryError]);
+  }, [uniIdInput, fullName, t, showTemporaryError]);
 
   const handleOTPVerification = useCallback(async () => {
     const otpData: VerifyOTPModel = { uniId: uniIdInput, otp: emailCode };
@@ -82,7 +75,7 @@ function CreateAccountView() {
   const handleRegister = useCallback(async () => {
     const userData: CreateUserModel = {
       uniId: uniIdInput,
-      fullName: `${firstName} ${lastName}`,
+      fullName: fullName.trim(),
       password,
     };
     const status = await CreateUserAccount(userData);
@@ -91,15 +84,7 @@ function CreateAccountView() {
     } else {
       showTemporaryError(t(String(status)));
     }
-  }, [
-    uniIdInput,
-    firstName,
-    lastName,
-    password,
-    navigate,
-    t,
-    showTemporaryError,
-  ]);
+  }, [uniIdInput, fullName, password, navigate, t, showTemporaryError]);
 
   const renderStep = () => {
     const sharedMessage = normalMessage || errorMessage;
@@ -117,15 +102,9 @@ function CreateAccountView() {
               <div className="flex min-w-2xs flex-col gap-5">
                 <TextBox
                   icon="person-icon"
-                  label={t("first-name")}
-                  value={firstName}
-                  onChange={(text) => setFirstName(text.trim())}
-                />
-                <TextBox
-                  icon="person-icon"
-                  label={t("last-name")}
-                  value={lastName}
-                  onChange={(text) => setLastName(text.trim())}
+                  label={t("name")}
+                  value={fullName}
+                  onChange={setFullName}
                 />
               </div>
               {sharedMessage && <>{messageComponent}</>}
@@ -251,12 +230,9 @@ function CreateAccountView() {
               <div className="flex flex-col gap-3 border-2 p-2 border-main-text rounded-2xl">
                 <DataField
                   fieldName={t("name")}
-                  data={`${firstName} ${lastName}`}
+                  data={fullName}
                 />
-                <DataField
-                  fieldName={"Uni-ID"}
-                  data={uniIdInput}
-                />
+                <DataField fieldName={"Uni-ID"} data={uniIdInput} />
               </div>
               {sharedMessage && <>{messageComponent}</>}
             </div>

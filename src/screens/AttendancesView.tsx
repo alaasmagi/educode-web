@@ -53,28 +53,39 @@ function AttendancesView() {
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
 
   const [studentCount, setStudentCount] = useState<string | null>(null);
-  const [attendanceData, setAttendanceData] = useState<CourseAttendance | null>(null);
+  const [attendanceData, setAttendanceData] = useState<CourseAttendance | null>(
+    null
+  );
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [qrValue, setQrValue] = useState<string>("");
 
   const [studentCodeInput, setStudentCodeInput] = useState<string>("");
-  const [firstNameInput, setFirstNameInput] = useState<string>("");
-  const [lastNameInput, setLastNameInput] = useState<string>("");
+  const [fullNameInput, setFullNameInput] = useState<string>("");
   const [workplaceInput, setWorkplaceInput] = useState<string>("");
 
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
-  const [selectedAttendanceTypeId, setSelectedAttendanceTypeId] = useState<string | null>(null);
+  const [selectedAttendanceTypeId, setSelectedAttendanceTypeId] = useState<
+    string | null
+  >(null);
   const [startTime, setStartTime] = useState<string | null>(null);
   const [endTime, setEndTime] = useState<string | null>(null);
   const [dates, setDates] = useState([{ id: 1, date: "" }]);
   const [date, setDate] = useState<string | null>(null);
 
-  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(null);
-  const [courseAttendances, setCourseAttendances] = useState<CourseAttendance[] | null>(null);
-  const [availableAttendanceTypes, setAvailableAttendanceTypes] = useState<AttendanceType[] | null>(null);
-  const [attendanceChecks, setAttendanceChecks] = useState<AttendanceCheckData[] | null>(null);
+  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(
+    null
+  );
+  const [courseAttendances, setCourseAttendances] = useState<
+    CourseAttendance[] | null
+  >(null);
+  const [availableAttendanceTypes, setAvailableAttendanceTypes] = useState<
+    AttendanceType[] | null
+  >(null);
+  const [attendanceChecks, setAttendanceChecks] = useState<
+    AttendanceCheckData[] | null
+  >(null);
 
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -84,7 +95,6 @@ function AttendancesView() {
       const timer = setTimeout(() => {
         setErrorMessage(null);
         setSuccessMessage(null);
-        setNormalMessage(null);
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -117,7 +127,7 @@ function AttendancesView() {
         case "Create":
           await Promise.all([
             fetchAllCoursesByUser(String(localData.uniId)),
-            fetchAttendanceTypes()
+            fetchAttendanceTypes(),
           ]);
           break;
         case "Students":
@@ -131,7 +141,6 @@ function AttendancesView() {
     fetchData();
   }, [navState, attendanceId, localData]);
 
-  // QR Code interval (only if attendanceId exists)
   useEffect(() => {
     if (!attendanceId) return;
     const interval = setInterval(() => {
@@ -164,13 +173,18 @@ function AttendancesView() {
 
   const fetchAllAttendances = async (uniId: string) => {
     const courses = await GetCoursesByUser(uniId);
-    if (typeof courses === "string") return setNormalMessage(t("no-course-attendances-found"));
+    if (typeof courses === "string") {
+      setNormalMessage(t("no-course-attendances-found"));
+      return;
+    }
 
     const attendances = await Promise.all(
       courses.map((course) => GetAttendancesByCourseCode(course.courseCode))
     );
 
-    const allAttendances = attendances.flat().filter((a): a is CourseAttendance => typeof a !== "string");
+    const allAttendances = attendances
+      .flat()
+      .filter((a): a is CourseAttendance => typeof a !== "string");
     setCourseAttendances(allAttendances);
   };
 
@@ -192,7 +206,9 @@ function AttendancesView() {
 
   const fetchAllAttendanceChecksByAttendance = async () => {
     if (!attendanceId) return;
-    const status = await GetAttendanceChecksByAttendanceId(Number(attendanceId));
+    const status = await GetAttendanceChecksByAttendanceId(
+      Number(attendanceId)
+    );
     if (typeof status === "string") {
       setNormalMessage(t("no-students-in-this-attendance"));
     } else {
@@ -211,7 +227,12 @@ function AttendancesView() {
   };
 
   const validateForm = () => {
-    if (!selectedCourseId || !selectedAttendanceTypeId || !startTime || !endTime) {
+    if (
+      !selectedCourseId ||
+      !selectedAttendanceTypeId ||
+      !startTime ||
+      !endTime
+    ) {
       setNormalMessage(t("all-fields-required-message"));
       return false;
     }
@@ -261,7 +282,7 @@ function AttendancesView() {
 
     const model: AttendanceCheckModel = {
       studentCode: studentCodeInput,
-      fullName: `${firstNameInput} ${lastNameInput}`,
+      fullName: fullNameInput.trim(),
       courseAttendanceId: attendanceData!.attendanceId!,
       workplaceId: workplaceInput ? parseInt(workplaceInput) : null,
     };
@@ -270,25 +291,32 @@ function AttendancesView() {
     if (typeof response === "string") {
       setErrorMessage(t(response));
     } else {
-      setSuccessMessage(t("attendance-check-add-success") + ` ${studentCodeInput}`);
+      setSuccessMessage(
+        t("attendance-check-add-success") + ` ${studentCodeInput}`
+      );
     }
 
     setStudentCodeInput("");
-    setFirstNameInput("");
-    setLastNameInput("");
+    setFullNameInput("");
     setWorkplaceInput("");
   };
 
   const generateQrValue = () => {
-    return `${ToSixDigit(Number(attendanceId))}-${ToSixDigit(GetSixDigitTimeStamp())}`;
+    return `${ToSixDigit(Number(attendanceId))}-${ToSixDigit(
+      GetSixDigitTimeStamp()
+    )}`;
   };
 
   const addDateField = () => setDates([...dates, { id: Date.now(), date: "" }]);
-  const removeDateField = (id: number) => setDates(dates.filter((entry) => entry.id !== id));
+  const removeDateField = (id: number) =>
+    setDates(dates.filter((entry) => entry.id !== id));
   const updateDateField = (id: number, newDate: string) => {
-    setDates(dates.map((entry) => (entry.id === id ? { ...entry, date: newDate } : entry)));
+    setDates(
+      dates.map((entry) =>
+        entry.id === id ? { ...entry, date: newDate } : entry
+      )
+    );
   };
-
 
   return (
     <>
@@ -478,32 +506,26 @@ function AttendancesView() {
                   <div className="flex flex-col md:w-7/12 max-md:w-11/12 self-center items-center gap-3">
                     <TextBox
                       icon="person-icon"
+                      label={t("name")}
+                      placeHolder={t("for-example-abbr") + "Andres Tamm"}
+                      value={fullNameInput}
+                      autofocus={true}
+                      onChange={setFullNameInput}
+                    />
+                    <TextBox
+                      icon="person-icon"
                       label={t("student-code")}
-                      placeHolder={t("for-example-abbr") + " 123456ABCD"}
+                      placeHolder={t("for-example-abbr") + "123456ABCD"}
                       value={studentCodeInput}
                       autofocus={true}
-                      onChange={setStudentCodeInput}
-                    />
-                     <TextBox
-                      icon="person-icon"
-                      label={t("first-name")}
-                      value={firstNameInput}
-                      autofocus={true}
-                      onChange={setFirstNameInput}
-                    />
-                     <TextBox
-                      icon="person-icon"
-                      label={t("last-name")}
-                      value={lastNameInput}
-                      autofocus={true}
-                      onChange={setLastNameInput}
+                      onChange={(text) => setStudentCodeInput(text.trim())}
                     />
                     <TextBox
                       icon="work-icon"
                       label={t("workplace-id")}
-                      placeHolder={t("for-example-abbr") + " 123456"}
+                      placeHolder={t("for-example-abbr") + "123456"}
                       value={workplaceInput}
-                      onChange={setWorkplaceInput}
+                      onChange={(text) => setWorkplaceInput(text.trim())}
                     />
                     <NormalButton
                       text={t("add-student")}
@@ -528,11 +550,11 @@ function AttendancesView() {
               <QuickNavigation
                 quickNavItemA={{
                   label: t("add-new-attendance"),
-                  onClick: () => navigate("/Attendance/Create"),
+                  onClick: () => setNavState("Create"),
                 }}
                 quickNavItemB={{
                   label: t("view-statistics"),
-                  onClick: () => navigate("/Statistics"),
+                  onClick: () => navigate(`/Statistics/View/${attendanceData?.courseId}`),
                 }}
               />
             </>
@@ -546,12 +568,14 @@ function AttendancesView() {
                 {attendanceChecks?.map((attendanceCheck) => (
                   <div className="flex flex-row gap-5 justify-between w-full">
                     <DetailedDataField
-                      dataA= {attendanceCheck.fullName}
+                      dataA={attendanceCheck.fullName}
                       dataB={attendanceCheck.studentCode}
                     />
                     <NormalLink
                       text={t("remove")}
-                      onClick={() => deleteAttendanceCheck(Number(attendanceCheck.id))}
+                      onClick={() =>
+                        deleteAttendanceCheck(Number(attendanceCheck.id))
+                      }
                     />
                   </div>
                 ))}
