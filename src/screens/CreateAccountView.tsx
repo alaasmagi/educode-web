@@ -17,7 +17,6 @@ import NormalMessage from "../components/NormalMessage";
 import VerifyOTPModel from "../models/VerifyOTPModel";
 import CreateUserModel from "../models/CreateUserModel";
 import UnderlineText from "../components/UnderlineText";
-import DataText from "../components/DataText";
 import DataField from "../components/DataField";
 
 function CreateAccountView() {
@@ -104,6 +103,8 @@ function CreateAccountView() {
                   icon="person-icon"
                   label={t("name")}
                   value={fullName}
+                  placeHolder={t("for-example-abbr") + "Andres Tamm"}
+                  autofocus={true}
                   onChange={setFullName}
                 />
               </div>
@@ -134,6 +135,7 @@ function CreateAccountView() {
                   icon="person-icon"
                   label="Uni-ID"
                   value={uniIdInput ?? ""}
+                  autofocus={true}
                   onChange={(text) => setUniIdInput(text.trim())}
                 />
               </div>
@@ -165,7 +167,9 @@ function CreateAccountView() {
                 <TextBox
                   icon="pincode-icon"
                   label={t("one-time-key")}
+                  placeHolder={t("for-example-abbr") + "123456"}
                   value={emailCode}
+                  autofocus={true}
                   onChange={(text) => setEmailCode(text.trim())}
                 />
               </div>
@@ -194,6 +198,7 @@ function CreateAccountView() {
                   label={t("password")}
                   isPassword
                   value={password}
+                  autofocus={true}
                   onChange={(text) => setPassword(text.trim())}
                 />
                 <TextBox

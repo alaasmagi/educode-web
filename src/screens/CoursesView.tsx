@@ -292,6 +292,7 @@ function CoursesView() {
               <TextBox
                   icon="school-icon"
                   label={t("course-name")}
+                  autofocus={true}
                   onChange={setSelectedCourseName}
                 />
                 <TextBox
