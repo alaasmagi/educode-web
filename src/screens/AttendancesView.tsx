@@ -517,7 +517,6 @@ function AttendancesView() {
                       label={t("student-code")}
                       placeHolder={t("for-example-abbr") + "123456ABCD"}
                       value={studentCodeInput}
-                      autofocus={true}
                       onChange={(text) => setStudentCodeInput(text.trim())}
                     />
                     <TextBox
