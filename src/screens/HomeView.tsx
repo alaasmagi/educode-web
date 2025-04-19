@@ -26,109 +26,92 @@ import AttendanceCheckModel from "../models/AttendanceCheckModel";
 function HomeView() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
-  const [currentStudentCount, setCurrentStudentCount] = useState<string | null>(
-    null
-  );
-  const [currentAttendanceData, setCurrentAttendanceData] =
-    useState<CourseAttendance | null>(null);
+  const [currentStudentCount, setCurrentStudentCount] = useState<string | null>(null);
+  const [currentAttendanceData, setCurrentAttendanceData] = useState<CourseAttendance | null>(null);
+  const [recentAttendanceId, setRecentAttendanceId] = useState<string>("");
 
   const [studentCodeInput, setStudentCodeInput] = useState<string>("");
   const [firstNameInput, setFirstNameInput] = useState<string>("");
   const [lastNameInput, setLastNameInput] = useState<string>("");
   const [workplaceInput, setWorkplaceInput] = useState<string>("");
-  const [recentAttendanceId, setRecentAttendanceId] = useState<string>("");
+
+  const setTempMessage = (setter: (msg: string | null) => void, msg: string) => {
+    setter(msg);
+    setTimeout(() => setter(null), 3000);
+  };
 
   useEffect(() => {
-    fetchUserData();
+    const initialize = async () => {
+      const userData = await GetOfflineUserData();
+      if (!userData) {
+        navigate("/");
+        return;
+      }
+      setLocalData(userData);
+    };
+    initialize();
   }, []);
 
   useEffect(() => {
-    if (localData != null) {
-      fetchCurrentAttdencanceData();
-      fetchMostRecentAttendace();
-      const interval = setInterval(() => {
-        fetchCurrentAttdencanceData();
-      }, 10000);
+    if (!localData) return;
 
-      return () => clearInterval(interval);
-    }
+    const fetchData = async () => {
+      const [current, recent] = await Promise.all([
+        GetCurrentAttendance(String(localData.uniId)),
+        GetMostRecentAttendance(String(localData.uniId)),
+      ]);
+
+      if (typeof current === "string") {
+        setCurrentAttendanceData(null);
+        setTempMessage(setNormalMessage, t(current));
+      } else {
+        setCurrentAttendanceData(current);
+        const studentCount = await GetStudentCountByAttendanceId(Number(current.attendanceId));
+        if (typeof studentCount === "string") {
+          setCurrentStudentCount("0");
+          setTempMessage(setErrorMessage, t(studentCount));
+        } else {
+          setCurrentStudentCount(String(studentCount));
+        }
+      }
+
+      if (typeof recent !== "string") {
+        setRecentAttendanceId(String(recent.attendanceId));
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
   }, [localData]);
 
-  const fetchCurrentAttdencanceData = async () => {
-    const status =
-      localData != null
-        ? await GetCurrentAttendance(String(localData.uniId))
-        : "Local data not found";
-    if (typeof status === "string") {
-      setCurrentAttendanceData(null);
-      setNormalMessage(t(status));
-    } else {
-      setNormalMessage(null);
-      const studentStatus = await GetStudentCountByAttendanceId(
-        Number(status.attendanceId)
-      );
-
-      if (typeof status === "string") {
-        setErrorMessage(t(String(studentStatus)));
-        setCurrentStudentCount("0");
-      } else {
-        setCurrentStudentCount(String(studentStatus));
-        setCurrentAttendanceData(status);
-      }
-    }
-    setTimeout(() => setErrorMessage(null), 3000);
-  };
-
-  const fetchMostRecentAttendace = async () => {
-    const status =
-      localData != null
-        ? await GetMostRecentAttendance(String(localData.uniId))
-        : "Local data not found";
-
-    if (typeof status !== "string") {
-      setRecentAttendanceId(String(status.attendanceId));
-    }
-  };
-
   const handleAddAttendanceCheck = async () => {
-    let response;
-    if (workplaceInput !== "" && !RegexFilters.defaultId.test(workplaceInput)) {
-      setErrorMessage(t("wrong-workplace-id"));
-      setTimeout(() => setErrorMessage(null), 3000);
-    } else {
-      const model: AttendanceCheckModel = {
-        studentCode: studentCodeInput,
-        fullName: `${firstNameInput} ${lastNameInput}`,
-        courseAttendanceId: currentAttendanceData!.attendanceId!,
-        workplaceId: parseInt(workplaceInput) ?? null,
-      };
-      response = await AddAttendanceCheck(model);
+    if (workplaceInput && !RegexFilters.defaultId.test(workplaceInput)) {
+      return setTempMessage(setErrorMessage, t("wrong-workplace-id"));
     }
+
+    const model: AttendanceCheckModel = {
+      studentCode: studentCodeInput,
+      fullName: `${firstNameInput} ${lastNameInput}`,
+      courseAttendanceId: currentAttendanceData!.attendanceId!,
+      workplaceId: workplaceInput ? parseInt(workplaceInput) : null,
+    };
+
+    const response = await AddAttendanceCheck(model);
 
     if (typeof response === "string") {
-      setErrorMessage(t(String(response)));
-      setTimeout(() => setErrorMessage(null), 3000);
+      setTempMessage(setErrorMessage, t(response));
     } else {
-      setSuccessMessage(
-        t("attendance-check-add-success") + `${studentCodeInput}`
-      );
-      setTimeout(() => setSuccessMessage(null), 3000);
+      setTempMessage(setSuccessMessage, `${t("attendance-check-add-success")}${studentCodeInput}`);
     }
+
     setStudentCodeInput("");
     setWorkplaceInput("");
-  };
-
-  const fetchUserData = async () => {
-    const userData = await GetOfflineUserData();
-    if (userData == null) {
-      navigate("/");
-      return;
-    }
-    setLocalData(userData);
   };
   return (
     <>

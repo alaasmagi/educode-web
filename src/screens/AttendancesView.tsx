@@ -51,167 +51,138 @@ function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
   const { status, attendanceId } = useParams();
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
+
   const [studentCount, setStudentCount] = useState<string | null>(null);
-  const [attendanceData, setAttendanceData] = useState<CourseAttendance | null>(
-    null
-  );
+  const [attendanceData, setAttendanceData] = useState<CourseAttendance | null>(null);
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [qrValue, setQrValue] = useState<string>("");
+
   const [studentCodeInput, setStudentCodeInput] = useState<string>("");
   const [firstNameInput, setFirstNameInput] = useState<string>("");
   const [lastNameInput, setLastNameInput] = useState<string>("");
   const [workplaceInput, setWorkplaceInput] = useState<string>("");
 
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
-  const [selectedAttendanceTypeId, setSelectedAttendanceTypeId] = useState<
-    string | null
-  >(null);
+  const [selectedAttendanceTypeId, setSelectedAttendanceTypeId] = useState<string | null>(null);
   const [startTime, setStartTime] = useState<string | null>(null);
   const [endTime, setEndTime] = useState<string | null>(null);
   const [dates, setDates] = useState([{ id: 1, date: "" }]);
   const [date, setDate] = useState<string | null>(null);
 
-  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(
-    null
-  );
-  const [courseAttendances, setCourseAttendances] = useState<
-    CourseAttendance[] | null
-  >(null);
-  const [availableAttendanceTypes, setAvailableAttendanceTypes] = useState<
-    AttendanceType[] | null
-  >(null);
-  const [attendanceChecks, setAttendanceChecks] = useState<
-    AttendanceCheckData[] | null
-  >(null);
+  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(null);
+  const [courseAttendances, setCourseAttendances] = useState<CourseAttendance[] | null>(null);
+  const [availableAttendanceTypes, setAvailableAttendanceTypes] = useState<AttendanceType[] | null>(null);
+  const [attendanceChecks, setAttendanceChecks] = useState<AttendanceCheckData[] | null>(null);
+
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetchUserData();
-    if (status) {
-      setNavState(status);
-    } else {
-      setNavState("Main");
+    if (errorMessage || successMessage || normalMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage(null);
+        setSuccessMessage(null);
+        setNormalMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
+  }, [errorMessage, successMessage, normalMessage]);
+
+  useEffect(() => {
+    const init = async () => {
+      const userData = await GetOfflineUserData();
+      if (!userData) {
+        navigate("/");
+        return;
+      }
+      setLocalData(userData);
+      setNavState(status ?? "Main");
+    };
+    init();
   }, [status]);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!localData) return;
+
       switch (navState) {
         case "Main":
-          fetchAllAttendances();
+          await fetchAllAttendances(String(localData.uniId));
           break;
         case "Details":
-          fetchAttendanceDetails();
+          await fetchAttendanceDetails();
           break;
         case "Create":
-          fetchAllCoursesByUser();
-          fetchAttendanceTypes();
+          await Promise.all([
+            fetchAllCoursesByUser(String(localData.uniId)),
+            fetchAttendanceTypes()
+          ]);
           break;
         case "Students":
-          fetchAllAttendanceChecksByAttendance();
+          await fetchAllAttendanceChecksByAttendance();
           break;
         default:
           break;
       }
-      setTimeout(() => setErrorMessage(null), 3000);
-      setTimeout(() => setNormalMessage(null), 3000);
     };
 
     fetchData();
-  }, [navState, attendanceId]);
+  }, [navState, attendanceId, localData]);
 
+  // QR Code interval (only if attendanceId exists)
   useEffect(() => {
     if (!attendanceId) return;
-
     const interval = setInterval(() => {
       setQrValue(generateQrValue());
     }, 7000);
-
     return () => clearInterval(interval);
   }, [attendanceId]);
 
   const fetchAttendanceDetails = async () => {
-    if (attendanceId) {
-      const status = await GetAttendanceById(Number(attendanceId));
-      if (typeof status === "string") {
-        setErrorMessage(status);
-      } else {
-        setAttendanceData(status);
-        setSelectedAttendanceTypeId(status.attendanceTypeId);
-        setSelectedCourseId(String(status.courseId));
-        setStartTime(String(status.startTime));
-        setEndTime(String(status.endTime));
-        setDate(String(status.date));
+    if (!attendanceId) return;
 
-        const studentStatus = await GetStudentCountByAttendanceId(
-          Number(attendanceId)
-        );
+    const response = await GetAttendanceById(Number(attendanceId));
+    if (typeof response === "string") return setErrorMessage(response);
 
-        if (typeof status === "string") {
-          setErrorMessage(t(String(studentStatus)));
-          setStudentCount("0");
-        } else {
-          setStudentCount(String(studentStatus));
-        }
-      }
-      setTimeout(() => setErrorMessage(null), 3000);
-      setTimeout(() => setNormalMessage(null), 3000);
+    setAttendanceData(response);
+    setSelectedAttendanceTypeId(response.attendanceTypeId);
+    setSelectedCourseId(String(response.courseId));
+    setStartTime(String(response.startTime));
+    setEndTime(String(response.endTime));
+    setDate(String(response.date));
+
+    const count = await GetStudentCountByAttendanceId(Number(attendanceId));
+    if (typeof count === "string") {
+      setErrorMessage(t(count));
+      setStudentCount("0");
+    } else {
+      setStudentCount(String(count));
     }
   };
 
-  const fetchAllAttendanceChecksByAttendance = async () => {
-    const status = await GetAttendanceChecksByAttendanceId(
-      Number(attendanceId)
+  const fetchAllAttendances = async (uniId: string) => {
+    const courses = await GetCoursesByUser(uniId);
+    if (typeof courses === "string") return setNormalMessage(t("no-course-attendances-found"));
+
+    const attendances = await Promise.all(
+      courses.map((course) => GetAttendancesByCourseCode(course.courseCode))
     );
 
-    if (typeof status === "string") {
-      setNormalMessage(t("no-students-in-this-attendance"));
-      setTimeout(() => setErrorMessage(null), 3000);
-    } else {
-      setAttendanceChecks(status);
-    }
+    const allAttendances = attendances.flat().filter((a): a is CourseAttendance => typeof a !== "string");
+    setCourseAttendances(allAttendances);
   };
 
-  const fetchAllAttendances = async () => {
-    const localData = await GetOfflineUserData();
-    const courses = await GetCoursesByUser(localData?.uniId!);
-    let attendances: CourseAttendance[] = [];
-    if (typeof courses === "string") {
-      setNormalMessage("no-course-attendances-found");
-      return;
-    }
-    for (const course of courses) {
-      const response = await GetAttendancesByCourseCode(course.courseCode);
-      if (typeof response !== "string") {
-        attendances.push(...response);
-      } else {
-        setNormalMessage(response);
-      }
-    }
-    setCourseAttendances(attendances);
-  };
-
-  const fetchAllCoursesByUser = async () => {
-    const userData = await GetOfflineUserData();
-    const response = await GetCoursesByUser(userData?.uniId!);
+  const fetchAllCoursesByUser = async (uniId: string) => {
+    const response = await GetCoursesByUser(uniId);
     if (typeof response !== "string") {
       setAvailableCourses(response);
     }
   };
-  const fetchUserData = async () => {
-    const userData = await GetOfflineUserData();
-    if (userData == null) {
-      navigate("/");
-      return;
-    }
-    setLocalData(userData);
-  };
+
   const fetchAttendanceTypes = async () => {
     const response = await GetAttendanceTypes();
-
     if (typeof response === "string") {
       setErrorMessage(t(response));
     } else {
@@ -219,122 +190,105 @@ function AttendancesView() {
     }
   };
 
+  const fetchAllAttendanceChecksByAttendance = async () => {
+    if (!attendanceId) return;
+    const status = await GetAttendanceChecksByAttendanceId(Number(attendanceId));
+    if (typeof status === "string") {
+      setNormalMessage(t("no-students-in-this-attendance"));
+    } else {
+      setAttendanceChecks(status);
+    }
+  };
+
   const deleteAttendanceCheck = async (attendanceCheckId: number) => {
     const status = await DeleteAttendanceCheck(attendanceCheckId);
-
     if (typeof status === "string") {
-      setErrorMessage(t(String(status)));
-      setTimeout(() => setErrorMessage(null), 3000);
+      setErrorMessage(t(status));
     } else {
       setSuccessMessage(t("student-remove-success"));
-      setTimeout(() => setSuccessMessage(null), 3000);
       setNavState("Students");
     }
   };
 
   const validateForm = () => {
-    if (
-      !selectedCourseId ||
-      !selectedAttendanceTypeId ||
-      !startTime ||
-      !endTime
-    ) {
+    if (!selectedCourseId || !selectedAttendanceTypeId || !startTime || !endTime) {
       setNormalMessage(t("all-fields-required-message"));
-      setTimeout(() => setNormalMessage(null), 3000);
       return false;
     }
     return true;
   };
+
   const handleAttendanceAdd = async () => {
     if (!validateForm()) return;
 
-    const attendanceData: MultipleCourseAttendances = {
+    const newAttendance: MultipleCourseAttendances = {
       courseId: Number(selectedCourseId),
       attendanceTypeId: String(selectedAttendanceTypeId),
       startTime: String(startTime),
       endTime: String(endTime),
-      dates: dates.map((entry) => FormatDateOnlyToBackendFormat(entry.date)),
+      dates: dates.map((d) => FormatDateOnlyToBackendFormat(d.date)),
     };
-    const result = await AddAttendances(attendanceData);
 
+    const result = await AddAttendances(newAttendance);
     if (typeof result === "string") {
-      setErrorMessage(t(String(result)));
-      setTimeout(() => setErrorMessage(null), 3000);
+      setErrorMessage(t(result));
     } else {
       setSelectedCourseId(null);
       setSelectedAttendanceTypeId(null);
       setStartTime(null);
-      setStartTime(null);
+      setEndTime(null);
       setDates([]);
       setSuccessMessage(t("attendance-add-success"));
-      setTimeout(() => setSuccessMessage(null), 3000);
       setTimeout(() => setNavState("Main"), 3000);
     }
   };
 
   const handleAttendanceDelete = async () => {
-    const status = DeleteAttendance(Number(attendanceId));
-
+    const status = await DeleteAttendance(Number(attendanceId));
     if (typeof status === "string") {
-      setErrorMessage(t(String(status)));
-      setTimeout(() => setErrorMessage(null), 3000);
+      setErrorMessage(t(status));
     } else {
       setSuccessMessage(t("attendance-delete-success"));
-      setTimeout(() => setSuccessMessage(null), 3000);
       setTimeout(() => navigate(`/Attendances`), 3000);
     }
   };
 
   const handleAddAttendanceCheck = async () => {
-    let response;
-    if (workplaceInput !== "" && !RegexFilters.defaultId.test(workplaceInput)) {
+    if (workplaceInput && !RegexFilters.defaultId.test(workplaceInput)) {
       setErrorMessage(t("wrong-workplace-id"));
-      setTimeout(() => setErrorMessage(null), 3000);
       return;
-    } else {
-      const model: AttendanceCheckModel = {
-        studentCode: studentCodeInput,
-        fullName: `${firstNameInput} ${lastNameInput}`,
-        courseAttendanceId: attendanceData!.attendanceId!,
-        workplaceId: parseInt(workplaceInput) ?? null,
-      };
-      response = await AddAttendanceCheck(model);
     }
 
+    const model: AttendanceCheckModel = {
+      studentCode: studentCodeInput,
+      fullName: `${firstNameInput} ${lastNameInput}`,
+      courseAttendanceId: attendanceData!.attendanceId!,
+      workplaceId: workplaceInput ? parseInt(workplaceInput) : null,
+    };
+
+    const response = await AddAttendanceCheck(model);
     if (typeof response === "string") {
-      setErrorMessage(t(String(response)));
-      setTimeout(() => setErrorMessage(null), 3000);
+      setErrorMessage(t(response));
     } else {
-      setSuccessMessage(
-        t("attendance-check-add-success") + `${studentCodeInput}`
-      );
-      setTimeout(() => setSuccessMessage(null), 3000);
+      setSuccessMessage(t("attendance-check-add-success") + ` ${studentCodeInput}`);
     }
+
     setStudentCodeInput("");
     setFirstNameInput("");
     setLastNameInput("");
     setWorkplaceInput("");
   };
 
-  function generateQrValue() {
-    return `${ToSixDigit(Number(attendanceId))}-${ToSixDigit(
-      GetSixDigitTimeStamp()
-    )}`;
-  }
+  const generateQrValue = () => {
+    return `${ToSixDigit(Number(attendanceId))}-${ToSixDigit(GetSixDigitTimeStamp())}`;
+  };
 
-  const addDateField = () => {
-    setDates([...dates, { id: Date.now(), date: "" }]);
-  };
-  const removeDateField = (id: number) => {
-    setDates(dates.filter((entry) => entry.id !== id));
-  };
+  const addDateField = () => setDates([...dates, { id: Date.now(), date: "" }]);
+  const removeDateField = (id: number) => setDates(dates.filter((entry) => entry.id !== id));
   const updateDateField = (id: number, newDate: string) => {
-    setDates((prevDates) =>
-      prevDates.map((entry) =>
-        entry.id === id ? { ...entry, date: newDate } : entry
-      )
-    );
+    setDates(dates.map((entry) => (entry.id === id ? { ...entry, date: newDate } : entry)));
   };
+
 
   return (
     <>
