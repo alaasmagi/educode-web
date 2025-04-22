@@ -187,8 +187,8 @@ function HomeView() {
                 <NormalButton
                   text={t("add-student")}
                   onClick={handleAddAttendanceCheck}
-                  isDisabled={!isNameFormValid || !isStudentCodeValid || !isWorkplaceIdValid}
-                />
+                  isDisabled={!isNameFormValid() || !isStudentCodeValid() || !isWorkplaceIdValid()}
+                  />
               </div>
             )}
           </div>

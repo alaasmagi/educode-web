@@ -46,7 +46,7 @@ import { RegexFilters } from "../helpers/RegexFilters";
 import PDFDocument from "../components/PDFDocument";
 import { PDFViewer } from "@react-pdf/renderer";
 import AttendanceCheckModel from "../models/AttendanceCheckModel";
-import { FetchAndSaveUserDataByUniId, TestConnection } from "../businesslogic/UserDataFetch";
+import { FetchAndSaveUserDataByUniId } from "../businesslogic/UserDataFetch";
 import i18next from "i18next";
 
 function AttendancesView() {
@@ -540,7 +540,7 @@ function AttendancesView() {
                     <NormalButton
                       text={t("add-student")}
                       onClick={handleAddAttendanceCheck}
-                      isDisabled={!isNameFormValid || !isStudentCodeValid || !isWorkplaceIdValid}
+                      isDisabled={!isNameFormValid() || !isStudentCodeValid() || !isWorkplaceIdValid()}
                     />
                   </div>
                 )}
