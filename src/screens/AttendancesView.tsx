@@ -89,6 +89,9 @@ function AttendancesView() {
     AttendanceCheckData[] | null
   >(null);
 
+  const isNameFormValid = () => fullNameInput !== "" && !fullNameInput.includes(";");
+  const isWorkplaceIdValid = () => RegexFilters.defaultId.test(workplaceInput);
+  const isStudentCodeValid = () => RegexFilters.studentCode.test(studentCodeInput);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -537,9 +540,7 @@ function AttendancesView() {
                     <NormalButton
                       text={t("add-student")}
                       onClick={handleAddAttendanceCheck}
-                      isDisabled={
-                        !RegexFilters.studentCode.test(studentCodeInput)
-                      }
+                      isDisabled={!isNameFormValid || !isStudentCodeValid || !isWorkplaceIdValid}
                     />
                   </div>
                 )}

@@ -45,6 +45,9 @@ function HomeView() {
     setter(msg);
     setTimeout(() => setter(null), 3000);
   };
+  const isNameFormValid = () => fullNameInput !== "" && !fullNameInput.includes(";");
+  const isWorkplaceIdValid = () => workplaceInput === "" || RegexFilters.defaultId.test(workplaceInput);
+  const isStudentCodeValid = () => RegexFilters.studentCode.test(studentCodeInput);
 
   useEffect(() => {
     init();
@@ -58,7 +61,7 @@ function HomeView() {
         String(localData?.uniId)
       );
       if (typeof(loginSuccess) === "string"){
-        navigate("/");
+        navigate("/login-again");
         return;
       }
       setLocalData(localData);
@@ -184,7 +187,7 @@ function HomeView() {
                 <NormalButton
                   text={t("add-student")}
                   onClick={handleAddAttendanceCheck}
-                  isDisabled={!RegexFilters.studentCode.test(studentCodeInput)}
+                  isDisabled={!isNameFormValid || !isStudentCodeValid || !isWorkplaceIdValid}
                 />
               </div>
             )}
