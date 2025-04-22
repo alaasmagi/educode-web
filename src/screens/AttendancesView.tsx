@@ -106,20 +106,20 @@ function AttendancesView() {
     init();
   }, [status]);
 
-    const init = async () => {
-      const lang = await GetCurrentLanguage();
-      if (lang) i18next.changeLanguage(lang);  
-      let localData = await GetOfflineUserData();
-        const loginSuccess = await FetchAndSaveUserDataByUniId(
-          String(localData?.uniId)
-        );
-        if (typeof(loginSuccess) === "string"){
-          navigate("/");
-          return;
-        }
-        setLocalData(localData);
-        setNavState(status ?? "Main");
-    }
+  const init = async () => {
+    const lang = await GetCurrentLanguage();
+    if (lang) i18next.changeLanguage(lang);  
+    let localData = await GetOfflineUserData();
+      const loginSuccess = await FetchAndSaveUserDataByUniId(
+        String(localData?.uniId)
+      );
+      if (typeof(loginSuccess) === "string"){
+        navigate("/login-again");
+        return;
+      }
+      setLocalData(localData);
+      setNavState(status ?? "Main");
+  }
 
   useEffect(() => {
     const fetchData = async () => {

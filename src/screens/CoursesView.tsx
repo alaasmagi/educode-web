@@ -111,7 +111,7 @@ function CoursesView() {
         String(localData?.uniId)
       );
       if (typeof(loginSuccess) === "string"){
-        navigate("/");
+        navigate("/login-again");
         return;
       }
       setLocalData(localData);
