@@ -7,11 +7,12 @@ import SideBar from "../layout/SideBar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import LocalUserData from "../models/LocalUserDataModel";
-import { DeleteCurrentLanguage, DeleteOfflineUserData, GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { DeleteCurrentLanguage, DeleteOfflineUserData, GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import NormalMessage from "../components/NormalMessage";
 import ErrorMessage from "../components/ErrorMessage";
 import { CourseAttendance } from "../models/CourseAttendanceModel";
-import { DeleteUser } from "../businesslogic/UserDataFetch";
+import { DeleteUser, FetchAndSaveUserDataByUniId } from "../businesslogic/UserDataFetch";
+import i18next from "i18next";
 
 function SettingsView() {
   const navigate = useNavigate();
@@ -22,17 +23,22 @@ function SettingsView() {
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
 
   useEffect(() => {
-    fetchUserData();
+    init();
   }, []);
 
-  const fetchUserData = async () => {
-    const userData = await GetOfflineUserData();
-    if (userData == null) {
-      navigate("/");
-      return;
-    }
-    setLocalData(userData);
-  };
+  const init = async () => {
+    const lang = await GetCurrentLanguage();
+    if (lang) i18next.changeLanguage(lang);  
+    let localData = await GetOfflineUserData();
+      const loginSuccess = await FetchAndSaveUserDataByUniId(
+        String(localData?.uniId)
+      );
+      if (typeof(loginSuccess) === "string"){
+        navigate("/");
+        return;
+      }
+      setLocalData(localData);
+  }
 
   const handleDelete = async () => {
     const status = localData?.uniId && await DeleteUser(localData.uniId);

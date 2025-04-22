@@ -9,12 +9,14 @@ import {
   GetCoursesByUser,
   GetCourseStudentCounts,
 } from "../businesslogic/CourseDataFetch";
-import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
 import StudentCountModel from "../models/StudentCountModel";
 import NormalMessage from "../components/NormalMessage";
 import NormalLink from "../components/Link";
+import i18next from "i18next";
+import { FetchAndSaveUserDataByUniId } from "../businesslogic/UserDataFetch";
 
 function StatisticsView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -32,6 +34,7 @@ function StatisticsView() {
   const { t } = useTranslation();
 
   useEffect(() => {
+    init();
     fetchUserData();
     if (status) {
       setNavState(status);
@@ -89,6 +92,21 @@ function StatisticsView() {
     }
     setLocalData(userData);
   };
+
+  const init = async () => {
+    const lang = await GetCurrentLanguage();
+    if (lang) i18next.changeLanguage(lang);  
+    let localData = await GetOfflineUserData();
+      const loginSuccess = await FetchAndSaveUserDataByUniId(
+        String(localData?.uniId)
+      );
+      if (typeof(loginSuccess) === "string"){
+        navigate("/");
+        return;
+      }
+      setLocalData(localData);
+  }
+
   return (
     <>
       <SideBar />

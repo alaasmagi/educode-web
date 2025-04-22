@@ -109,7 +109,7 @@ function ForgotPasswordView() {
                 <UnderlineText text={t("verify-account")} />
                 <TextBox
                   icon="person-icon"
-                  label="UNI-ID"
+                  label="Uni-ID"
                   value={uniId}
                   onChange={(text) => setUniId(text.trim())}
                 />

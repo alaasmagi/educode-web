@@ -11,7 +11,7 @@ import QuickNavigation from "../layout/QuickNavigation";
 import { useNavigate, useParams } from "react-router-dom";
 import SuccessMessage from "../components/SuccessMessage";
 import { useTranslation } from "react-i18next";
-import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
 import {
@@ -25,6 +25,8 @@ import {
 import { CourseStatus } from "../models/CourseStatus";
 import ErrorMessage from "../components/ErrorMessage";
 import NormalMessage from "../components/NormalMessage";
+import { FetchAndSaveUserDataByUniId, TestConnection } from "../businesslogic/UserDataFetch";
+import i18next from "i18next";
 
 function CoursesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -55,6 +57,7 @@ function CoursesView() {
   const { t } = useTranslation();
 
   useEffect(() => {
+    init();
     fetchUserData();
     if (status) {
       setNavState(status);
@@ -99,6 +102,21 @@ function CoursesView() {
 
     fetchData();
   }, [navState, courseId]);
+  
+  const init = async () => {
+    const lang = await GetCurrentLanguage();
+    if (lang) i18next.changeLanguage(lang);  
+    let localData = await GetOfflineUserData();
+      const loginSuccess = await FetchAndSaveUserDataByUniId(
+        String(localData?.uniId)
+      );
+      if (typeof(loginSuccess) === "string"){
+        navigate("/");
+        return;
+      }
+      setLocalData(localData);
+      setNavState(status ?? "Main");
+  }
 
   const fetchCourseDetails = async () => {
     if (courseId) {

@@ -16,12 +16,14 @@ import {
   GetStudentCountByAttendanceId,
 } from "../businesslogic/AttendanceDataFetch";
 import LocalUserData from "../models/LocalUserDataModel";
-import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import NormalMessage from "../components/NormalMessage";
 import ErrorMessage from "../components/ErrorMessage";
 import { RegexFilters } from "../helpers/RegexFilters";
 import { CourseAttendance } from "../models/CourseAttendanceModel";
 import AttendanceCheckModel from "../models/AttendanceCheckModel";
+import i18next from "i18next";
+import { FetchAndSaveUserDataByUniId } from "../businesslogic/UserDataFetch";
 
 function HomeView() {
   const navigate = useNavigate();
@@ -45,16 +47,22 @@ function HomeView() {
   };
 
   useEffect(() => {
-    const initialize = async () => {
-      const userData = await GetOfflineUserData();
-      if (!userData) {
+    init();
+  }, []);
+
+  const init = async () => {
+    const lang = await GetCurrentLanguage();
+    if (lang) i18next.changeLanguage(lang);  
+    let localData = await GetOfflineUserData();
+      const loginSuccess = await FetchAndSaveUserDataByUniId(
+        String(localData?.uniId)
+      );
+      if (typeof(loginSuccess) === "string"){
         navigate("/");
         return;
       }
-      setLocalData(userData);
-    };
-    initialize();
-  }, []);
+      setLocalData(localData);
+  }
 
   useEffect(() => {
     if (!localData) return;

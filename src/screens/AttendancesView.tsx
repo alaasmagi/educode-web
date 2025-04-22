@@ -16,7 +16,7 @@ import TimeSelector from "../components/TimeSelector";
 import DetailedDataField from "../components/DetailedDataField";
 import QrGenerator from "../components/QrGenerator";
 import { Icons } from "../components/Icons";
-import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
 import {
   AddAttendanceCheck,
   AddAttendances,
@@ -46,6 +46,8 @@ import { RegexFilters } from "../helpers/RegexFilters";
 import PDFDocument from "../components/PDFDocument";
 import { PDFViewer } from "@react-pdf/renderer";
 import AttendanceCheckModel from "../models/AttendanceCheckModel";
+import { FetchAndSaveUserDataByUniId, TestConnection } from "../businesslogic/UserDataFetch";
+import i18next from "i18next";
 
 function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -101,17 +103,23 @@ function AttendancesView() {
   }, [errorMessage, successMessage, normalMessage]);
 
   useEffect(() => {
-    const init = async () => {
-      const userData = await GetOfflineUserData();
-      if (!userData) {
-        navigate("/");
-        return;
-      }
-      setLocalData(userData);
-      setNavState(status ?? "Main");
-    };
     init();
   }, [status]);
+
+    const init = async () => {
+      const lang = await GetCurrentLanguage();
+      if (lang) i18next.changeLanguage(lang);  
+      let localData = await GetOfflineUserData();
+        const loginSuccess = await FetchAndSaveUserDataByUniId(
+          String(localData?.uniId)
+        );
+        if (typeof(loginSuccess) === "string"){
+          navigate("/");
+          return;
+        }
+        setLocalData(localData);
+        setNavState(status ?? "Main");
+    }
 
   useEffect(() => {
     const fetchData = async () => {

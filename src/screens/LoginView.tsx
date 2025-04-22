@@ -80,7 +80,7 @@ function LoginView() {
             {successMessage && <SuccessMessage text={t(successMessage)} />}
             <div className="flex flex-col gap-0.5">
               <div className="flex justify-end pr-2">
-                <NormalLink text={t("forgot-password")} onClick={() => console.log("LINK PRESSED")} />
+                <NormalLink text={t("forgot-password")} onClick={() => navigate("/PasswordRecovery")} />
               </div>
               <NormalButton text={"Log in"} onClick={handleLogin} />
               <div className="flex flex-col gap-4">
