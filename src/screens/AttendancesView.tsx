@@ -90,7 +90,7 @@ function AttendancesView() {
   >(null);
 
   const isNameFormValid = () => fullNameInput !== "" && !fullNameInput.includes(";");
-  const isWorkplaceIdValid = () => RegexFilters.defaultId.test(workplaceInput);
+  const isWorkplaceIdValid = () => workplaceInput === "" || RegexFilters.defaultId.test(workplaceInput);
   const isStudentCodeValid = () => RegexFilters.studentCode.test(studentCodeInput);
   const navigate = useNavigate();
   const { t } = useTranslation();
