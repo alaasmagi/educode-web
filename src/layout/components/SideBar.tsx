@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { SideBarItem } from "./components/SideBarItem";
-import NormalButton from "./components/NormalButton";
-import { Icons } from "./components/Icons";
+import { SideBarItem } from "../components/SideBarItem";
+import NormalButton from "../components/NormalButton";
+import { Icons } from "../components/Icons";
 import { useNavigate, useLocation } from "react-router-dom";
-import LanguageSwitch from "./components/LanguageSwitch";
+import LanguageSwitch from "../components/LanguageSwitch";
 import { useTranslation } from "react-i18next";
 
 export default function SideBar() {
