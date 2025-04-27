@@ -23,17 +23,9 @@ function LoginView() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetchUserData();
     message && setSuccessMessage(t(String(message))); 
     setTimeout (() => setSuccessMessage(null), 3000); 
   }, []);
-
-  const fetchUserData = async () => {
-    const userData = await GetOfflineUserData();
-    if (userData !== null) {
-      navigate("/Home");
-    }
-  };
 
   const handleLogin = async () => {
     dismissKeyboard();

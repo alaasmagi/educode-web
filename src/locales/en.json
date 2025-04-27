@@ -79,6 +79,7 @@
   "delete-account-success": "Account deleted successfully",
 
 
+  "name": "Full name",
   "home": "Home",
   "courses": "Courses",
   "attendances": "Attendances",
