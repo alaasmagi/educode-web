@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Icons } from "./Icons";
-import i18next from "../../services/i18next";
+import i18next from "../../../services/i18next";
 import NormalLink from "./Link";
 
 interface LanguageSwitchProperties {

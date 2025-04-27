@@ -1,8 +1,8 @@
 import axios from "axios";
-import Course from "../models/CourseModel";
+import Course from "../../models/CourseModel";
 import { GetUserToken } from "./UserDataOffline";
-import { CourseStatus } from "../models/CourseStatus";
-import StudentCountModel from "../models/StudentCountModel";
+import { CourseStatus } from "../../models/CourseStatus";
+import StudentCountModel from "../../models/StudentCountModel";
 import { ConvertDateTimeToDateOnly, ConvertUTCToLocalDateTime } from "../helpers/DateHandlers";
 
 export async function GetCoursesByUser(

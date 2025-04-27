@@ -1,14 +1,14 @@
 import { GetUserToken } from "./UserDataOffline";
 import axios from "axios";
-import { CourseAttendance, MultipleCourseAttendances } from "../models/CourseAttendanceModel";
+import { CourseAttendance, MultipleCourseAttendances } from "../../models/CourseAttendanceModel";
 import {
   ConvertDateTimeToDateOnly,
   ConvertDateTimeToTimeOnly,
   ConvertUTCToLocalDateTime,
 } from "../helpers/DateHandlers";
-import AttendanceType from "../models/AttendanceTypeModel";
-import AttendanceCheckData from "../models/AttendanceCheckModel";
-import AttendanceCheckModel from "../models/AttendanceCheckModel";
+import AttendanceType from "../../models/AttendanceTypeModel";
+import AttendanceCheckData from "../../models/AttendanceCheckModel";
+import AttendanceCheckModel from "../../models/AttendanceCheckModel";
 
 export async function AddAttendanceCheck(model: AttendanceCheckModel): Promise<boolean | string> {
   const token = await GetUserToken();

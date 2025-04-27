@@ -1,4 +1,4 @@
-import NormalLink from "../components/Link";
+import NormalLink from "./components/Link";
 import { useTranslation } from "react-i18next";
 
 interface QuickNavigationItem {

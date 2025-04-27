@@ -1,6 +1,6 @@
 import Storage from "../data/LocalDataAccess";
 import { LocalKeys } from "../helpers/HardcodedLocalDataKeys";
-import LocalUserData from "../models/LocalUserDataModel";
+import LocalUserData from "../../models/LocalUserDataModel";
 
 export async function GetOfflineUserData(): Promise<LocalUserData | null> {
   const userData: LocalUserData | null = await Storage.getData(

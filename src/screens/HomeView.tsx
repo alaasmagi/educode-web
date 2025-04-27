@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import "../App.css";
-import DataField from "../components/DataField";
-import NormalLink from "../components/Link";
-import NormalButton from "../components/NormalButton";
-import SuccessMessage from "../components/SuccessMessage";
-import TextBox from "../components/TextBox";
-import QuickNavigation from "../layout/QuickNavigation";
-import SideBar from "../layout/SideBar";
+import DataField from "../layout/components/DataField";
+import NormalLink from "../layout/components/Link";
+import NormalButton from "../layout/components/NormalButton";
+import SuccessMessage from "../layout/components/SuccessMessage";
+import TextBox from "../layout/components/TextBox";
+import QuickNavigation from "../layout/components/QuickNavigation";
+import SideBar from "../layout/components/SideBar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,16 +14,16 @@ import {
   GetCurrentAttendance,
   GetMostRecentAttendance,
   GetStudentCountByAttendanceId,
-} from "../businesslogic/AttendanceDataFetch";
+} from "../businesslogic/services/AttendanceDataFetch";
 import LocalUserData from "../models/LocalUserDataModel";
-import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
-import NormalMessage from "../components/NormalMessage";
-import ErrorMessage from "../components/ErrorMessage";
-import { RegexFilters } from "../helpers/RegexFilters";
+import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
+import NormalMessage from "../layout/components/NormalMessage";
+import ErrorMessage from "../layout/components/ErrorMessage";
+import { RegexFilters } from "../businesslogic/helpers/RegexFilters";
 import { CourseAttendance } from "../models/CourseAttendanceModel";
 import AttendanceCheckModel from "../models/AttendanceCheckModel";
 import i18next from "i18next";
-import { FetchAndSaveUserDataByUniId } from "../businesslogic/UserDataFetch";
+import { FetchAndSaveUserDataByUniId } from "../businesslogic/services/UserDataFetch";
 
 function HomeView() {
   const navigate = useNavigate();

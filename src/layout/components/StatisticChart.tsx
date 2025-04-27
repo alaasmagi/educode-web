@@ -8,7 +8,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import StudentCountModel from "../models/StudentCountModel";
+import StudentCountModel from "../../models/StudentCountModel";
 
 interface StatisticChartProperties {
   data: StudentCountModel[];

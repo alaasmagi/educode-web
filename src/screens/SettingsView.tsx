@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import "../App.css";
-import NormalLink from "../components/Link";
-import NormalButton from "../components/NormalButton";
-import SuccessMessage from "../components/SuccessMessage";
-import SideBar from "../layout/SideBar";
+import NormalLink from "../layout/components/Link";
+import NormalButton from "../layout/components/NormalButton";
+import SuccessMessage from "../layout/components/SuccessMessage";
+import SideBar from "../layout/components/SideBar";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import LocalUserData from "../models/LocalUserDataModel";
-import { DeleteCurrentLanguage, DeleteOfflineUserData, GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
-import NormalMessage from "../components/NormalMessage";
-import ErrorMessage from "../components/ErrorMessage";
+import { DeleteCurrentLanguage, DeleteOfflineUserData, GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
+import NormalMessage from "../layout/components/NormalMessage";
+import ErrorMessage from "../layout/components/ErrorMessage";
 import { CourseAttendance } from "../models/CourseAttendanceModel";
-import { DeleteUser, FetchAndSaveUserDataByUniId } from "../businesslogic/UserDataFetch";
+import { DeleteUser, FetchAndSaveUserDataByUniId } from "../businesslogic/services/UserDataFetch";
 import i18next from "i18next";
 
 function SettingsView() {

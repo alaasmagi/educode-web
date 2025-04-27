@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
 import "../App.css";
-import ContainerCardSmall from "../components/ContainerCardSmall";
-import SideBar from "../layout/SideBar";
+import ContainerCardSmall from "../layout/components/ContainerCardSmall";
+import SideBar from "../layout/components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import StatisticChart from "../components/StatisticChart";
+import StatisticChart from "../layout/components/StatisticChart";
 import {
   GetCoursesByUser,
   GetCourseStudentCounts,
-} from "../businesslogic/CourseDataFetch";
-import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
+} from "../businesslogic/services/CourseDataFetch";
+import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
 import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
 import StudentCountModel from "../models/StudentCountModel";
-import NormalMessage from "../components/NormalMessage";
-import NormalLink from "../components/Link";
+import NormalMessage from "../layout/components/NormalMessage";
+import NormalLink from "../layout/components/Link";
 import i18next from "i18next";
-import { FetchAndSaveUserDataByUniId } from "../businesslogic/UserDataFetch";
+import { FetchAndSaveUserDataByUniId } from "../businesslogic/services/UserDataFetch";
 
 function StatisticsView() {
   const [navState, setNavState] = useState<string>("Main");

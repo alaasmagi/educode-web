@@ -5,10 +5,10 @@ import {
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
-import AttendanceCheckData from "../models/AttendanceCheckModel";
-import ToSixDigit from "../helpers/NumberConverter";
+import AttendanceCheckData from "../../models/AttendanceCheckModel";
+import ToSixDigit from "../../businesslogic/helpers/NumberConverter";
 import { useTranslation } from "react-i18next";
-import { CourseAttendance } from "../models/CourseAttendanceModel";
+import { CourseAttendance } from "../../models/CourseAttendanceModel";
 
 interface PDFDocumentProperties {
   attendanceChecks: AttendanceCheckData[];

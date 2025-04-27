@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
 import "../App.css";
-import LanguageSwitch from "../components/LanguageSwitch";
-import NormalButton from "../components/NormalButton";
+import LanguageSwitch from "../layout/components/LanguageSwitch";
+import NormalButton from "../layout/components/NormalButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
-import { FetchAndSaveUserDataByUniId } from "../businesslogic/UserDataFetch";
+import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
+import { FetchAndSaveUserDataByUniId } from "../businesslogic/services/UserDataFetch";
 import i18next from "i18next";
-import NormalMessage from "../components/NormalMessage";
+import NormalMessage from "../layout/components/NormalMessage";
 
 function InitialSelectionView() {
   const { message } = useParams() ?? null;

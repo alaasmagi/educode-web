@@ -1,10 +1,10 @@
-import CreateUserModel from "../models/CreateUserModel";
-import OnlineUserModel from "../models/OnlineUserModel";
-import LocalUserData from "../models/LocalUserDataModel";
+import CreateUserModel from "../../models/CreateUserModel";
+import OnlineUserModel from "../../models/OnlineUserModel";
+import LocalUserData from "../../models/LocalUserDataModel";
 import axios from "axios";
 import { DeleteTempToken, GetTempToken, GetUserToken, SaveOfflineUserData, SaveTempToken, SaveUserToken } from "./UserDataOffline";
-import VerifyOTPModel from "../models/VerifyOTPModel";
-import ChangePasswordModel from "../models/ChangePasswordModel";
+import VerifyOTPModel from "../../models/VerifyOTPModel";
+import ChangePasswordModel from "../../models/ChangePasswordModel";
 
 export async function TestConnection(): Promise<boolean> {
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/User/TestConnection`);

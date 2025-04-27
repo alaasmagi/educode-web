@@ -3,21 +3,21 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import NormalButton from "../components/NormalButton";
-import TextBox from "../components/TextBox";
-import NormalLink from "../components/Link";
-import ErrorMessage from "../components/ErrorMessage";
-import NormalMessage from "../components/NormalMessage";
-import UnderlineText from "../components/UnderlineText";
-import LanguageSwitch from "../components/LanguageSwitch";
+import NormalButton from "../layout/components/NormalButton";
+import TextBox from "../layout/components/TextBox";
+import NormalLink from "../layout/components/Link";
+import ErrorMessage from "../layout/components/ErrorMessage";
+import NormalMessage from "../layout/components/NormalMessage";
+import UnderlineText from "../layout/components/UnderlineText";
+import LanguageSwitch from "../layout/components/LanguageSwitch";
 
 import {
   RequestOTP,
   VerifyOTP,
   ChangeUserPassword,
-} from "../businesslogic/UserDataFetch";
+} from "../businesslogic/services/UserDataFetch";
 
-import { RegexFilters } from "../helpers/RegexFilters";
+import { RegexFilters } from "../businesslogic/helpers/RegexFilters";
 import VerifyOTPModel from "../models/VerifyOTPModel";
 import ChangePasswordModel from "../models/ChangePasswordModel";
 

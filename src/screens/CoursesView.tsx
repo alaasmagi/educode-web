@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import "../App.css";
-import ContainerCardSmall from "../components/ContainerCardSmall";
-import NormalLink from "../components/Link";
-import TextBox from "../components/TextBox";
-import SideBar from "../layout/SideBar";
-import NormalButton from "../components/NormalButton";
-import DropDownList from "../components/DropdownList";
-import DataField from "../components/DataField";
-import QuickNavigation from "../layout/QuickNavigation";
+import ContainerCardSmall from "../layout/components/ContainerCardSmall";
+import NormalLink from "../layout/components/Link";
+import TextBox from "../layout/components/TextBox";
+import SideBar from "../layout/components/SideBar";
+import NormalButton from "../layout/components/NormalButton";
+import DropDownList from "../layout/components/DropdownList";
+import DataField from "../layout/components/DataField";
+import QuickNavigation from "../layout/components/QuickNavigation";
 import { useNavigate, useParams } from "react-router-dom";
-import SuccessMessage from "../components/SuccessMessage";
+import SuccessMessage from "../layout/components/SuccessMessage";
 import { useTranslation } from "react-i18next";
-import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
 import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
 import {
@@ -21,11 +21,11 @@ import {
   GetCoursebyId,
   GetCoursesByUser,
   GetCourseStatuses,
-} from "../businesslogic/CourseDataFetch";
+} from "../businesslogic/services/CourseDataFetch";
 import { CourseStatus } from "../models/CourseStatus";
-import ErrorMessage from "../components/ErrorMessage";
-import NormalMessage from "../components/NormalMessage";
-import { FetchAndSaveUserDataByUniId, TestConnection } from "../businesslogic/UserDataFetch";
+import ErrorMessage from "../layout/components/ErrorMessage";
+import NormalMessage from "../layout/components/NormalMessage";
+import { FetchAndSaveUserDataByUniId, TestConnection } from "../businesslogic/services/UserDataFetch";
 import i18next from "i18next";
 
 function CoursesView() {

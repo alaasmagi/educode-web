@@ -1,22 +1,22 @@
 import { use, useEffect, useState } from "react";
 import "../App.css";
-import ContainerCardLarge from "../components/ContainerCardLarge";
-import NormalLink from "../components/Link";
-import TextBox from "../components/TextBox";
-import SideBar from "../layout/SideBar";
-import NormalButton from "../components/NormalButton";
-import DropDownList from "../components/DropdownList";
-import DataField from "../components/DataField";
-import QuickNavigation from "../layout/QuickNavigation";
+import ContainerCardLarge from "../layout/components/ContainerCardLarge";
+import NormalLink from "../layout/components/Link";
+import TextBox from "../layout/components/TextBox";
+import SideBar from "../layout/components/SideBar";
+import NormalButton from "../layout/components/NormalButton";
+import DropDownList from "../layout/components/DropdownList";
+import DataField from "../layout/components/DataField";
+import QuickNavigation from "../layout/components/QuickNavigation";
 import { useNavigate, useParams } from "react-router-dom";
-import SuccessMessage from "../components/SuccessMessage";
+import SuccessMessage from "../layout/components/SuccessMessage";
 import { useTranslation } from "react-i18next";
-import DateSelector from "../components/DateSelector";
-import TimeSelector from "../components/TimeSelector";
-import DetailedDataField from "../components/DetailedDataField";
-import QrGenerator from "../components/QrGenerator";
-import { Icons } from "../components/Icons";
-import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import DateSelector from "../layout/components/DateSelector";
+import TimeSelector from "../layout/components/TimeSelector";
+import DetailedDataField from "../layout/components/DetailedDataField";
+import QrGenerator from "../layout/components/QrGenerator";
+import { Icons } from "../layout/components/Icons";
+import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
 import {
   AddAttendanceCheck,
   AddAttendances,
@@ -27,26 +27,26 @@ import {
   GetAttendancesByCourseCode,
   GetAttendanceTypes,
   GetStudentCountByAttendanceId,
-} from "../businesslogic/AttendanceDataFetch";
+} from "../businesslogic/services/AttendanceDataFetch";
 import LocalUserData from "../models/LocalUserDataModel";
 import {
   CourseAttendance,
   MultipleCourseAttendances,
 } from "../models/CourseAttendanceModel";
-import ToSixDigit from "../helpers/NumberConverter";
-import { GetCoursesByUser } from "../businesslogic/CourseDataFetch";
+import ToSixDigit from "../businesslogic/helpers/NumberConverter";
+import { GetCoursesByUser } from "../businesslogic/services/CourseDataFetch";
 import Course from "../models/CourseModel";
 import AttendanceType from "../models/AttendanceTypeModel";
-import NormalMessage from "../components/NormalMessage";
-import ErrorMessage from "../components/ErrorMessage";
-import { FormatDateOnlyToBackendFormat } from "../helpers/DateHandlers";
-import GetSixDigitTimeStamp from "../helpers/TimeStamp";
+import NormalMessage from "../layout/components/NormalMessage";
+import ErrorMessage from "../layout/components/ErrorMessage";
+import { FormatDateOnlyToBackendFormat } from "../businesslogic/helpers/DateHandlers";
+import GetSixDigitTimeStamp from "../businesslogic/helpers/TimeStamp";
 import AttendanceCheckData from "../models/AttendanceCheckModel";
-import { RegexFilters } from "../helpers/RegexFilters";
-import PDFDocument from "../components/PDFDocument";
+import { RegexFilters } from "../businesslogic/helpers/RegexFilters";
+import PDFDocument from "../layout/components/PDFDocument";
 import { PDFViewer } from "@react-pdf/renderer";
 import AttendanceCheckModel from "../models/AttendanceCheckModel";
-import { FetchAndSaveUserDataByUniId } from "../businesslogic/UserDataFetch";
+import { FetchAndSaveUserDataByUniId } from "../businesslogic/services/UserDataFetch";
 import i18next from "i18next";
 
 function AttendancesView() {

@@ -1,16 +1,16 @@
 import "../App.css";
-import NormalButton from "../components/NormalButton";
+import NormalButton from "../layout/components/NormalButton";
 import { useNavigate, useParams } from "react-router-dom";
-import TextBox from "../components/TextBox";
-import NormalLink from "../components/Link";
-import ErrorMessage from "../components/ErrorMessage";
+import TextBox from "../layout/components/TextBox";
+import NormalLink from "../layout/components/Link";
+import ErrorMessage from "../layout/components/ErrorMessage";
 import { useEffect, useState } from "react";
-import { dismissKeyboard } from "../hooks/DismissKeyboard";
-import { FetchAndSaveUserDataByUniId, UserLogin } from "../businesslogic/UserDataFetch";
-import { GetOfflineUserData } from "../businesslogic/UserDataOffline";
+import { dismissKeyboard } from "../businesslogic/hooks/DismissKeyboard";
+import { FetchAndSaveUserDataByUniId, UserLogin } from "../businesslogic/services/UserDataFetch";
+import { GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
 import { useTranslation } from "react-i18next";
-import LanguageSwitch from "../components/LanguageSwitch";
-import SuccessMessage from "../components/SuccessMessage";
+import LanguageSwitch from "../layout/components/LanguageSwitch";
+import SuccessMessage from "../layout/components/SuccessMessage";
 
 function LoginView() {
   const { message } = useParams() ?? null;
