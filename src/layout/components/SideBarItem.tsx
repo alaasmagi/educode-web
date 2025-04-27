@@ -1,4 +1,4 @@
-import "../App.css";
+import "../../App.css"
 
 interface SideBarItemProperties {
   label: string;
