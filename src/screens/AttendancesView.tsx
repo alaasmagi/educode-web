@@ -209,6 +209,7 @@ function AttendancesView() {
       setIsButtonDisabled(false);
       setSuccessMessage(t("student-remove-success"));
       setTimeout(() => setSuccessMessage(null), 1500);
+      fetchAllAttendanceChecksByAttendance();
       setNavState("Students");
     }
   };
