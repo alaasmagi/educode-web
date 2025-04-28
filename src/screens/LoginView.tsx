@@ -18,16 +18,18 @@ function LoginView() {
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
-    message && setSuccessMessage(t(String(message))); 
-    setTimeout (() => setSuccessMessage(null), 3000); 
+    message && setSuccessMessage(t(String(message)));
+    setTimeout(() => setSuccessMessage(null), 3000);
   }, []);
 
   const handleLogin = async () => {
+    setIsButtonDisabled(true);
     dismissKeyboard();
     const status = await UserLogin(uniIdInput, passwordInput);
     if (status === true) {
@@ -35,15 +37,19 @@ function LoginView() {
       if (fetchStatus === true) {
         const localData = await GetOfflineUserData();
         if (localData) {
+          setIsButtonDisabled(false);
           localData.userType === "Teacher" ? navigate("/Home") : setErrorMessage(t("students-not-allowed"));
         }
       } else {
+        setIsButtonDisabled(false);
         setErrorMessage(t(String(fetchStatus)));
       }
     } else {
+      setIsButtonDisabled(false);
       setErrorMessage(t(String(status)));
     }
     setTimeout(() => {
+      setIsButtonDisabled(false);
       setErrorMessage(null);
     }, 3000);
   };
@@ -54,13 +60,7 @@ function LoginView() {
         <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
           <img src="../logos/splash-logo.png" className="md:w-xl" />
           <div className="flex flex-col gap-3.5">
-            <TextBox
-              icon="person-icon"
-              label={"Uni-ID"}
-              value={uniIdInput}
-              onChange={setUniIdInput}
-              autofocus={true}
-            />
+            <TextBox icon="person-icon" label={"Uni-ID"} value={uniIdInput} onChange={setUniIdInput} autofocus={true} />
             <TextBox
               icon="lock-icon"
               label={t("password")}
@@ -74,7 +74,7 @@ function LoginView() {
               <div className="flex justify-end pr-2">
                 <NormalLink text={t("forgot-password")} onClick={() => navigate("/PasswordRecovery")} />
               </div>
-              <NormalButton text={"Log in"} onClick={handleLogin} />
+              <NormalButton text={"Log in"} onClick={handleLogin} isDisabled={isButtonDisabled} />
               <div className="flex flex-col gap-4">
                 <NormalLink text={t("register-now")} onClick={() => navigate("/CreateAccount")} />
                 <LanguageSwitch linkStyle={true} />

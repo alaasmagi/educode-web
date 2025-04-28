@@ -78,7 +78,6 @@
   "password-change-success": "Password changed successfully",
   "delete-account-success": "Account deleted successfully",
 
-
   "name": "Full name",
   "home": "Home",
   "courses": "Courses",
@@ -180,6 +179,6 @@
   "attendance-add-success": "Attendance added successfully",
   "account-logout-success": "Logged out successfully",
   "wrong-workplace-id": "Wrong workplace ID",
-  "for-example-abbr": "eg."
-
+  "for-example-abbr": "eg.",
+  "course-details": "Course details"
 }

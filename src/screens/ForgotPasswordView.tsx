@@ -11,11 +11,7 @@ import NormalMessage from "../layout/components/NormalMessage";
 import UnderlineText from "../layout/components/UnderlineText";
 import LanguageSwitch from "../layout/components/LanguageSwitch";
 
-import {
-  RequestOTP,
-  VerifyOTP,
-  ChangeUserPassword,
-} from "../businesslogic/services/UserDataFetch";
+import { RequestOTP, VerifyOTP, ChangeUserPassword } from "../businesslogic/services/UserDataFetch";
 
 import { RegexFilters } from "../businesslogic/helpers/RegexFilters";
 import VerifyOTPModel from "../models/VerifyOTPModel";
@@ -30,6 +26,7 @@ function ForgotPasswordView() {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [normalMessage, setNormalMessage] = useState<string | null>("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -40,8 +37,7 @@ function ForgotPasswordView() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const isPasswordFormValid = () =>
-    password.length >= 8 && password === passwordAgain;
+  const isPasswordFormValid = () => password.length >= 8 && password === passwordAgain;
 
   useEffect(() => {
     if (uniId !== "") {
@@ -62,32 +58,41 @@ function ForgotPasswordView() {
   }, [password, passwordAgain]);
 
   const handleOTPRequest = useCallback(async () => {
+    setIsButtonDisabled(true);
     const status = await RequestOTP(uniId);
     if (status) {
+      setIsButtonDisabled(false);
       setStepNr(2);
     } else {
+      setIsButtonDisabled(false);
       showTemporaryError(t("no-account-found"));
     }
   }, [uniId, t, showTemporaryError]);
 
   const handleOTPVerification = useCallback(async () => {
+    setIsButtonDisabled(true);
     const otpData: VerifyOTPModel = { uniId, otp: emailCode };
     const status = await VerifyOTP(otpData);
-    if (typeof(status) !== "string") {
+    if (typeof status !== "string") {
+      setIsButtonDisabled(false);
       setStepNr(3);
     } else {
+      setIsButtonDisabled(false);
       showTemporaryError(t(status));
     }
   }, [uniId, emailCode, t, showTemporaryError]);
 
   const handlePasswordChange = useCallback(async () => {
+    setIsButtonDisabled(true);
     const model: ChangePasswordModel = { uniId, newPassword: password };
     const status = await ChangeUserPassword(model);
-    if (typeof(status) !== "string") {
+    if (typeof status !== "string") {
+      setIsButtonDisabled(false);
       navigate("/Login", {
         state: { successMessage: t("password-change-success") },
       });
     } else {
+      setIsButtonDisabled(false);
       showTemporaryError(t(status));
     }
   }, [uniId, password, t, navigate, showTemporaryError]);
@@ -107,24 +112,13 @@ function ForgotPasswordView() {
             <div className="flex flex-col gap-10">
               <div className="flex min-w-2xs flex-col gap-5">
                 <UnderlineText text={t("verify-account")} />
-                <TextBox
-                  icon="person-icon"
-                  label="Uni-ID"
-                  value={uniId}
-                  onChange={(text) => setUniId(text.trim())}
-                />
+                <TextBox icon="person-icon" label="Uni-ID" value={uniId} onChange={(text) => setUniId(text.trim())} />
                 {sharedMessage && messageComponent}
               </div>
               <div className="flex flex-col self-center justify-center ">
-                <NormalButton
-                  text={t("continue")}
-                  onClick={handleOTPRequest}
-                />
+                <NormalButton text={t("continue")} onClick={handleOTPRequest} isDisabled={isButtonDisabled} />
                 <div className="flex flex-col gap-4">
-                  <NormalLink
-                    text={t("something-wrong-back")}
-                    onClick={() => navigate(-1)}
-                  />
+                  <NormalLink text={t("something-wrong-back")} onClick={() => navigate(-1)} />
                   <LanguageSwitch linkStyle={true} />
                 </div>
               </div>
@@ -136,9 +130,7 @@ function ForgotPasswordView() {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-10">
               <div className="flex min-w-2xs flex-col gap-5">
-                <UnderlineText
-                  text={`${t("one-time-key-prompt")} ${uniId}@taltech.ee`}
-                />
+                <UnderlineText text={`${t("one-time-key-prompt")} ${uniId}@taltech.ee`} />
                 <TextBox
                   icon="pincode-icon"
                   label={t("one-time-key")}
@@ -151,13 +143,10 @@ function ForgotPasswordView() {
                 <NormalButton
                   text={t("continue")}
                   onClick={handleOTPVerification}
-                  isDisabled={!RegexFilters.defaultId.test(emailCode)}
+                  isDisabled={!RegexFilters.defaultId.test(emailCode) || isButtonDisabled}
                 />
                 <div className="flex flex-col gap-4">
-                  <NormalLink
-                    text={t("something-wrong-back")}
-                    onClick={() => setStepNr(1)}
-                  />
+                  <NormalLink text={t("something-wrong-back")} onClick={() => setStepNr(1)} />
                   <LanguageSwitch linkStyle={true} />
                 </div>
               </div>
@@ -192,13 +181,10 @@ function ForgotPasswordView() {
                 <NormalButton
                   text={t("continue")}
                   onClick={handlePasswordChange}
-                  isDisabled={!isPasswordFormValid()}
+                  isDisabled={!isPasswordFormValid() || isButtonDisabled}
                 />
                 <div className="flex flex-col gap-4">
-                  <NormalLink
-                    text={t("something-wrong-back")}
-                    onClick={() => setStepNr(2)}
-                  />
+                  <NormalLink text={t("something-wrong-back")} onClick={() => setStepNr(2)} />
                   <LanguageSwitch linkStyle={true} />
                 </div>
               </div>

@@ -16,33 +16,30 @@ function InitialSelectionView() {
   const { t } = useTranslation();
 
   useEffect(() => {
-      init();
-        message && setNormalMessage(t(String(message))); 
-        setTimeout (() => setNormalMessage(null), 3000); 
-    }, []);
+    init();
+    message && setNormalMessage(t(String(message)));
+    setTimeout(() => setNormalMessage(null), 3000);
+  }, []);
 
   const init = async () => {
     const lang = await GetCurrentLanguage();
     if (lang) i18next.changeLanguage(lang);
-      let localData = await GetOfflineUserData();
-      const loginSuccess = await FetchAndSaveUserDataByUniId(
-        String(localData?.uniId)
-      );
-      if (typeof(loginSuccess) !== "string") {
-        navigate("/Home");
-      } else {
-        return;
-      }
-  }
-  
-  
+    let localData = await GetOfflineUserData();
+    const loginSuccess = await FetchAndSaveUserDataByUniId(String(localData?.uniId));
+    if (typeof loginSuccess !== "string") {
+      navigate("/Home");
+    } else {
+      return;
+    }
+  };
+
   return (
     <>
       <div className="max-h-screen max-w-screen flex items-center justify-center gap-10">
         <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
           <img src="../logos/splash-logo.png" className="w-xl" />
           <div className="flex flex-col gap-3.5">
-            {normalMessage && <NormalMessage text={t(normalMessage)}/>}
+            {normalMessage && <NormalMessage text={t(normalMessage)} />}
             <NormalButton text={t("log-in")} onClick={() => navigate("/Login")} />
             <NormalButton text={t("register-as-teacher")} onClick={() => navigate("/CreateAccount")} />
             <LanguageSwitch linkStyle={true} />

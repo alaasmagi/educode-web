@@ -5,10 +5,7 @@ import SideBar from "../layout/components/SideBar";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import StatisticChart from "../layout/components/StatisticChart";
-import {
-  GetCoursesByUser,
-  GetCourseStudentCounts,
-} from "../businesslogic/services/CourseDataFetch";
+import { GetCoursesByUser, GetCourseStudentCounts } from "../businesslogic/services/CourseDataFetch";
 import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
 import Course from "../models/CourseModel";
 import LocalUserData from "../models/LocalUserDataModel";
@@ -21,15 +18,11 @@ import { FetchAndSaveUserDataByUniId } from "../businesslogic/services/UserDataF
 function StatisticsView() {
   const [navState, setNavState] = useState<string>("Main");
   const { status, courseId } = useParams();
-  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(
-    null
-  );
+  const [availableCourses, setAvailableCourses] = useState<Course[] | null>(null);
   const [localData, setLocalData] = useState<LocalUserData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [normalMessage, setNormalMessage] = useState<string | null>(null);
-  const [courseStatistics, setCourseStatistics] = useState<
-    StudentCountModel[] | null
-  >(null);
+  const [courseStatistics, setCourseStatistics] = useState<StudentCountModel[] | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -58,7 +51,6 @@ function StatisticsView() {
       }
       setTimeout(() => setErrorMessage(null), 3000);
       setTimeout(() => setNormalMessage(null), 3000);
-
     };
 
     fetchData();
@@ -95,17 +87,15 @@ function StatisticsView() {
 
   const init = async () => {
     const lang = await GetCurrentLanguage();
-    if (lang) i18next.changeLanguage(lang);  
+    if (lang) i18next.changeLanguage(lang);
     let localData = await GetOfflineUserData();
-      const loginSuccess = await FetchAndSaveUserDataByUniId(
-        String(localData?.uniId)
-      );
-      if (typeof(loginSuccess) === "string"){
-        navigate("/login-again");
-        return;
-      }
-      setLocalData(localData);
-  }
+    const loginSuccess = await FetchAndSaveUserDataByUniId(String(localData?.uniId));
+    if (typeof loginSuccess === "string") {
+      navigate("/login-again");
+      return;
+    }
+    setLocalData(localData);
+  };
 
   return (
     <>
@@ -114,9 +104,7 @@ function StatisticsView() {
         <div className="flex flex-col gap-5">
           {navState === "Main" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-              <span className="text-2xl font-bold self-start">
-                {t("all-attendances")}
-              </span>
+              <span className="text-2xl font-bold self-start">{t("all-attendances")}</span>
               {availableCourses?.map((course) => (
                 <ContainerCardSmall
                   key={course.id}
@@ -126,16 +114,12 @@ function StatisticsView() {
                   onClick={() => navigate(`/Statistics/View/${course.id}`)}
                 />
               ))}
-              <div className="flex self-center">
-                {normalMessage && <NormalMessage text={t(normalMessage)} />}
-              </div>
+              <div className="flex self-center">{normalMessage && <NormalMessage text={t(normalMessage)} />}</div>
             </div>
           )}
           {navState === "View" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-              <span className="text-2xl font-bold self-start">
-                {t("statistics")}
-              </span>
+              <span className="text-2xl font-bold self-start">{t("statistics")}</span>
               {courseStatistics && <StatisticChart data={courseStatistics} />}
               {courseStatistics == null && (
                 <div className="flex self-center">

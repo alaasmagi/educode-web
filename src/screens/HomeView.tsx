@@ -40,6 +40,7 @@ function HomeView() {
   const [studentCodeInput, setStudentCodeInput] = useState<string>("");
   const [fullNameInput, setFullNameInput] = useState<string>("");
   const [workplaceInput, setWorkplaceInput] = useState<string>("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
 
   const setTempMessage = (setter: (msg: string | null) => void, msg: string) => {
     setter(msg);
@@ -55,17 +56,15 @@ function HomeView() {
 
   const init = async () => {
     const lang = await GetCurrentLanguage();
-    if (lang) i18next.changeLanguage(lang);  
+    if (lang) i18next.changeLanguage(lang);
     let localData = await GetOfflineUserData();
-      const loginSuccess = await FetchAndSaveUserDataByUniId(
-        String(localData?.uniId)
-      );
-      if (typeof(loginSuccess) === "string"){
-        navigate("/login-again");
-        return;
-      }
-      setLocalData(localData);
-  }
+    const loginSuccess = await FetchAndSaveUserDataByUniId(String(localData?.uniId));
+    if (typeof loginSuccess === "string") {
+      navigate("/login-again");
+      return;
+    }
+    setLocalData(localData);
+  };
 
   useEffect(() => {
     if (!localData) return;
@@ -105,6 +104,7 @@ function HomeView() {
       return setTempMessage(setErrorMessage, t("wrong-workplace-id"));
     }
 
+    setIsButtonDisabled(true);
     const model: AttendanceCheckModel = {
       studentCode: studentCodeInput,
       fullName: fullNameInput.trim(),
@@ -115,12 +115,15 @@ function HomeView() {
     const response = await AddAttendanceCheck(model);
 
     if (typeof response === "string") {
+      setIsButtonDisabled(false);
       setTempMessage(setErrorMessage, t(response));
     } else {
+      setIsButtonDisabled(false);
       setTempMessage(setSuccessMessage, `${t("attendance-check-add-success")}${studentCodeInput}`);
     }
 
     setStudentCodeInput("");
+    setFullNameInput("");
     setWorkplaceInput("");
   };
   return (
@@ -129,30 +132,15 @@ function HomeView() {
       <div className="flex max-h-screen max-w-screen items-center justify-center md:pl-90">
         <div className="flex flex-col gap-5">
           <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-            <span className="text-2xl font-bold self-start">
-              {t("ongoing-attendance")}
-            </span>
+            <span className="text-2xl font-bold self-start">{t("ongoing-attendance")}</span>
             {currentAttendanceData && (
               <div className="flex flex-col gap-2 items-start">
-                <DataField
-                  fieldName={t("course-name")}
-                  data={String(currentAttendanceData.courseName)}
-                />
-                <DataField
-                  fieldName={t("course-code")}
-                  data={String(currentAttendanceData.courseCode)}
-                />
-                <DataField
-                  fieldName={t("no-of-students")}
-                  data={String(currentStudentCount)}
-                />
+                <DataField fieldName={t("course-name")} data={String(currentAttendanceData.courseName)} />
+                <DataField fieldName={t("course-code")} data={String(currentAttendanceData.courseCode)} />
+                <DataField fieldName={t("no-of-students")} data={String(currentStudentCount)} />
                 <NormalLink
                   text={t("view-attendance-details")}
-                  onClick={() =>
-                    navigate(
-                      `/Attendances/Details/${currentAttendanceData.attendanceId}`
-                    )
-                  }
+                  onClick={() => navigate(`/Attendances/Details/${currentAttendanceData.attendanceId}`)}
                 />
               </div>
             )}
@@ -183,12 +171,13 @@ function HomeView() {
                   label={t("workplace-id")}
                   placeHolder={t("for-example-abbr") + "123456"}
                   value={workplaceInput}
-                  onChange={(text) => setWorkplaceInput(text.trim())}                />
+                  onChange={(text) => setWorkplaceInput(text.trim())}
+                />
                 <NormalButton
                   text={t("add-student")}
                   onClick={handleAddAttendanceCheck}
-                  isDisabled={!isNameFormValid() || !isStudentCodeValid() || !isWorkplaceIdValid()}
-                  />
+                  isDisabled={!isNameFormValid() || !isStudentCodeValid() || !isWorkplaceIdValid() || isButtonDisabled}
+                />
               </div>
             )}
           </div>
@@ -200,9 +189,7 @@ function HomeView() {
             quickNavItemB={{
               label: t("view-recent-attendance"),
               onClick: () =>
-                recentAttendanceId
-                  ? navigate(`/Attendances/Details/${recentAttendanceId}`)
-                  : navigate("/Attendances"),
+                recentAttendanceId ? navigate(`/Attendances/Details/${recentAttendanceId}`) : navigate("/Attendances"),
             }}
           />
         </div>

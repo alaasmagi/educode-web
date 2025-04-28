@@ -179,5 +179,6 @@
   "attendance-add-success": "Ainetund edukalt lisatud",
   "account-logout-success": "Oled edukalt väljalogitud",
   "wrong-workplace-id": "Vale töökoha ID",
-  "for-example-abbr": "nt."
+  "for-example-abbr": "nt.",
+  "course-details": "Õppeaine üksikasjad"
 }

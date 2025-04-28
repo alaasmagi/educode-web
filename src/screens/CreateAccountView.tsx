@@ -5,11 +5,7 @@ import TextBox from "../layout/components/TextBox";
 import NormalLink from "../layout/components/Link";
 import ErrorMessage from "../layout/components/ErrorMessage";
 import { useCallback, useEffect, useState } from "react";
-import {
-  CreateUserAccount,
-  RequestOTP,
-  VerifyOTP,
-} from "../businesslogic/services/UserDataFetch";
+import { CreateUserAccount, RequestOTP, VerifyOTP } from "../businesslogic/services/UserDataFetch";
 import { useTranslation } from "react-i18next";
 import LanguageSwitch from "../layout/components/LanguageSwitch";
 import { RegexFilters } from "../businesslogic/helpers/RegexFilters";
@@ -28,6 +24,7 @@ function CreateAccountView() {
   const [passwordAgain, setPasswordAgain] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [normalMessage, setNormalMessage] = useState<string | null>("null");
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -39,8 +36,7 @@ function CreateAccountView() {
   }, []);
 
   const isNameFormValid = () => fullName !== "" && !fullName.includes(";");
-  const isPasswordFormValid = () =>
-    password.length >= 8 && password === passwordAgain;
+  const isPasswordFormValid = () => password.length >= 8 && password === passwordAgain;
 
   useEffect(() => {
     if (password.length < 8 && password !== "") {
@@ -53,25 +49,32 @@ function CreateAccountView() {
   }, [password, passwordAgain]);
 
   const handleOTPRequest = useCallback(async () => {
+    setIsButtonDisabled(true);
     const status = await RequestOTP(uniIdInput, fullName);
     if (status === true) {
+      setIsButtonDisabled(false);
       setStepNr(3);
     } else {
+      setIsButtonDisabled(false);
       showTemporaryError(t(String(status)));
     }
   }, [uniIdInput, fullName, t, showTemporaryError]);
 
   const handleOTPVerification = useCallback(async () => {
+    setIsButtonDisabled(true);
     const otpData: VerifyOTPModel = { uniId: uniIdInput, otp: emailCode };
     const status = await VerifyOTP(otpData);
     if (status === true) {
+      setIsButtonDisabled(false);
       setStepNr(4);
     } else {
+      setIsButtonDisabled(false);
       showTemporaryError(t(String(status)));
     }
   }, [uniIdInput, emailCode, t, showTemporaryError]);
 
   const handleRegister = useCallback(async () => {
+    setIsButtonDisabled(true);
     const userData: CreateUserModel = {
       uniId: uniIdInput,
       fullName: fullName.trim(),
@@ -79,8 +82,10 @@ function CreateAccountView() {
     };
     const status = await CreateUserAccount(userData);
     if (typeof status !== "string") {
+      setIsButtonDisabled(false);
       navigate("/Login/create-account-success");
     } else {
+      setIsButtonDisabled(false);
       showTemporaryError(t(String(status)));
     }
   }, [uniIdInput, fullName, password, navigate, t, showTemporaryError]);
@@ -114,13 +119,10 @@ function CreateAccountView() {
               <NormalButton
                 text={t("continue")}
                 onClick={() => setStepNr(2)}
-                isDisabled={!isNameFormValid()}
+                isDisabled={!isNameFormValid() || isButtonDisabled}
               />
               <div className="flex flex-col gap-4">
-                <NormalLink
-                  text={t("already-registered")}
-                  onClick={() => navigate("/Login")}
-                />
+                <NormalLink text={t("already-registered")} onClick={() => navigate("/Login")} />
                 <LanguageSwitch linkStyle={true} />
               </div>
             </div>
@@ -142,12 +144,9 @@ function CreateAccountView() {
               {sharedMessage && <>{messageComponent}</>}
             </div>
             <div className="flex flex-col self-center justify-center ">
-              <NormalButton text={t("continue")} onClick={handleOTPRequest} />
+              <NormalButton text={t("continue")} onClick={handleOTPRequest} isDisabled={isButtonDisabled} />
               <div className="flex flex-col gap-4">
-                <NormalLink
-                  text={t("something-wrong-back")}
-                  onClick={() => setStepNr(1)}
-                />
+                <NormalLink text={t("something-wrong-back")} onClick={() => setStepNr(1)} />
                 <LanguageSwitch linkStyle={true} />
               </div>
             </div>
@@ -157,9 +156,7 @@ function CreateAccountView() {
         return (
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-5">
-              <UnderlineText
-                text={`${t("one-time-key-prompt")} ${uniIdInput}@taltech.ee`}
-              />
+              <UnderlineText text={`${t("one-time-key-prompt")} ${uniIdInput}@taltech.ee`} />
             </div>
             <div className="flex flex-col self-center justify-center">
               <div className="my-4">
@@ -176,13 +173,10 @@ function CreateAccountView() {
               <NormalButton
                 text={t("continue")}
                 onClick={handleOTPVerification}
-                isDisabled={!RegexFilters.defaultId.test(emailCode)}
+                isDisabled={!RegexFilters.defaultId.test(emailCode) || isButtonDisabled}
               />
               <div className="flex flex-col gap-4">
-                <NormalLink
-                  text={t("something-wrong-back")}
-                  onClick={() => setStepNr(2)}
-                />
+                <NormalLink text={t("something-wrong-back")} onClick={() => setStepNr(2)} />
                 <LanguageSwitch linkStyle={true} />
               </div>
             </div>
@@ -215,13 +209,10 @@ function CreateAccountView() {
               <NormalButton
                 text={t("continue")}
                 onClick={() => setStepNr(5)}
-                isDisabled={!isPasswordFormValid()}
+                isDisabled={!isPasswordFormValid() || isButtonDisabled}
               />
               <div className="flex flex-col gap-4">
-                <NormalLink
-                  text={t("something-wrong-back")}
-                  onClick={() => setStepNr(3)}
-                />
+                <NormalLink text={t("something-wrong-back")} onClick={() => setStepNr(3)} />
                 <LanguageSwitch linkStyle={true} />
               </div>
             </div>
@@ -233,24 +224,15 @@ function CreateAccountView() {
             <div className="flex flex-col gap-5">
               <UnderlineText text={t("verify-details")} />
               <div className="flex flex-col gap-3 border-2 p-2 border-main-text rounded-2xl">
-                <DataField
-                  fieldName={t("name")}
-                  data={fullName}
-                />
+                <DataField fieldName={t("name")} data={fullName} />
                 <DataField fieldName={"Uni-ID"} data={uniIdInput} />
               </div>
               {sharedMessage && <>{messageComponent}</>}
             </div>
             <div className="flex flex-col self-center justify-center ">
-              <NormalButton
-                text={t("create-account")}
-                onClick={handleRegister}
-              />
+              <NormalButton text={t("create-account")} onClick={handleRegister} isDisabled={isButtonDisabled} />
               <div className="flex flex-col gap-4">
-                <NormalLink
-                  text={t("something-wrong-back")}
-                  onClick={() => setStepNr(4)}
-                />
+                <NormalLink text={t("something-wrong-back")} onClick={() => setStepNr(4)} />
                 <LanguageSwitch linkStyle={true} />
               </div>
             </div>
