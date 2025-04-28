@@ -194,6 +194,7 @@ function AttendancesView() {
     const status = await GetAttendanceChecksByAttendanceId(Number(attendanceId));
     if (typeof status === "string") {
       setNormalMessage(t("no-students-in-this-attendance"));
+      setAttendanceChecks([]);
     } else {
       setAttendanceChecks(status);
     }
@@ -202,15 +203,18 @@ function AttendancesView() {
   const deleteAttendanceCheck = async (attendanceCheckId: number) => {
     setIsButtonDisabled(true);
     const status = await DeleteAttendanceCheck(attendanceCheckId);
+
     if (typeof status === "string") {
       setIsButtonDisabled(false);
       setErrorMessage(t(status));
     } else {
       setIsButtonDisabled(false);
       setSuccessMessage(t("student-remove-success"));
-      setTimeout(() => setSuccessMessage(null), 1500);
-      fetchAllAttendanceChecksByAttendance();
-      setNavState("Students");
+
+      setTimeout(async () => {
+        setSuccessMessage(null);
+        await fetchAllAttendanceChecksByAttendance();
+      }, 1500);
     }
   };
 
