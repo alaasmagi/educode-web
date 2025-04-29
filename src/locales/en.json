@@ -180,5 +180,6 @@
   "account-logout-success": "Logged out successfully",
   "wrong-workplace-id": "Wrong workplace ID",
   "for-example-abbr": "eg.",
-  "course-details": "Course details"
+  "course-details": "Course details",
+  "no-data-available": "No data available"
 }

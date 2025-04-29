@@ -180,5 +180,6 @@
   "account-logout-success": "Oled edukalt väljalogitud",
   "wrong-workplace-id": "Vale töökoha ID",
   "for-example-abbr": "nt.",
-  "course-details": "Õppeaine üksikasjad"
+  "course-details": "Õppeaine üksikasjad",
+  "no-data-available": "Andmed puuduvad"
 }
