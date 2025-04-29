@@ -155,12 +155,9 @@ function CreateAccountView() {
       case 3:
         return (
           <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-10">
               <UnderlineText text={`${t("one-time-key-prompt")} ${uniIdInput}@taltech.ee`} />
-            </div>
-            <div className="flex flex-col self-center justify-center">
-              <div className="gap-10 my-4">
-                {sharedMessage && <>{messageComponent}</>}
+              <div className="flex min-w-2xs flex-col gap-5 items-center">
                 <TextBox
                   icon="pincode-icon"
                   label={t("one-time-key")}
@@ -169,7 +166,10 @@ function CreateAccountView() {
                   autofocus={true}
                   onChange={(text) => setEmailCode(text.trim())}
                 />
+                {sharedMessage && <>{messageComponent}</>}
               </div>
+            </div>
+            <div className="flex flex-col self-center justify-center ">
               <NormalButton
                 text={t("continue")}
                 onClick={handleOTPVerification}
