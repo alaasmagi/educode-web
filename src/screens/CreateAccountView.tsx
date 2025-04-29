@@ -159,7 +159,7 @@ function CreateAccountView() {
               <UnderlineText text={`${t("one-time-key-prompt")} ${uniIdInput}@taltech.ee`} />
             </div>
             <div className="flex flex-col self-center justify-center">
-              <div className="my-4">
+              <div className="flex flex-col gap-10">
                 {sharedMessage && <>{messageComponent}</>}
                 <TextBox
                   icon="pincode-icon"
