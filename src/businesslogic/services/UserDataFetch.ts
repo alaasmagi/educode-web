@@ -2,7 +2,14 @@ import CreateUserModel from "../../models/CreateUserModel";
 import OnlineUserModel from "../../models/OnlineUserModel";
 import LocalUserData from "../../models/LocalUserDataModel";
 import axios from "axios";
-import { DeleteTempToken, GetTempToken, GetUserToken, SaveOfflineUserData, SaveTempToken, SaveUserToken } from "./UserDataOffline";
+import {
+  DeleteTempToken,
+  GetTempToken,
+  GetUserToken,
+  SaveOfflineUserData,
+  SaveTempToken,
+  SaveUserToken,
+} from "./UserDataOffline";
 import VerifyOTPModel from "../../models/VerifyOTPModel";
 import ChangePasswordModel from "../../models/ChangePasswordModel";
 
@@ -22,15 +29,15 @@ export async function UserLogin(uniId: string, password: string): Promise<boolea
       headers: {
         "Content-Type": "application/json",
       },
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
-  if (response.status === 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     await SaveUserToken(response.data.token);
     return true;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function CreateUserAccount(model: CreateUserModel): Promise<boolean | string> {
@@ -47,14 +54,14 @@ export async function CreateUserAccount(model: CreateUserModel): Promise<boolean
       headers: {
         "Content-Type": "application/json",
       },
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
-  if (response.status === 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     return true;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function FetchAndSaveUserDataByUniId(uniId: string): Promise<boolean | string> {
@@ -63,10 +70,10 @@ export async function FetchAndSaveUserDataByUniId(uniId: string): Promise<boolea
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    validateStatus: (status) => status < 500,
+    validateStatus: (status) => status <= 500,
   });
 
-  if (response.status === 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     const data: OnlineUserModel = response.data;
     const localData: LocalUserData = {
       userType: data.userType.userType,
@@ -79,9 +86,8 @@ export async function FetchAndSaveUserDataByUniId(uniId: string): Promise<boolea
     SaveOfflineUserData(localData);
     return true;
   }
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
-
 
 export async function RequestOTP(uniId: string, fullName?: string): Promise<boolean | string> {
   const response = await axios.post(
@@ -94,15 +100,15 @@ export async function RequestOTP(uniId: string, fullName?: string): Promise<bool
       headers: {
         "Content-Type": "application/json",
       },
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
 
-  if (response.status === 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     return true;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function VerifyOTP(model: VerifyOTPModel): Promise<boolean | string> {
@@ -116,35 +122,32 @@ export async function VerifyOTP(model: VerifyOTPModel): Promise<boolean | string
       headers: {
         "Content-Type": "application/json",
       },
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
 
-  if (response.status === 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     response.data.token && SaveTempToken(response.data.token);
     return true;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function DeleteUser(uniId: string): Promise<boolean | string> {
   const token = await GetUserToken();
-  const response = await axios.delete(
-    `${import.meta.env.VITE_API_URL}/User/Delete/UniId/${uniId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      validateStatus: (status) => status < 500,
-    }
-  );
+  const response = await axios.delete(`${import.meta.env.VITE_API_URL}/User/Delete/UniId/${uniId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    validateStatus: (status) => status <= 500,
+  });
 
-  if (response.status === 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     return true;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function ChangeUserPassword(model: ChangePasswordModel): Promise<boolean | string> {
@@ -160,14 +163,14 @@ export async function ChangeUserPassword(model: ChangePasswordModel): Promise<bo
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
 
-  if (response.status === 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     DeleteTempToken();
     return true;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }

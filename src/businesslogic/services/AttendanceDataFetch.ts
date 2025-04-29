@@ -26,13 +26,13 @@ export async function AddAttendanceCheck(model: AttendanceCheckModel): Promise<b
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     return true;
   }
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function GetCurrentAttendance(uniId: string): Promise<CourseAttendance | string> {
@@ -43,10 +43,10 @@ export async function GetCurrentAttendance(uniId: string): Promise<CourseAttenda
       Authorization: `Bearer ${token}`,
     },
     withCredentials: true,
-    validateStatus: (status) => status < 500,
+    validateStatus: (status) => status <= 500,
   });
 
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     const data = response.data;
     return {
       courseId: data.course.id,
@@ -61,7 +61,7 @@ export async function GetCurrentAttendance(uniId: string): Promise<CourseAttenda
     } as CourseAttendance;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function GetStudentCountByAttendanceId(attendanceId: number): Promise<number | string> {
@@ -74,16 +74,16 @@ export async function GetStudentCountByAttendanceId(attendanceId: number): Promi
         Authorization: `Bearer ${token}`,
       },
       withCredentials: true,
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
 
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     const data = response.data;
     return data;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function GetMostRecentAttendance(uniId: string): Promise<CourseAttendance | string> {
@@ -94,10 +94,10 @@ export async function GetMostRecentAttendance(uniId: string): Promise<CourseAtte
       Authorization: `Bearer ${token}`,
     },
     withCredentials: true,
-    validateStatus: (status) => status < 500,
+    validateStatus: (status) => status <= 500,
   });
 
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     const data = response.data;
     return {
       courseId: data.course.id,
@@ -112,7 +112,7 @@ export async function GetMostRecentAttendance(uniId: string): Promise<CourseAtte
     } as CourseAttendance;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function GetAttendanceById(attendanceId: number): Promise<CourseAttendance | string> {
@@ -123,9 +123,9 @@ export async function GetAttendanceById(attendanceId: number): Promise<CourseAtt
       Authorization: `Bearer ${token}`,
     },
     withCredentials: true,
-    validateStatus: (status) => status < 500,
+    validateStatus: (status) => status <= 500,
   });
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     const data = response.data;
     return {
       courseId: data.course.id,
@@ -140,7 +140,7 @@ export async function GetAttendanceById(attendanceId: number): Promise<CourseAtt
     } as CourseAttendance;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function GetAttendanceTypes(): Promise<AttendanceType[] | string> {
@@ -151,14 +151,14 @@ export async function GetAttendanceTypes(): Promise<AttendanceType[] | string> {
       Authorization: `Bearer ${token}`,
     },
     withCredentials: true,
-    validateStatus: (status) => status < 500,
+    validateStatus: (status) => status <= 500,
   });
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     const data = response.data;
     return data;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function AddAttendances(attendances: MultipleCourseAttendances): Promise<boolean | string> {
@@ -178,14 +178,14 @@ export async function AddAttendances(attendances: MultipleCourseAttendances): Pr
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     return true;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function GetAttendancesByCourseCode(courseCode: string): Promise<CourseAttendance[] | string> {
@@ -195,9 +195,9 @@ export async function GetAttendancesByCourseCode(courseCode: string): Promise<Co
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    validateStatus: (status) => status < 500,
+    validateStatus: (status) => status <= 500,
   });
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     const courseAttendances: CourseAttendance[] = response.data.map((item: any) => ({
       courseId: item.courseId,
       courseCode: item.course.courseCode,
@@ -212,7 +212,7 @@ export async function GetAttendancesByCourseCode(courseCode: string): Promise<Co
 
     return courseAttendances;
   }
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function DeleteAttendance(attendanceId: number): Promise<boolean | string> {
@@ -222,13 +222,13 @@ export async function DeleteAttendance(attendanceId: number): Promise<boolean | 
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    validateStatus: (status) => status < 500,
+    validateStatus: (status) => status <= 500,
   });
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     return true;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function DeleteAttendanceCheck(attendanceCheckId: number): Promise<boolean | string> {
@@ -240,14 +240,14 @@ export async function DeleteAttendanceCheck(attendanceCheckId: number): Promise<
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     return true;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
 
 export async function GetAttendanceChecksByAttendanceId(attendanceId: number): Promise<AttendanceCheckData[] | string> {
@@ -260,13 +260,13 @@ export async function GetAttendanceChecksByAttendanceId(attendanceId: number): P
         Authorization: `Bearer ${token}`,
       },
       withCredentials: true,
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status <= 500,
     }
   );
-  if (response.status == 200) {
+  if (response.status === 200 && !response.data.messageCode) {
     const data = response.data;
     return data;
   }
 
-  return response.data.error ?? "internet-connection-error";
+  return response.data.messageCode ?? "internet-connection-error";
 }
