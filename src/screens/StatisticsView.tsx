@@ -104,7 +104,7 @@ function StatisticsView() {
         <div className="flex flex-col gap-5">
           {navState === "Main" && (
             <div className="flex flex-col max-md:w-90 md:w-xl bg-main-dark rounded-3xl p-6 gap-5">
-              <span className="text-2xl font-bold self-start">{t("all-attendances")}</span>
+              <span className="text-2xl font-bold self-start">{t("all-courses")}</span>
               {availableCourses?.map((course) => (
                 <ContainerCardSmall
                   key={course.id}
