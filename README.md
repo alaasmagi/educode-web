@@ -29,14 +29,14 @@ npm i; npm run dev
 * The Admin UI can be viewed from the web browser on the address the application provided in the terminal/cmd
 
 ## Features
-- Teachers can sign up and log in with university email addresses.
-- Teachers can manage courses.
-- Teachers can manage course attendances.
-- Teachers can view QR codes for each course attendance so students can register themselves.
-- Teachers can manually register students to course attendances.
-- Teachers can view the list of registered students for each course attendance.
-- Teachers can download the list of registered students as a PDF.
-- Teachers can view statistics for each course's attendances.
+- Teachers can sign up and log in with university email addresses
+- Teachers can manage courses
+- Teachers can manage course attendances
+- Teachers can view QR codes for each course attendance so students can register themselves
+- Teachers can manually register students to course attendances
+- Teachers can view the list of registered students for each course attendance
+- Teachers can download the list of registered students as a PDF
+- Teachers can view statistics of course attendances by course
 
 ## Design choices
 
