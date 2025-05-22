@@ -49,21 +49,19 @@ The project is divided into 6 folders:
 * **models** - contains DTOs used for communication between the client app and the backend API
 * **screens** - contains all the views/pages of the browser client application
   
-### Database entities
-There are 9 DB entities to manage user data, course data, attendance data and attendance check data.  
-* **AttendanceCheckEntity**
-```csharp
-public class AttendanceCheckEntity : BaseEntity
-{
-    [Required]
-    public string StudentCode { get; set; } = default!;
-    [Required]
-    public string FullName { get; set; } = default!;
-    [Required]
-    public int CourseAttendanceId { get; set; }
-    public int? WorkplaceId { get; set; }
-    public WorkplaceEntity? Workplace { get; set; }
+### Data Transfer Objects (DTOs)
+There are 13 DTOs in `/models` folder which are responsible for communication between the client app and backend API.
+* **AttendanceCheckModel**
+```typescript
+interface AttendanceCheckModel {
+  id?: number;
+  studentCode: string;
+  fullName: string;
+  courseAttendanceId: number;
+  workplaceId?: number | null;
 }
+
+export default AttendanceCheckModel;
 ```
 * **AttendanceTypeEntity**
 ```csharp
