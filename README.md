@@ -58,7 +58,7 @@ interface AttendanceCheckModel {
   studentCode: string;
   fullName: string;
   courseAttendanceId: number;
-  workplaceId?: number | null;
+  workplaceId?: number;
 }
 
 export default AttendanceCheckModel;
