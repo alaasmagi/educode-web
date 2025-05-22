@@ -63,168 +63,139 @@ interface AttendanceCheckModel {
 
 export default AttendanceCheckModel;
 ```
-* **AttendanceTypeEntity**
-```csharp
-public class AttendanceTypeEntity : BaseEntity
-{
-    [Required]
-    [MaxLength(128)]
-    public string AttendanceType { get; set; } = default!;
+* **AttendanceType**
+```typescript
+interface AttendanceType {
+  id: number;
+  attendanceType: string;
 }
-```
-* **CourseAttendanceEntity**
-```csharp
-public class CourseAttendanceEntity : BaseEntity
-{
-    [Required]
-    [ForeignKey("Course")]
-    public int CourseId { get; set; }
-    public CourseEntity? Course { get; set; }
-    [Required]
-    [ForeignKey("AttendanceType")]
-    public int AttendanceTypeId { get; set; }
-    public AttendanceTypeEntity? AttendanceType { get; set; }
-    [Required]
-    public DateTime StartTime { get; set; }
-    [Required]
-    public DateTime EndTime { get; set; }
 
-    public ICollection<AttendanceCheckEntity>? AttendanceChecks { get; set; }
+export default AttendanceType;
+```
+* **ChangePasswordModel**
+```typescript
+interface ChangePasswordModel {
+    uniId: string;
+    newPassword: string;
+}
+
+export default ChangePasswordModel;
+```
+* **CourseAttendance**
+```typescript
+export interface CourseAttendance {
+  courseId: number;
+  courseCode?: string;
+  courseName?: string;
+  attendanceId?: number;
+  attendanceTypeId: string;
+  attendanceType?: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface MultipleCourseAttendances {
+  attendanceId?: number;
+  courseId: number;
+  attendanceTypeId: string;
+  dates: string[];
+  startTime: string;
+  endTime: string;
 }
 ```
-* **CourseEntity**
-```csharp
-public class CourseEntity : BaseEntity
-{
-    [Required]
-    [MaxLength(128)]
-    public string CourseCode { get; set; } = default!;
-    [Required]
-    [MaxLength(128)]
-    public string CourseName { get; set; } = default!;
-    [Required]
-    public ECourseValidStatus CourseValidStatus { get; set; }
-    public ICollection<CourseTeacherEntity>? CourseTeacherEntities { get; set; }
+* **Course**
+```typescript
+interface Course {
+  id?: number;
+  courseCode: string;
+  courseName: string;
+  courseValidStatus: number;
+}
+
+export default Course;
+```
+* **CourseStatus**
+```typescript
+export interface CourseStatus {
+  id: number;
+  status: string;
 }
 ```
-* **CourseTeacherEntity**
-```csharp
-public class CourseTeacherEntity : BaseEntity
-{
-    [Required]
-    [ForeignKey("Course")]
-    public int CourseId { get; set; }
-    public CourseEntity? Course { get; set; }
-    [Required]
-    [ForeignKey("Teacher")]
-    public int TeacherId { get; set; }
-    public UserEntity? Teacher { get; set; }
+* **CreateUserModel**
+```typescript
+interface CreateUserModel {
+    uniId: string;
+    fullName: string;
+    password: string;
 }
+
+export default CreateUserModel;
 ```
-* **UserAuthEntity**
-```csharp
-public class UserAuthEntity : BaseEntity
-{
-    [Required]
-    [ForeignKey("User")]
-    public int UserId { get; set; }
-    public UserEntity? User { get; set; }
-    [Required]
-    [MaxLength(255)]
-    public string PasswordHash { get; set; } = default!;
+* **LocalDataModel**
+```typescript
+interface LocalDataModel {
+    uniId: string;
+    token: string;
 }
+
+export default LocalDataModel;
 ```
-* **UserEntity**
-```csharp
-public class UserEntity : BaseEntity
-{
-    [Required]
-    [ForeignKey("UserType")]
-    public int? UserTypeId { get; set; }
-    public UserTypeEntity? UserType { get; set; }
-    [Required]
-    [MaxLength(128)]
-    public string UniId { get; set; } = default!;
-    [MaxLength(128)]
-    public string? StudentCode { get; set; }
-    [Required]
-    [MaxLength(255)]
-    public string FullName { get; set; } = default!;
+* **LocalUserData**
+```typescript
+interface LocalUserData {
+    userType: string,
+    uniId?: string;
+    studentCode?: string;
+    offlineOnly: boolean;
+    fullName?: string;
 }
+
+export default LocalUserData;
 ```
-* **UserTypeEntity**
-```csharp
-public class UserTypeEntity : BaseEntity
-{
-    [Required]
-    [MaxLength(128)]
-    public string UserType { get; set; } = default!;
-    
+* **OnlineUserModel**
+```typescript
+interface OnlineUserModel {
+    id: number;
+    userType: {
+        userType: string;
+    };
+    uniId: string;
+    studentCode?: string;
+    fullName: string;
 }
+
+export default OnlineUserModel;
 ```
-* **WorkplaceEntity**
-```csharp
-public class WorkplaceEntity : BaseEntity
-{
-    [Required]
-    [MaxLength(128)]
-    public string ClassRoom { get; set; } = default!;
-    [Required]
-    [MaxLength(128)]
-    public string ComputerCode { get; set; } = default!;
+* **StudentAttendanceModel**
+```typescript
+interface StudentAttendanceModel {
+    attendaceCheckId: number,
+    studentCode: string;
+    workplaceId?: number;
 }
+
+export default StudentAttendanceModel;
+```
+* **StudentCountModel**
+```typescript
+interface StudentCountModel {
+    attendanceDate: string;
+    studentCount: number;
+}
+
+export default StudentCountModel;
+```
+* **VerifyOTPModel**
+```typescript
+interface VerifyOTPModel {
+    uniId: string;
+    otp: string;
+}
+
+export default VerifyOTPModel;
 ```
 
-### BaseEntity
-The `BaseEntity` class is defined in this project, and it is uploaded as a NuGet package [AL_AppDev.Base(v1.0.2)](https://www.nuget.org/packages/AL_AppDev.Base/1.0.2)
-```csharp
-public class BaseEntity
-{
-    [Required]
-    public int Id { get; set; }
-    [Required]
-    [MaxLength(128)]
-    public string CreatedBy { get; set; } = default!;
-    [Required]
-    public DateTime CreatedAt { get; set; }
-    [Required]
-    [MaxLength(128)]
-    public string UpdatedBy { get; set; } = default!;
-    [Required]
-    public DateTime UpdatedAt { get; set; }
-    [Required] 
-    public bool Deleted { get; set; } = false;
-}
-```
-
-### DTOs and enums
-There are several DTOs and enums that are used in the application.  
-* **CourseStatusDto**
-```csharp
-public class CourseStatusDto
-{
-    public int Id { get; set; }
-    public string Status { get; set; } = string.Empty;
-}
-```
-* **CourseUserCountDto**
-```csharp
-public class CourseUserCountDto
-{
-    public DateTime AttendanceDate { get; set; }
-    public int UserCount { get; set; } = 0;
-}
-```
-* **ECourseValidStatus**
-```csharp
-public enum ECourseValidStatus
-{
-    Available,
-    TempUnavailable,
-    Unavailable
-}
-```
-  
 ### User Interface (Admin UI)
 * The Admin UI is implemented using ASP.NET MVC default pages (Views)
 * Bootstrap is used for quick customisation
