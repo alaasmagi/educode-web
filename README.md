@@ -22,16 +22,21 @@ VITE_API_URL=<your-educode-backend-intsance-url>/api
 ### Running the app
 
 After meeting all prerequisites above - 
-* application can be run via terminal/cmd opened in the root of WebApp folder `/WebApp` by command
+* browser client application can be run via terminal/cmd opened in the root folder `/` by command
 ```bash
-dotnet run
+npm i; npm run dev 
 ```
 * The Admin UI can be viewed from the web browser on the address the application provided in the terminal/cmd
 
 ## Features
-* The Admin UI allows convenient management of the application's database.
-
-
+- Teachers can sign up and log in with university email addresses.
+- Teachers can manage courses.
+- Teachers can manage course attendances.
+- Teachers can view QR codes for each course attendance so students can register themselves.
+- Teachers can manually register students to course attendances.
+- Teachers can view the list of registered students for each course attendance.
+- Teachers can download the list of registered students as a PDF.
+- Teachers can view statistics for each course's attendances.
 
 ## Design choices
 
