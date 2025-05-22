@@ -5,7 +5,7 @@
 * Development year: **2025**
 * Languages and technologies: **TypeScript, React, Vite, Tailwind CSS**
 * This is the mobile app component of my Bachelor's final thesis project, which also includes [backend](https://github.com/alaasmagi/educode-backend) and [mobile app](https://github.com/alaasmagi/educode-mobile)  
-* Detailed documentation of my Bachelor's final thesis project:<link>
+* Detailed documentation of my Bachelor's final thesis project (in Estonian):<link>
 
 ## How to run
 
