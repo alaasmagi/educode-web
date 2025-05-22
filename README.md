@@ -26,7 +26,7 @@ After meeting all prerequisites above -
 ```bash
 npm i; npm run dev 
 ```
-* The Admin UI can be viewed from the web browser on the address the application provided in the terminal/cmd
+* The UI can be viewed from the web browser on the address the application provided in the terminal/cmd
 
 ## Features
 - Teachers can sign up and log in with university email addresses
@@ -196,15 +196,7 @@ interface VerifyOTPModel {
 export default VerifyOTPModel;
 ```
 
-### User Interface (Admin UI)
-* The Admin UI is implemented using ASP.NET MVC default pages (Views)
-* Bootstrap is used for quick customisation
-
-### Unit tests
-* Unit tests cover 100% of the business logic
-* Tests are written using the NUnit framework
-
-## Screenshots (Admin UI)
+## Screenshots
 * Login page:  
 ![Screenshot 2025-05-21 232318](https://github.com/user-attachments/assets/2ec61886-e21c-4d92-ae5e-d6c45db64b54)
 * Main page:  
@@ -212,10 +204,7 @@ export default VerifyOTPModel;
 * Entity main page:  
 ![Screenshot 2025-05-21 232350](https://github.com/user-attachments/assets/e3796688-dbcd-4d14-a244-89e1349437ed)
 
-
-
 ## Improvements & scaling possibilities
-
 ### Integration with more education related services
 * User testing results suggested the idea of integrating this application with the existing infrastructure of the University (e.g., the TalTech app)
 
