@@ -25,7 +25,7 @@ VITE_EMAIL_DOMAIN=<email-domain-for-otp> //For example: "@taltech.ee"
 After meeting all prerequisites above - 
 * browser client application can be run via terminal/cmd opened in the root folder `/` by command
 ```bash
-npm i; npm run dev 
+npm i; npm start
 ```
 * The UI can be viewed from the web browser on the address the application provided in the terminal/cmd
 
