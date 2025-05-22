@@ -197,12 +197,16 @@ export default VerifyOTPModel;
 ```
 
 ## Screenshots
-* Login page:  
-![Screenshot 2025-05-21 232318](https://github.com/user-attachments/assets/2ec61886-e21c-4d92-ae5e-d6c45db64b54)
-* Main page:  
-![Screenshot 2025-05-21 232335](https://github.com/user-attachments/assets/d093fbd4-ae64-4c50-ba93-6c3d8b6e3111)
-* Entity main page:  
-![Screenshot 2025-05-21 232350](https://github.com/user-attachments/assets/e3796688-dbcd-4d14-a244-89e1349437ed)
+* Main page view:  
+![Screenshot 2025-05-07 143342](https://github.com/user-attachments/assets/597a9494-829a-41a4-bdec-6d2b1f93ead2)
+* Attendance QR code view:  
+![Screenshot 2025-05-07 143404](https://github.com/user-attachments/assets/f0c51ca4-0641-4eb7-8b22-0f94b2be3bb0)
+* Attendances' view:  
+![Screenshot 2025-05-07 143421](https://github.com/user-attachments/assets/7cb6f5c0-1c92-460a-a1d6-c2031f68a716)
+* Attendance's details:  
+![Screenshot 2025-05-07 143354](https://github.com/user-attachments/assets/10feab0a-1020-40fa-86b2-47aa65f8866e)
+* Statistics view:  
+![Screenshot 2025-05-07 143432](https://github.com/user-attachments/assets/95505dfa-f22c-4c56-b251-773dd9c76918)
 
 ## Improvements & scaling possibilities
 ### Integration with more education related services
