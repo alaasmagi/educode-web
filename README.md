@@ -17,6 +17,7 @@
 The application should have .env file in the root folder `/` and it shoult have following content:
 ```bash
 VITE_API_URL=<your-educode-backend-instance-url>/api
+VITE_EMAIL_DOMAIN=<email-domain-for-otp> //For example: "@taltech.ee"
 ```
 
 ### Running the app
