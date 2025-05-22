@@ -40,20 +40,14 @@ npm i; npm run dev
 
 ## Design choices
 
-### Application overall design
-ASP.NET MVC is used because it promotes a clear separation of concerns between application logic and presentation. This architectural pattern helps maintain clean and well-structured code, thereby enhancing maintainability, scalability, and testability.  
-### Services
-There are 7 main services:
-* **AdminAccessService** - controls admin access to the Admin UI
-* **AttendanceManagementService** - handles CRUD operations for attendances and attendance checks
-* **AuthService** - responsible for JWT generation
-* **CourseManagementService** - manages CRUD operations for courses
-* **EmailService** - sends emails containing OTPs
-* **OtpService** - handles OTP generation and verification
-* **UserManagementService** - manages all CRUD operations related to users  
-
-Additionally, there is a helper service:  
-* **CleanupService** - performs automatic cleanup of attendances older than 6 months
+### Structure
+The project is divided into 6 folders:
+* **assets** - contains static icons and logos
+* **businesslogic** - contains all the core logic of the client application
+* **layout** - contains custom-built UI components
+* **locales** - contains files for UI translations (localization)
+* **models** - contains DTOs used for communication between the client app and the backend API
+* **screens** - contains all the views/pages of the browser client application
   
 ### Database entities
 There are 9 DB entities to manage user data, course data, attendance data and attendance check data.  
