@@ -130,7 +130,7 @@ function ForgotPasswordView() {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-10">
               <div className="flex min-w-2xs flex-col gap-5">
-                <UnderlineText text={`${t("one-time-key-prompt")} ${uniId}@taltech.ee`} />
+                <UnderlineText text={`${t("one-time-key-prompt")} ${uniId}${import.meta.env.VITE_EMAIL_DOMAIN}`} />
                 <TextBox
                   icon="pincode-icon"
                   label={t("one-time-key")}

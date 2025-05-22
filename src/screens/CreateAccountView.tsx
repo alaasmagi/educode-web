@@ -156,7 +156,7 @@ function CreateAccountView() {
         return (
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-10">
-              <UnderlineText text={`${t("one-time-key-prompt")} ${uniIdInput}@taltech.ee`} />
+              <UnderlineText text={`${t("one-time-key-prompt")} ${uniIdInput}${import.meta.env.VITE_EMAIL_DOMAIN}`} />
               <div className="flex min-w-2xs flex-col gap-5 items-center">
                 <TextBox
                   icon="pincode-icon"

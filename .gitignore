@@ -100,6 +100,3 @@ packages/react-devtools-timeline/dist
 
 # local env files
 .env*.local
-
-#overall env
-.env
