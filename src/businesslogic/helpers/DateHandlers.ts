@@ -25,3 +25,14 @@ export const FormatDateOnly = (date: string): string => {
 export const FormatDateOnlyToBackendFormat = (date: string): string => {
   return format(date, "yyyy-MM-dd");
 };
+
+export const ConvertLocalTimeToUtcTimeOnly = (localTime: string): string => {
+  const [hours, minutes] = localTime.split(":").map(Number);
+  const localDate = new Date();
+  localDate.setHours(hours, minutes, 0, 0);
+
+  const utcHours = localDate.getUTCHours().toString().padStart(2, "0");
+  const utcMinutes = localDate.getUTCMinutes().toString().padStart(2, "0");
+
+  return `${utcHours}:${utcMinutes}`;
+};

@@ -4,6 +4,7 @@ import { CourseAttendance, MultipleCourseAttendances } from "../../models/Course
 import {
   ConvertDateTimeToDateOnly,
   ConvertDateTimeToTimeOnly,
+  ConvertLocalTimeToUtcTimeOnly,
   ConvertUTCToLocalDateTime,
 } from "../helpers/DateHandlers";
 import AttendanceType from "../../models/AttendanceTypeModel";
@@ -168,8 +169,8 @@ export async function AddAttendances(attendances: MultipleCourseAttendances): Pr
     {
       courseId: attendances.courseId,
       attendanceTypeId: attendances.attendanceTypeId,
-      startTime: attendances.startTime,
-      endTime: attendances.endTime,
+      startTime: ConvertLocalTimeToUtcTimeOnly(attendances.startTime),
+      endTime: ConvertLocalTimeToUtcTimeOnly(attendances.endTime),
       attendanceDates: attendances.dates,
       creator: "educode-webapp",
     },
