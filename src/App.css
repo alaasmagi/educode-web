@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-main-blue: #4492EA;
-  --color-main-dark: #2B2B2B;
-  --color-button-dark: #1E1E1E;
-  --color-button-hover: #282828;
-  --color-secondary-dark: #3B3B3B;
-  --color-teritary-dark: #525252;
+  --color-main-blue: #1977E2;
+  --color-main-dark: #343434;
+  --color-button-dark: #262626;
+  --color-button-hover: #222222;
+  --color-secondary-dark: #343434;
+  --color-teritary-dark: #343434;
   --color-nav-hover: #353535;
-  --color-main-text: #BCBCBD;
+  --color-main-text: #E8EEF1;
 }
 
 #root {

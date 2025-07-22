@@ -58,7 +58,7 @@ function LoginView() {
     <>
       <div className="max-h-screen max-w-screen flex items-center justify-center gap-10">
         <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
-          <img src="../logos/splash-logo.png" className="md:w-xl" />
+          <img src="../logos/app-logo.png" className="md:w-xl" />
           <div className="flex flex-col gap-3.5">
             <TextBox icon="person-icon" label={"Uni-ID"} value={uniIdInput} onChange={setUniIdInput} autofocus={true} />
             <TextBox
