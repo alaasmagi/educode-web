@@ -1,15 +1,16 @@
 import React from "react";
-import { Icons } from "./Icons";
+import { IconContent} from "./Icons";
+import Icon from "./Icon";
 
 interface DataTextProperties {
-    icon: keyof typeof Icons;
+    icon: keyof typeof IconContent;
     text: string;
 }
 
 const DataText: React.FC<DataTextProperties> = ({ icon, text }) => {
   return (
     <div className="flex flex-row gap-3 items-center">
-        <img src={Icons[icon]} className="h-7" alt={`${icon}-Icon`} />
+        <Icon iconContent={IconContent[icon]} size={20} color={"#E8EEF1"} strokeWidth={2} />
         <span className="text-xl">{text}</span>
     </div>
   );

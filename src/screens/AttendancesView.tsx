@@ -15,7 +15,7 @@ import DateSelector from "../layout/components/DateSelector";
 import TimeSelector from "../layout/components/TimeSelector";
 import DetailedDataField from "../layout/components/DetailedDataField";
 import QrGenerator from "../layout/components/QrGenerator";
-import { Icons } from "../layout/components/Icons";
+import { IconContent } from "../layout/components/Icons";
 import { GetCurrentLanguage, GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
 import {
   AddAttendanceCheck,
@@ -45,6 +45,7 @@ import { PDFViewer } from "@react-pdf/renderer";
 import AttendanceCheckModel from "../models/AttendanceCheckModel";
 import { FetchAndSaveUserDataByUniId } from "../businesslogic/services/UserDataFetch";
 import i18next from "i18next";
+import Icon from "../layout/components/Icon";
 
 function AttendancesView() {
   const [navState, setNavState] = useState<string>("Main");
@@ -526,7 +527,7 @@ function AttendancesView() {
               <div className="flex flex-col gap-5 items-center justify-center self-center">
                 <QrGenerator value={qrValue} />
                 <div className="flex flex-row gap-5 justify-items-center">
-                  <img src={Icons["key-icon"]} className="md:h-13 max-md:h-8" />
+                  <Icon iconContent={IconContent["key-icon"]} size={20} color={"#E8EEF1"} strokeWidth={2} />
                   <span className="md:text-5xl max-md:text-2xl font-bold">
                     {ToSixDigit(parseInt(attendanceId!)) + "-" + String(ToSixDigit(GetSixDigitTimeStamp()))}
                   </span>

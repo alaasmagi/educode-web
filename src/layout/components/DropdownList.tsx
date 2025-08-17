@@ -1,7 +1,8 @@
-import { Icons } from "./Icons";
+import Icon from "./Icon";
+import { IconContent } from "./Icons";
 
 interface DropDownListProperties {
-  icon: keyof typeof Icons;
+  icon: keyof typeof IconContent;
   options: { value: string; label: string }[];
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   label: string;
@@ -12,7 +13,7 @@ const DropDownList: React.FC<DropDownListProperties> = ({ icon, options, value, 
   return (
     <div className="flex flex-col w-full">
       <div className="flex flex-row w-max-full items-center gap-1.5">
-        <img src={Icons[icon]} className="h-7" />
+        <Icon iconContent={IconContent[icon]} size={20} color={"#E8EEF1"} strokeWidth={2} />
         <select
           value={value}
           onChange={(e) => onChange(e)}

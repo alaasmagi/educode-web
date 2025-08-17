@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Icons } from "./Icons";
+import { IconContent } from "./Icons";
+import Icon from "./Icon";
 
 interface TextBoxProperties {
   label: string;
-  icon: keyof typeof Icons;
+  icon: keyof typeof IconContent;
   placeHolder?: string;
   isPassword?: boolean;
   disabled?: boolean;
@@ -28,9 +29,14 @@ export default function TextBox({
   return (
     <div className="flex flex-col w-full">
       <label className="self-start">{label}</label>
-      <div className= {isFocused ? "flex flex-row w-max-screen items-center gap-1.5 border-[1px] py-2 px-1 rounded-xl border-main-blue" : 
-        "flex flex-row w-max-screen items-center gap-1.5 border-[1px] py-2 px-1 rounded-xl border-main-text"}>
-        <img src={Icons[icon]} className="h-7" alt={`${icon}-Icon`} />
+      <div
+        className={
+          isFocused
+            ? "flex flex-row w-max-screen items-center gap-1.5 border-[1px] py-2 px-1 rounded-xl border-main-blue"
+            : "flex flex-row w-max-screen items-center gap-1.5 border-[1px] py-2 px-1 rounded-xl border-main-text"
+        }
+      >
+        <Icon iconContent={IconContent[icon]} size={20} color={"#E8EEF1"} strokeWidth={2} />
         <input
           type={isTextVisible ? "text" : "password"}
           value={value}
@@ -45,9 +51,9 @@ export default function TextBox({
         {isPassword && (
           <button onClick={() => setIsTextVisible((prev) => !prev)} className="pr-1 hover:cursor-pointer">
             {isTextVisible ? (
-              <img src={Icons["visibility-on"]} className="h-7" alt="User Icon" />
+              <Icon iconContent={IconContent["visibility-on"]} size={20} color={"#E8EEF1"} strokeWidth={2} />
             ) : (
-              <img src={Icons["visibility-off"]} className="h-7" alt="User Icon" />
+              <Icon iconContent={IconContent["visibility-off"]} size={20} color={"#E8EEF1"} strokeWidth={2} />
             )}
           </button>
         )}

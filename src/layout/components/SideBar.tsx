@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { SideBarItem } from "../components/SideBarItem";
 import NormalButton from "../components/NormalButton";
-import { Icons } from "../components/Icons";
+import { IconContent } from "../components/Icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import LanguageSwitch from "../components/LanguageSwitch";
 import { useTranslation } from "react-i18next";
+import Icon from "./Icon";
 
 export default function SideBar() {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ export default function SideBar() {
         onClick={() => setIsOpen(!isOpen)}
         className="p-2 md:hidden bg-button-dark border-main-blue border-2 absolute top-15 right-5 z-50 rounded-2xl "
       >
-        <img src={Icons["menu-icon"]} className="h-7"></img>
+        <Icon iconContent={IconContent["menu-icon"]} size={20} color={"#E8EEF1"} strokeWidth={2} />
       </button>
       <div
         className={`fixed top-0 left-0 h-screen bg-main-dark text-white md:w-90 max-md:w-screen transform transition-transform duration-300 ease-in-out z-40 ${
@@ -38,7 +39,7 @@ export default function SideBar() {
         } md:translate-x-0 md:block`}
       >
         <div className="p-5 mt-10 flex items-center gap-2">
-          <img src="/logos/app-logo.png" alt="EduCode Logo" className="md:h-15 max-md:h-12 w-auto" />
+          <img src="/icons/app-logo.png" alt="EduCode Logo" className="md:h-12 max-md:h-12 w-auto" />
         </div>
 
         <nav className="flex flex-col mt-5">

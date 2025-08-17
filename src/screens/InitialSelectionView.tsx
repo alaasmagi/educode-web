@@ -37,7 +37,7 @@ function InitialSelectionView() {
     <>
       <div className="max-h-screen max-w-screen flex items-center justify-center gap-10">
         <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
-          <img src="../logos/app-logo.png" className="w-xl" />
+          <img src="../icons/app-logo.png" className="w-xl" />
           <div className="flex flex-col gap-3.5">
             {normalMessage && <NormalMessage text={t(normalMessage)} />}
             <NormalButton text={t("log-in")} onClick={() => navigate("/Login")} />
