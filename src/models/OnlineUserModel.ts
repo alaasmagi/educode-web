@@ -1,11 +1,11 @@
+import { EAccessLevel } from "./EAccessLevel";
+
 interface OnlineUserModel {
   id: string;
-  userType: {
-    userType: string;
-  };
-  uniId: string;
+  userType: string;
+  accessLevel: EAccessLevel;
   studentCode?: string;
-  fullName: string;
+  uniId: string;
 }
 
 export default OnlineUserModel;

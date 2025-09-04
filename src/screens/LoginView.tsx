@@ -11,6 +11,7 @@ import { GetOfflineUserData } from "../businesslogic/services/UserDataOffline";
 import { useTranslation } from "react-i18next";
 import LanguageSwitch from "../layout/components/LanguageSwitch";
 import SuccessMessage from "../layout/components/SuccessMessage";
+import { EAccessLevel } from "../models/EAccessLevel";
 
 function LoginView() {
   const { message } = useParams() ?? null;
@@ -32,24 +33,22 @@ function LoginView() {
     setIsButtonDisabled(true);
     dismissKeyboard();
     const status = await UserLogin(uniIdInput, passwordInput);
+    setIsButtonDisabled(false);
     if (status === true) {
       const fetchStatus = await FetchAndSaveUserDataByUniId(uniIdInput);
       if (fetchStatus === true) {
         const localData = await GetOfflineUserData();
         if (localData) {
           setIsButtonDisabled(false);
-          localData.userType === "Teacher" ? navigate("/Home") : setErrorMessage(t("students-not-allowed"));
+          localData.accessLevel > EAccessLevel.SecondaryLevel ? navigate("/Home") : setErrorMessage(t("students-not-allowed"));
         }
       } else {
-        setIsButtonDisabled(false);
         setErrorMessage(t(String(fetchStatus)));
       }
     } else {
-      setIsButtonDisabled(false);
       setErrorMessage(t(String(status)));
     }
     setTimeout(() => {
-      setIsButtonDisabled(false);
       setErrorMessage(null);
     }, 3000);
   };

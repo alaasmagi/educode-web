@@ -1,9 +1,11 @@
+import { EAccessLevel } from "./EAccessLevel";
+
 interface LocalUserData {
-  userType: string;
   uniId?: string;
+  userType: string;
+  accessLevel: EAccessLevel;
   studentCode?: string;
   offlineOnly: boolean;
-  fullName?: string;
 }
 
 export default LocalUserData;

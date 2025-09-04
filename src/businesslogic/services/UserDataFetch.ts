@@ -76,11 +76,11 @@ export async function FetchAndSaveUserDataByUniId(uniId: string): Promise<boolea
   if (response.status === 200 && !response.data.messageCode) {
     const data: OnlineUserModel = response.data;
     const localData: LocalUserData = {
-      userType: data.userType.userType,
+      userType: data.userType,
       uniId: data.uniId,
+      accessLevel: data.accessLevel,
       studentCode: data.studentCode,
       offlineOnly: false,
-      fullName: data.fullName,
     };
 
     SaveOfflineUserData(localData);

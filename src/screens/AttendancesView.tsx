@@ -230,7 +230,7 @@ function AttendancesView() {
     if (!isFormValid()) return;
     setIsButtonDisabled(true);
     const newAttendance: MultipleCourseAttendances = {
-      courseId: Number(selectedCourseId),
+      courseId: String(selectedCourseId),
       attendanceTypeId: String(selectedAttendanceTypeId),
       startTime: String(startTime),
       endTime: String(endTime),
@@ -285,7 +285,7 @@ function AttendancesView() {
       studentCode: studentCodeInput,
       fullName: fullNameInput.trim(),
       courseAttendanceId: attendanceData!.attendanceId!,
-      workplaceId: workplaceInput ? parseInt(workplaceInput) : null,
+      workplaceId: workplaceInput ? workplaceInput : null,
     };
 
     const response = await AddAttendanceCheck(model);

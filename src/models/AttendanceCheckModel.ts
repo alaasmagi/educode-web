@@ -2,8 +2,8 @@ interface AttendanceCheckModel {
   id?: string;
   studentCode: string;
   fullName: string;
-  courseAttendanceId: number;
-  workplaceId?: number | null;
+  courseAttendanceId: string;
+  workplaceId?: string | null;
 }
 
 export default AttendanceCheckModel;

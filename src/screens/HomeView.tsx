@@ -109,7 +109,7 @@ function HomeView() {
       studentCode: studentCodeInput,
       fullName: fullNameInput.trim(),
       courseAttendanceId: currentAttendanceData!.attendanceId!,
-      workplaceId: workplaceInput ? parseInt(workplaceInput) : null,
+      workplaceId: workplaceInput ? workplaceInput : null,
     };
 
     const response = await AddAttendanceCheck(model);

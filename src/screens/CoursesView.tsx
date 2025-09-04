@@ -154,7 +154,7 @@ function CoursesView() {
     const courseData: Course = {
       courseName: selectedCourseName ?? "",
       courseCode: selectedCourseCode ?? "",
-      courseValidStatus: selectedCourseStatus?.id ?? 0,
+      courseValidStatus: selectedCourseStatus?.status ?? null,
     };
     const result = await AddCourse(localData?.uniId ?? "", courseData);
     if (typeof result === "string") {
@@ -186,7 +186,7 @@ function CoursesView() {
       setSuccessMessage(t("course-delete-success"));
       setTimeout(() => setSuccessMessage(null), 1500);
 
-      setAvailableCourses((prevCourses) => prevCourses?.filter((course) => course.id !== Number(courseId)) || []);
+      setAvailableCourses((prevCourses) => prevCourses?.filter((course) => course.id !== (courseId)) || []);
 
       setTimeout(() => setNavState("Main"), 1500);
       setTimeout(() => navigate(`/Courses`), 1500);
@@ -198,7 +198,7 @@ function CoursesView() {
     const courseData: Course = {
       courseName: selectedCourseName ?? "",
       courseCode: selectedCourseCode ?? "",
-      courseValidStatus: selectedCourseStatus?.id ?? 0,
+      courseValidStatus: selectedCourseStatus?.status ?? null,
     };
     const result = await EditCourse(Number(courseId), localData?.uniId ?? "", courseData);
     if (typeof result === "string") {

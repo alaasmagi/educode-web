@@ -2,7 +2,7 @@ interface Course {
   id?: string;
   courseCode: string;
   courseName: string;
-  courseValidStatus: number;
+  courseValidStatus: string | null;
 }
 
 export default Course;
