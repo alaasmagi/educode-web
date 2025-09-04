@@ -1,12 +1,12 @@
 import axios from "axios";
 import Course from "../../models/CourseModel";
-import { GetUserToken } from "./UserDataOffline";
+import { GetJwtToken } from "./UserDataOffline";
 import { CourseStatus } from "../../models/CourseStatus";
 import StudentCountModel from "../../models/StudentCountModel";
 import { ConvertDateTimeToDateOnly } from "../helpers/DateHandlers";
 
 export async function GetCoursesByUser(uniId: string): Promise<Course[] | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Course/UniId/${uniId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +22,7 @@ export async function GetCoursesByUser(uniId: string): Promise<Course[] | string
 }
 
 export async function GetCoursebyId(courseId: number): Promise<Course | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Course/Id/${courseId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export async function GetCoursebyId(courseId: number): Promise<Course | string> 
 }
 
 export async function GetCourseStatuses(): Promise<CourseStatus[] | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Course/Statuses`, {
     headers: {
       "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export async function GetCourseStatuses(): Promise<CourseStatus[] | string> {
 }
 
 export async function AddCourse(uniId: string, courseModel: Course): Promise<boolean | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.post(
     `${import.meta.env.VITE_API_URL}/Course/Add`,
     {
@@ -79,7 +79,7 @@ export async function AddCourse(uniId: string, courseModel: Course): Promise<boo
 }
 
 export async function GetCourseStudentCounts(courseId: number): Promise<StudentCountModel[] | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Course/StudentCounts/${courseId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -98,7 +98,7 @@ export async function GetCourseStudentCounts(courseId: number): Promise<StudentC
 }
 
 export async function EditCourse(courseId: number, uniId: string, course: Course): Promise<boolean | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.patch(
     `${import.meta.env.VITE_API_URL}/Course/Edit`,
     {
@@ -125,7 +125,7 @@ export async function EditCourse(courseId: number, uniId: string, course: Course
 }
 
 export async function DeleteCourse(courseId: number): Promise<boolean | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.delete(`${import.meta.env.VITE_API_URL}/Course/Delete/${courseId}`, {
     headers: {
       "Content-Type": "application/json",

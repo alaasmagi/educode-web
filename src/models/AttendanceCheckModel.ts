@@ -1,5 +1,5 @@
 interface AttendanceCheckModel {
-  id?: number;
+  id?: string;
   studentCode: string;
   fullName: string;
   courseAttendanceId: number;

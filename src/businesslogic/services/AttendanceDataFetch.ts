@@ -1,4 +1,4 @@
-import { GetUserToken } from "./UserDataOffline";
+import { GetJwtToken } from "./UserDataOffline";
 import axios from "axios";
 import { CourseAttendance, MultipleCourseAttendances } from "../../models/CourseAttendanceModel";
 import {
@@ -12,7 +12,7 @@ import AttendanceCheckData from "../../models/AttendanceCheckModel";
 import AttendanceCheckModel from "../../models/AttendanceCheckModel";
 
 export async function AddAttendanceCheck(model: AttendanceCheckModel): Promise<boolean | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.post(
     `${import.meta.env.VITE_API_URL}/Attendance/AttendanceCheck/Add`,
     {
@@ -37,7 +37,7 @@ export async function AddAttendanceCheck(model: AttendanceCheckModel): Promise<b
 }
 
 export async function GetCurrentAttendance(uniId: string): Promise<CourseAttendance | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Attendance/CurrentAttendance/UniId/${uniId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export async function GetCurrentAttendance(uniId: string): Promise<CourseAttenda
 }
 
 export async function GetStudentCountByAttendanceId(attendanceId: number): Promise<number | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(
     `${import.meta.env.VITE_API_URL}/Attendance/StudentCount/AttendanceId/${attendanceId}`,
     {
@@ -88,7 +88,7 @@ export async function GetStudentCountByAttendanceId(attendanceId: number): Promi
 }
 
 export async function GetMostRecentAttendance(uniId: string): Promise<CourseAttendance | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Attendance/RecentAttendance/UniId/${uniId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -117,7 +117,7 @@ export async function GetMostRecentAttendance(uniId: string): Promise<CourseAtte
 }
 
 export async function GetAttendanceById(attendanceId: number): Promise<CourseAttendance | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Attendance/Id/${attendanceId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -145,7 +145,7 @@ export async function GetAttendanceById(attendanceId: number): Promise<CourseAtt
 }
 
 export async function GetAttendanceTypes(): Promise<AttendanceType[] | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Attendance/AttendanceTypes`, {
     headers: {
       "Content-Type": "application/json",
@@ -163,7 +163,7 @@ export async function GetAttendanceTypes(): Promise<AttendanceType[] | string> {
 }
 
 export async function AddAttendances(attendances: MultipleCourseAttendances): Promise<boolean | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.post(
     `${import.meta.env.VITE_API_URL}/Attendance/Add`,
     {
@@ -190,7 +190,7 @@ export async function AddAttendances(attendances: MultipleCourseAttendances): Pr
 }
 
 export async function GetAttendancesByCourseCode(courseCode: string): Promise<CourseAttendance[] | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/Attendance/CourseCode/${courseCode}`, {
     headers: {
       "Content-Type": "application/json",
@@ -217,7 +217,7 @@ export async function GetAttendancesByCourseCode(courseCode: string): Promise<Co
 }
 
 export async function DeleteAttendance(attendanceId: number): Promise<boolean | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.delete(`${import.meta.env.VITE_API_URL}/Attendance/Delete/${attendanceId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -233,7 +233,7 @@ export async function DeleteAttendance(attendanceId: number): Promise<boolean | 
 }
 
 export async function DeleteAttendanceCheck(attendanceCheckId: number): Promise<boolean | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.delete(
     `${import.meta.env.VITE_API_URL}/Attendance/AttendanceCheck/Delete/${attendanceCheckId}`,
     {
@@ -252,7 +252,7 @@ export async function DeleteAttendanceCheck(attendanceCheckId: number): Promise<
 }
 
 export async function GetAttendanceChecksByAttendanceId(attendanceId: number): Promise<AttendanceCheckData[] | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(
     `${import.meta.env.VITE_API_URL}/Attendance/AttendanceChecks/AttendanceId/${attendanceId}`,
     {

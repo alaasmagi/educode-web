@@ -1,8 +1,8 @@
 export interface CourseAttendance {
-  courseId: number;
+  courseId: string;
   courseCode?: string;
   courseName?: string;
-  attendanceId?: number;
+  attendanceId?: string;
   attendanceTypeId: string;
   attendanceType?: string;
   date: string;
@@ -11,8 +11,8 @@ export interface CourseAttendance {
 }
 
 export interface MultipleCourseAttendances {
-  attendanceId?: number;
-  courseId: number;
+  attendanceId?: string;
+  courseId: string;
   attendanceTypeId: string;
   dates: string[];
   startTime: string;

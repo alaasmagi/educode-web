@@ -3,9 +3,7 @@ import { LocalKeys } from "../helpers/HardcodedLocalDataKeys";
 import LocalUserData from "../../models/LocalUserDataModel";
 
 export async function GetOfflineUserData(): Promise<LocalUserData | null> {
-  const userData: LocalUserData | null = await Storage.getData(
-    LocalKeys.userProfile
-  );
+  const userData: LocalUserData | null = await Storage.getData(LocalKeys.userProfile);
   return userData;
 }
 
@@ -17,17 +15,30 @@ export async function DeleteOfflineUserData() {
   await Storage.removeData(LocalKeys.userProfile);
 }
 
-export async function GetUserToken(): Promise<string | null> {
-  const token: string | null = await Storage.getData(LocalKeys.localToken);
+export async function GetJwtToken(): Promise<string | null> {
+  const token: string | null = await Storage.getData(LocalKeys.jwtToken);
   return token;
 }
 
-export async function SaveUserToken(token: string) {
-  await Storage.saveData(LocalKeys.localToken, token);
+export async function SaveJwtToken(token: string) {
+  await Storage.saveData(LocalKeys.jwtToken, token);
 }
 
-export async function DeleteUserToken() {
-  await Storage.removeData(LocalKeys.localToken);
+export async function DeleteJwtToken() {
+  await Storage.removeData(LocalKeys.jwtToken);
+}
+
+export async function GetRefreshToken(): Promise<string | null> {
+  const token: string | null = await Storage.getData(LocalKeys.refreshToken);
+  return token;
+}
+
+export async function SaveRefreshoken(token: string) {
+  await Storage.saveData(LocalKeys.refreshToken, token);
+}
+
+export async function DeleteRefreshToken() {
+  await Storage.removeData(LocalKeys.refreshToken);
 }
 
 export async function GetTempToken(): Promise<string | null> {

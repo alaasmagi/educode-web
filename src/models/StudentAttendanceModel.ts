@@ -1,7 +1,7 @@
 interface StudentAttendanceModel {
-    attendaceCheckId: number,
-    studentCode: string;
-    workplaceId?: number;
+  attendaceCheckId: string;
+  studentCode: string;
+  workplaceId?: string;
 }
 
 export default StudentAttendanceModel;

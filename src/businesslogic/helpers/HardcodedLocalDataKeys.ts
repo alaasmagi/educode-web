@@ -1,6 +1,7 @@
 export const LocalKeys = {
   userProfile: "userProfile",
-  localToken: "loginToken",
+  jwtToken: "jwt",
+  refreshToken: "refresh",
   currentLanguage: "currentLanguage",
   tempToken: "tempToken",
 };

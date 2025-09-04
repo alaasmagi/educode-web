@@ -1,6 +1,7 @@
 interface LocalDataModel {
-    uniId: string;
-    token: string;
+  uniId: string;
+  jwtToken: string;
+  refreshToken: string;
 }
 
 export default LocalDataModel;

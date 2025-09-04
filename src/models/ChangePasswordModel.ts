@@ -1,6 +1,6 @@
 interface ChangePasswordModel {
-    uniId: string;
-    newPassword: string;
+  uniId: string;
+  newPassword: string;
 }
 
 export default ChangePasswordModel;

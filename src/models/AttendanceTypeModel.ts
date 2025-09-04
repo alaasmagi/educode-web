@@ -1,5 +1,5 @@
 interface AttendanceType {
-  id: number;
+  id: string;
   attendanceType: string;
 }
 

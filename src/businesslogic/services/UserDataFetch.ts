@@ -5,10 +5,10 @@ import axios from "axios";
 import {
   DeleteTempToken,
   GetTempToken,
-  GetUserToken,
+  GetJwtToken,
   SaveOfflineUserData,
   SaveTempToken,
-  SaveUserToken,
+  SaveJwtToken,
 } from "./UserDataOffline";
 import VerifyOTPModel from "../../models/VerifyOTPModel";
 import ChangePasswordModel from "../../models/ChangePasswordModel";
@@ -33,7 +33,7 @@ export async function UserLogin(uniId: string, password: string): Promise<boolea
     }
   );
   if (response.status === 200 && !response.data.messageCode) {
-    await SaveUserToken(response.data.token);
+    await SaveJwtToken(response.data.token);
     return true;
   }
 
@@ -65,7 +65,7 @@ export async function CreateUserAccount(model: CreateUserModel): Promise<boolean
 }
 
 export async function FetchAndSaveUserDataByUniId(uniId: string): Promise<boolean | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.get(`${import.meta.env.VITE_API_URL}/User/UniId/${uniId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -135,7 +135,7 @@ export async function VerifyOTP(model: VerifyOTPModel): Promise<boolean | string
 }
 
 export async function DeleteUser(uniId: string): Promise<boolean | string> {
-  const token = await GetUserToken();
+  const token = await GetJwtToken();
   const response = await axios.delete(`${import.meta.env.VITE_API_URL}/User/Delete/UniId/${uniId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
