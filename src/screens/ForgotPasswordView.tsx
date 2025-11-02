@@ -198,7 +198,7 @@ function ForgotPasswordView() {
     <>
       <div className="max-h-screen max-w-screen flex items-center justify-center gap-10">
         <div className="flex flex-col md:p-20 max-md:p-10 items-center gap-20 bg-main-dark rounded-3xl">
-          <img src="../icons/splash-logo.png" className="md:w-xl" />
+          <img src="../assets/app-logo-darkmode-wobg.png" className="md:w-xl" />
           {renderStep()}
         </div>
       </div>

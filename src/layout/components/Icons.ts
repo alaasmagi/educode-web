@@ -1,11 +1,11 @@
-import estFlag from "../../assets/png/est-flag.png"
-import engFlag from "../../assets/png/eng-flag.png"
-import ukrFlag from "../../assets/png/ukr-flag.png"
-import gerFlag from "../../assets/png/ger-flag.png"
-import finFlag from "../../assets/png/fin-flag.png"
-import rusFlag from "../../assets/png/rus-flag.png"
-import latFlag from "../../assets/png/lat-flag.png"
-import litFlag from "../../assets/png/lit-flag.png"
+import estFlag from "../../assets/est-flag.png"
+import engFlag from "../../assets/eng-flag.png"
+import ukrFlag from "../../assets/ukr-flag.png"
+import gerFlag from "../../assets/ger-flag.png"
+import finFlag from "../../assets/fin-flag.png"
+import rusFlag from "../../assets/rus-flag.png"
+import latFlag from "../../assets/lat-flag.png"
+import litFlag from "../../assets/lit-flag.png"
 
 export const IconContent: { [key: string]: string } = {
   "lock-icon":
