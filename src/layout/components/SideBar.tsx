@@ -39,7 +39,7 @@ export default function SideBar() {
         } md:translate-x-0 md:block`}
       >
         <div className="p-5 mt-10 flex items-center gap-2">
-          <img src="../assets/app-logo-darkmode-wobg.png" alt="EduCode Logo" className="md:h-12 max-md:h-12 w-auto" />
+          <img src="../assets/logo/white-on-transparent.png" alt="EduCode Logo" className="md:h-12 max-md:h-12 w-auto" />
         </div>
 
         <nav className="flex flex-col mt-5">
