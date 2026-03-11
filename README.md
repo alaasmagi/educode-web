@@ -6,7 +6,7 @@ This repository has been **archived** and is no longer actively maintained as a 
 
 ## Current Repository
 
-The educode web is now part of a unified monorepo. Please visit:
+The educode-web is now part of a unified monorepo. Please visit:
 
 **[The new EduCode monorepository](https://github.com/alaasmagi/educode)**
 
